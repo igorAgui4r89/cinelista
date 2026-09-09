@@ -1,0 +1,258 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+
+body {
+    min-height: 100vh;
+
+    /* Fonte principal da aplicação */
+    font-family: "Inter", Arial, Helvetica, sans-serif;
+
+    background-image: url("../imagens/background/background-cinema.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+    color: white;
+}
+.header {
+    width: 100%;
+    height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 40px;
+
+    background-color: rgba(12, 7, 25, 0.78);
+
+    border-bottom: 1px solid rgba(180, 80, 255, 0.35);
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+
+    background-color: rgba(255, 255, 255, 0.08);
+
+    padding: 5px 10px;
+
+    border-radius: 10px;
+}
+
+.logo {
+    width: 175px;
+    height: auto;
+    display: block;
+}
+
+.menu {
+    display: flex;
+    gap: 35px;
+}
+
+.menu a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+
+    transition: color 0.3s ease;
+}
+
+.menu a:hover {
+    color: #b95cff;
+}
+
+
+.main-content {
+    /* Ocupa o restante da tela abaixo do cabeçalho */
+    min-height: calc(100vh - 72px);
+
+    display: flex;
+
+    /* Mantém o formulário alinhado à esquerda */
+    justify-content: flex-start;
+
+    /* Mantém o formulário no início da área principal */
+    align-items: flex-start;
+
+    /*
+       Espaçamento interno:
+       40px em cima e embaixo
+       50px nas laterais
+    */
+    padding: 40px 50px;
+}
+
+.cadastro-card {
+    width: 100%;
+    max-width: 520px;
+
+    padding: 30px;
+
+    background: rgba(10, 6, 24, 0.88);
+
+    border: 1px solid rgba(185, 92, 255, 0.35);
+
+    border-radius: 18px;
+
+    backdrop-filter: blur(12px);
+
+    box-shadow:
+        0 0 30px rgba(130, 40, 220, 0.18);
+}
+
+.cadastro-card h1 {
+    margin-bottom: 25px;
+
+    font-size: 25px;
+    font-weight: 600;
+
+    letter-spacing: -0.5px;
+}
+
+.tipo-conteudo {
+    display: flex;
+    gap: 10px;
+
+    margin-bottom: 25px;
+}
+
+.tipo-btn {
+    flex: 1;
+
+    padding: 12px;
+
+    border: 1px solid rgba(185, 92, 255, 0.35);
+
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.05);
+
+    color: white;
+
+    cursor: pointer;
+}
+
+.tipo-btn.ativo {
+    background: #8f35ff;
+
+    border-color: #b95cff;
+}
+
+.formulario {
+    display: flex;
+    flex-direction: column;
+
+    gap: 18px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.campo label {
+    font-size: 14px;
+}
+
+.campo input {
+    width: 100%;
+
+    padding: 13px 14px;
+
+    /* Borda discreta no estado normal */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+
+    border-radius: 9px;
+
+    /* Fundo escuro e levemente transparente */
+    background: rgba(255, 255, 255, 0.07);
+
+    color: white;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    /* Remove a borda padrão do navegador */
+    outline: none;
+
+    /* Deixa as mudanças mais suaves */
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        background-color 0.25s ease;
+}
+
+.campo input:focus {
+    /* Realça o campo selecionado */
+    border-color: #b95cff;
+
+    /* Clareia levemente o fundo */
+    background: rgba(255, 255, 255, 0.10);
+
+    /* Cria o brilho neon roxo */
+    box-shadow:
+        0 0 0 3px rgba(185, 92, 255, 0.12),
+        0 0 14px rgba(185, 92, 255, 0.22);
+}
+
+.campo input::placeholder {
+    /* Deixa o texto de exemplo mais suave */
+    color: rgba(255, 255, 255, 0.38);
+}
+
+/* Espaçamento entre os campos dinâmicos de série */
+.campo-episodios {
+    margin-top: 18px;
+}
+
+
+.btn-salvar {
+    margin-top: 5px;
+
+    padding: 13px;
+
+    border: none;
+    border-radius: 10px;
+
+    /* Gradiente principal da identidade visual */
+    background: linear-gradient(
+        90deg,
+        #7a2cff,
+        #b344ff
+    );
+
+    color: white;
+
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+/* Efeito ao passar o mouse */
+.btn-salvar:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 6px 20px rgba(143, 53, 255, 0.35);
+}
+
+/* Efeito visual enquanto o botão está sendo pressionado */
+.btn-salvar:active {
+    transform: translateY(0);
+}

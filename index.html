@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CineLista</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+
+    
+ <body>
+
+    <header class="header">
+
+        <div class="logo-container">
+            <img
+                src="assets/imagens/logos/logo-cinelista.png"
+                alt="Logo CineLista"
+                class="logo"
+            >
+        </div>
+
+        <nav class="menu">
+            <a href="#inicio">Início</a>
+            <a href="#cadastro">Cadastrar</a>
+            <a href="#minha-lista">Minha Lista</a>
+        </nav>
+
+    </header>
+
+
+
+    <main class="main-content">
+
+    <section class="cadastro-card" id="cadastro">
+
+        <h1>Adicionar à CineLista</h1>
+
+        <!-- Botões para escolher o tipo de conteúdo -->
+         <div class="tipo-conteudo">
+
+        <button
+            type="button"
+            class="tipo-btn ativo"
+            id="btn-filmes"
+        >
+            Filmes
+        </button>
+
+        <button
+            type="button"
+            class="tipo-btn"
+            id="btn-series"
+        >
+            Séries
+        </button>
+
+        </div>
+
+            <form class="formulario" id="formulario-cadastro">
+            
+            <div class="campo">
+                <label for="titulo">Título</label>
+                <input
+                    type="text"
+                    id="titulo"
+                    placeholder="Digite o título"
+                    required
+                >
+            </div>
+
+            <div class="campo">
+                <label for="genero">Gênero</label>
+                <input
+                    type="text"
+                    id="genero"
+                    placeholder="Ex.: Ficção científica"
+                    required
+                >
+            </div>
+
+            <!-- Área que será alterada pelo JavaScript -->
+            <div id="campos-duracao">
+
+            <!-- Campo exibido inicialmente para filmes -->
+            <div class="campo">
+            <label for="duracao">Duração</label>
+
+            <input
+                type="number"
+                id="duracao"
+                min="1"
+                placeholder="Ex.: 120 minutos"
+                required
+            >
+        </div>
+
+</div>
+
+            <div class="campo">
+                <label for="streaming">Streaming disponível</label>
+                <input
+                    type="text"
+                    id="streaming"
+                    placeholder="Ex.: Netflix"
+                    required
+                >
+            </div>
+
+            <div class="campo">
+                <label for="lancamento">Data de lançamento</label>
+                <input
+                    type="date"
+                    id="lancamento"
+                    required
+                >
+            </div>
+
+            <div class="campo">
+                <label for="diretor">Diretor</label>
+                <input
+                    type="text"
+                    id="diretor"
+                    placeholder="Digite o nome do diretor"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn-salvar">
+                Salvar
+            </button>
+
+        </form>
+
+        </section>
+
+    </main>
+
+
+
+
+
+    <!-- Arquivo responsável pelo comportamento da aplicação -->
+    <script src="assets/js/script.js"></script>
+</body>
+
+</html>
