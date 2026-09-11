@@ -27,6 +27,22 @@ const formulario = document.getElementById("formulario-cadastro");
 // A página começa com "Filmes" selecionado.
 let tipoSelecionado = "filme";
 
+// -----------------------------------------------------
+// LISTA TEMPORÁRIA DE CONTEÚDOS
+// -----------------------------------------------------
+
+/*
+    Este array armazenará todos os filmes e séries
+    cadastrados enquanto a página estiver aberta.
+
+    Por enquanto, os dados são temporários.
+    Se a página for atualizada, o array será esvaziado.
+
+    Mais adiante utilizaremos localStorage para
+    manter os dados salvos no navegador.
+*/
+const listaConteudos = [];
+
 
 // -----------------------------------------------------
 // 2. EXIBIÇÃO DOS CAMPOS DE FILME
@@ -212,17 +228,27 @@ formulario.addEventListener("submit", function (event) {
     }
 
 
-    // -------------------------------------------------
-    // TESTE
-    // -------------------------------------------------
+// -------------------------------------------------
+// ARMAZENAMENTO TEMPORÁRIO
+// -------------------------------------------------
 
-    /*
-        Por enquanto apenas mostramos o objeto
-        no console.
+/*
+    O método push() adiciona o novo objeto
+    ao final do array listaConteudos.
+*/
+listaConteudos.push(conteudo);
 
-        Na próxima etapa ele será armazenado
-        em um array.
-    */
-    console.log("Conteúdo capturado:");
-    console.log(conteudo);
+
+// -------------------------------------------------
+// TESTES NO CONSOLE
+// -------------------------------------------------
+
+// Mostra apenas o conteúdo que acabou de ser cadastrado.
+console.log("Conteúdo cadastrado:");
+console.log(conteudo);
+
+
+// Mostra todos os conteúdos cadastrados até o momento.
+console.log("Lista atual:");
+console.log(listaConteudos);
 });
