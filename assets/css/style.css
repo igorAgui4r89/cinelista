@@ -71,21 +71,43 @@ body {
 
 
 .main-content {
-    /* Ocupa o restante da tela abaixo do cabeçalho */
+    /*
+        Ocupa o restante da tela
+        abaixo do cabeçalho de 72px.
+    */
     min-height: calc(100vh - 72px);
 
+    /*
+        Ativa o Flexbox para organizar
+        as seções dentro do <main>.
+    */
     display: flex;
 
-    /* Mantém o formulário alinhado à esquerda */
-    justify-content: flex-start;
+    /*
+        IMPORTANTE:
+        coloca os elementos um embaixo do outro.
 
-    /* Mantém o formulário no início da área principal */
+        Sem esta linha, o padrão é "row"
+        e eles ficam lado a lado.
+    */
+    flex-direction: column;
+
+    /*
+        Mantém os elementos alinhados
+        à esquerda da página.
+    */
     align-items: flex-start;
 
     /*
-       Espaçamento interno:
-       40px em cima e embaixo
-       50px nas laterais
+        Cria 40px de distância entre
+        o formulário e "Minha Lista".
+    */
+    gap: 40px;
+
+    /*
+        Espaçamento interno:
+        40px em cima e embaixo
+        50px nas laterais.
     */
     padding: 40px 50px;
 }
@@ -255,4 +277,65 @@ body {
 /* Efeito visual enquanto o botão está sendo pressionado */
 .btn-salvar:active {
     transform: translateY(0);
+}
+
+/* ==================================================
+   MINHA LISTA
+   Área onde os filmes e séries serão exibidos
+================================================== */
+
+.minha-lista {
+    /*
+        Faz a seção ocupar o espaço disponível,
+        respeitando o limite máximo definido abaixo.
+    */
+    width: 100%;
+
+    /*
+        Impede que a seção fique larga demais
+        em monitores grandes.
+    */
+    max-width: 1100px;
+
+    /* Espaçamento interno do card */
+    padding: 30px;
+
+    /*
+        Mesmo estilo escuro e transparente
+        utilizado no card de cadastro.
+    */
+    background: rgba(10, 6, 24, 0.88);
+
+    /* Borda roxa discreta */
+    border: 1px solid rgba(185, 92, 255, 0.35);
+
+    /* Arredonda as bordas */
+    border-radius: 18px;
+
+    /* Dá profundidade ao card */
+    box-shadow:
+        0 0 30px rgba(130, 40, 220, 0.18);
+}
+
+
+/* Título "Minha Lista" */
+.minha-lista h2 {
+    margin-bottom: 15px;
+
+    font-size: 24px;
+    font-weight: 600;
+}
+
+
+/* Área que futuramente receberá os cards */
+.lista-conteudos {
+    width: 100%;
+}
+
+
+/* Mensagem exibida enquanto não houver cadastros */
+.lista-vazia {
+    color: rgba(255, 255, 255, 0.55);
+
+    font-size: 14px;
 }
