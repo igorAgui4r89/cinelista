@@ -80,6 +80,62 @@ function salvarLista() {
     );
 }
 
+// -----------------------------------------------------
+// EXCLUSÃO DE CONTEÚDO
+// -----------------------------------------------------
+
+/*
+    Esta função recebe a posição do conteúdo
+    dentro do array e remove esse item.
+*/
+function excluirConteudo(indice) {
+
+    /*
+        Antes de excluir, pedimos uma confirmação
+        para evitar remoções acidentais.
+    */
+    const confirmarExclusao = confirm(
+        "Deseja realmente excluir este conteúdo?"
+    );
+
+
+    /*
+        Se o usuário clicar em "Cancelar",
+        interrompemos a função.
+    */
+    if (!confirmarExclusao) {
+        return;
+    }
+
+
+    /*
+        splice() remove elementos de um array.
+
+        O primeiro valor indica a posição inicial.
+        O segundo indica quantos elementos serão removidos.
+
+        Portanto:
+        splice(indice, 1)
+
+        significa:
+        "remova 1 item a partir desta posição".
+    */
+    listaConteudos.splice(indice, 1);
+
+
+    // Atualiza os dados armazenados no navegador.
+    salvarLista();
+
+
+    // Atualiza visualmente a seção "Minha Lista".
+    renderizarLista();
+}
+
+// Atualiza visualmente a seção "Minha Lista".
+renderizarLista();
+
+
+
 
 // -----------------------------------------------------
 // 2. EXIBIÇÃO DOS CAMPOS DE FILME
@@ -217,7 +273,7 @@ function renderizarLista() {
         Percorre todos os objetos armazenados
         dentro do array listaConteudos.
     */
-    listaConteudos.forEach(function (conteudo) {
+        listaConteudos.forEach(function (conteudo, indice) {    
 
         // Cria um elemento <article> para representar o card.
         const card = document.createElement("article");
@@ -313,6 +369,39 @@ function renderizarLista() {
                 " episódio(s)";
         }
 
+// -------------------------------------------------
+// BOTÃO EXCLUIR
+// -------------------------------------------------
+
+// Cria o botão de exclusão.
+const btnExcluir = document.createElement("button");
+
+// Texto exibido no botão.
+btnExcluir.textContent = "Excluir";
+
+// Classe utilizada para estilizar o botão no CSS.
+btnExcluir.classList.add("btn-excluir");
+
+// Define que este botão não envia formulários.
+btnExcluir.type = "button";
+
+
+/*
+    Quando o usuário clicar no botão,
+    chamamos a função excluirConteudo()
+    passando a posição deste conteúdo no array.
+*/
+btnExcluir.addEventListener("click", function () {
+
+    excluirConteudo(indice);
+
+});
+
+
+
+
+
+
 
         // -------------------------------------------------
         // MONTAGEM DO CARD
@@ -329,6 +418,7 @@ function renderizarLista() {
         card.appendChild(streaming);
         card.appendChild(lancamento);
         card.appendChild(diretor);
+        card.appendChild(btnExcluir);
 
 
         /*
@@ -438,8 +528,8 @@ listaConteudos.push(conteudo);
 
 // Salva a lista atualizada no navegador.
 salvarLista();
-
 // Atualiza visualmente a seção "Minha Lista".
+
 renderizarLista();
 
 
@@ -447,23 +537,9 @@ renderizarLista();
 // TESTES NO CONSOLE
 // -------------------------------------------------
 
-// Mostra apenas o conteúdo que acabou de ser cadastrado.
 console.log("Conteúdo cadastrado:");
 console.log(conteudo);
 
-
-// Mostra todos os conteúdos cadastrados até o momento.
 console.log("Lista atual:");
 console.log(listaConteudos);
 });
-
-// -----------------------------------------------------
-// CARREGAMENTO INICIAL DA LISTA
-// -----------------------------------------------------
-
-/*
-    Quando a página é aberta ou atualizada,
-    esta função exibe os conteúdos que já foram
-    recuperados do localStorage.
-*/
-renderizarLista();

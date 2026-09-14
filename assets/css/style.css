@@ -453,3 +453,44 @@ body {
 
     letter-spacing: 0.5px;
 }
+
+/* ==================================================
+   BOTÃO EXCLUIR
+================================================== */
+
+.btn-excluir {
+    /* Espaço entre as informações e o botão */
+    margin-top: 12px;
+
+    padding: 8px 14px;
+
+    /* Fundo transparente */
+    background: transparent;
+
+    /* Borda em tom avermelhado */
+    border: 1px solid rgba(255, 90, 110, 0.55);
+
+    border-radius: 8px;
+
+    /* Cor do texto */
+    color: #ff7588;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    /* Suaviza a mudança de aparência */
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+
+/* Efeito ao passar o mouse */
+.btn-excluir:hover {
+    background: rgba(255, 90, 110, 0.15);
+
+    color: #ff9aaa;
+}
