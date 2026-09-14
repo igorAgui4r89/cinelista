@@ -23,12 +23,28 @@ const formulario = document.getElementById("formulario-cadastro");
 // Área do HTML onde os filmes e séries cadastrados serão exibidos.
 const listaConteudosHTML = document.getElementById("lista-conteudos");
 
+// Botão principal do formulário.
+const btnSalvar = document.querySelector(".btn-salvar");
+
 // -----------------------------------------------------
 // TIPO DE CONTEÚDO SELECIONADO
 // -----------------------------------------------------
 
 // A página começa com "Filmes" selecionado.
 let tipoSelecionado = "filme";
+
+/*
+    Guarda a posição do conteúdo que está sendo editado.
+
+    Quando o valor for null, significa que estamos
+    fazendo um novo cadastro.
+
+    Quando houver um número, significa que estamos
+    editando um item que já existe no array.
+*/
+let indiceEmEdicao = null;
+
+
 
 // -----------------------------------------------------
 // LISTA TEMPORÁRIA DE CONTEÚDOS
@@ -369,6 +385,39 @@ function renderizarLista() {
                 " episódio(s)";
         }
 
+
+// -------------------------------------------------
+// BOTÃO EDITAR
+// -------------------------------------------------
+
+// Cria um novo elemento <button>.
+const btnEditar = document.createElement("button");
+
+// Define o texto que aparecerá dentro do botão.
+btnEditar.textContent = "Editar";
+
+// Adiciona uma classe para estilizar o botão no CSS.
+btnEditar.classList.add("btn-editar");
+
+// Define que o botão não deve enviar nenhum formulário.
+btnEditar.type = "button";
+
+/*
+    Quando o usuário clicar no botão Editar,
+    chamamos a função editarConteudo().
+
+    O "indice" informa qual item da lista
+    foi escolhido pelo usuário.
+*/
+btnEditar.addEventListener("click", function () {
+
+    editarConteudo(indice);
+
+});
+
+
+
+
 // -------------------------------------------------
 // BOTÃO EXCLUIR
 // -------------------------------------------------
@@ -400,6 +449,102 @@ btnExcluir.addEventListener("click", function () {
 
 
 
+// -----------------------------------------------------
+// EDIÇÃO DE CONTEÚDO
+// -----------------------------------------------------
+
+function editarConteudo(indice) {
+
+    /*
+        Recupera do array o conteúdo correspondente
+        ao card em que o usuário clicou.
+    */
+    const conteudo = listaConteudos[indice];
+
+
+    /*
+        Guarda o índice para sabermos, no momento
+        de salvar, que não é um novo cadastro.
+    */
+    indiceEmEdicao = indice;
+
+
+    // -------------------------------------------------
+    // DEFINE SE É FILME OU SÉRIE
+    // -------------------------------------------------
+
+    if (conteudo.tipo === "filme") {
+
+        /*
+            Mostra o campo de duração
+            e ativa visualmente a aba Filmes.
+        */
+        mostrarCamposFilme();
+
+    } else {
+
+        /*
+            Mostra os campos de temporadas e episódios
+            e ativa visualmente a aba Séries.
+        */
+        mostrarCamposSerie();
+    }
+
+
+    // -------------------------------------------------
+    // PREENCHE OS CAMPOS COM OS DADOS EXISTENTES
+    // -------------------------------------------------
+
+    document.getElementById("titulo").value =
+        conteudo.titulo;
+
+    document.getElementById("genero").value =
+        conteudo.genero;
+
+    document.getElementById("streaming").value =
+        conteudo.streaming;
+
+    document.getElementById("lancamento").value =
+        conteudo.lancamento;
+
+    document.getElementById("diretor").value =
+        conteudo.diretor;
+
+
+    // Campos específicos de filme ou série.
+    if (conteudo.tipo === "filme") {
+
+        document.getElementById("duracao").value =
+            conteudo.duracao;
+
+    } else {
+
+        document.getElementById("temporadas").value =
+            conteudo.temporadas;
+
+        document.getElementById("episodios").value =
+            conteudo.episodios;
+    }
+
+
+    /*
+        Muda o texto do botão para deixar claro
+        que estamos atualizando um cadastro existente.
+    */
+    btnSalvar.textContent = "Atualizar";
+
+
+    /*
+        Leva o usuário de volta ao formulário.
+    */
+    document
+        .getElementById("cadastro")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+}
+
+
 
 
 
@@ -418,9 +563,12 @@ btnExcluir.addEventListener("click", function () {
         card.appendChild(streaming);
         card.appendChild(lancamento);
         card.appendChild(diretor);
+
+        // Coloca o botão Editar dentro do card.
+        card.appendChild(btnEditar);
+
+        // Coloca o botão Excluir depois dele.
         card.appendChild(btnExcluir);
-
-
         /*
             Por último, colocamos o card
             dentro da seção "Minha Lista".
@@ -524,13 +672,57 @@ formulario.addEventListener("submit", function (event) {
     O método push() adiciona o novo objeto
     ao final do array listaConteudos.
 */
-listaConteudos.push(conteudo);
+listaConteudos.push(conteudo);/*
+    Se indiceEmEdicao for null,
+    estamos fazendo um novo cadastro.
+*/
+if (indiceEmEdicao === null) {
+
+    listaConteudos.push(conteudo);
+
+} else {
+
+    /*
+        Se houver um índice,
+        substituímos o conteúdo antigo
+        pelo conteúdo atualizado.
+    */
+    listaConteudos[indiceEmEdicao] = conteudo;
+
+
+    /*
+        Depois da atualização, voltamos
+        ao modo normal de cadastro.
+    */
+    indiceEmEdicao = null;
+
+
+    // O botão volta a se chamar Salvar.
+    btnSalvar.textContent = "Salvar";
+}
 
 // Salva a lista atualizada no navegador.
 salvarLista();
 // Atualiza visualmente a seção "Minha Lista".
 
 renderizarLista();
+
+// -----------------------------------------------------
+// LIMPEZA DO FORMULÁRIO
+// -----------------------------------------------------
+
+/*
+    Limpa os campos do formulário depois que
+    o conteúdo foi cadastrado com sucesso.
+*/
+formulario.reset();
+
+
+/*
+    Coloca novamente o cursor no campo Título,
+    deixando o formulário pronto para um novo cadastro.
+*/
+document.getElementById("titulo").focus();
 
 
 // -------------------------------------------------

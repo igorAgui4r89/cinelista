@@ -494,3 +494,41 @@ body {
 
     color: #ff9aaa;
 }
+
+/* ==================================================
+   BOTÃO EDITAR
+================================================== */
+
+.btn-editar {
+    margin-top: 12px;
+    margin-right: 8px;
+
+    padding: 8px 14px;
+
+    background: transparent;
+
+    /* Roxo para diferenciar da ação de excluir */
+    border: 1px solid rgba(185, 92, 255, 0.60);
+
+    border-radius: 8px;
+
+    color: #d5a5ff;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+
+/* Efeito ao passar o mouse */
+.btn-editar:hover {
+    background: rgba(185, 92, 255, 0.16);
+
+    color: white;
+}
