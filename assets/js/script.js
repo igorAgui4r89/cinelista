@@ -20,6 +20,9 @@ const camposDuracao = document.getElementById("campos-duracao");
 // Formulário principal de cadastro.
 const formulario = document.getElementById("formulario-cadastro");
 
+// Área do HTML onde os filmes e séries cadastrados serão exibidos.
+const listaConteudosHTML = document.getElementById("lista-conteudos");
+
 // -----------------------------------------------------
 // TIPO DE CONTEÚDO SELECIONADO
 // -----------------------------------------------------
@@ -41,7 +44,41 @@ let tipoSelecionado = "filme";
     Mais adiante utilizaremos localStorage para
     manter os dados salvos no navegador.
 */
-const listaConteudos = [];
+/*
+    Tenta recuperar do navegador uma lista
+    que já tenha sido salva anteriormente.
+
+    localStorage.getItem() recupera os dados salvos.
+
+    JSON.parse() transforma o texto salvo novamente
+    em um array JavaScript.
+
+    Se ainda não existir nada salvo, usamos [].
+*/
+const listaConteudos =
+    JSON.parse(localStorage.getItem("cinelistaConteudos")) || [];
+
+// -----------------------------------------------------
+// SALVAMENTO NO LOCALSTORAGE
+// -----------------------------------------------------
+
+/*
+    Esta função será responsável por salvar
+    a lista de filmes e séries no navegador.
+*/
+function salvarLista() {
+
+    /*
+        O localStorage só consegue armazenar texto.
+
+        Por isso usamos JSON.stringify() para
+        transformar o array listaConteudos em texto.
+    */
+    localStorage.setItem(
+        "cinelistaConteudos",
+        JSON.stringify(listaConteudos)
+    );
+}
 
 
 // -----------------------------------------------------
@@ -141,6 +178,167 @@ btnSeries.addEventListener("click", mostrarCamposSerie);
 // 5. VALIDAÇÃO E CAPTURA DOS DADOS
 // -----------------------------------------------------
 
+// -----------------------------------------------------
+// EXIBIÇÃO DOS CONTEÚDOS NA PÁGINA
+// -----------------------------------------------------
+
+function renderizarLista() {
+
+    /*
+        Antes de desenhar a lista novamente,
+        apagamos o conteúdo que já estava dentro dela.
+
+        Isso evita que os cards sejam duplicados.
+    */
+    listaConteudosHTML.innerHTML = "";
+
+
+    /*
+        Se o array estiver vazio, mostramos
+        uma mensagem informando que ainda
+        não existe nenhum cadastro.
+    */
+    if (listaConteudos.length === 0) {
+
+        const mensagem = document.createElement("p");
+
+        mensagem.classList.add("lista-vazia");
+
+        mensagem.textContent =
+            "Nenhum filme ou série cadastrado ainda.";
+
+        listaConteudosHTML.appendChild(mensagem);
+
+        return;
+    }
+
+
+    /*
+        Percorre todos os objetos armazenados
+        dentro do array listaConteudos.
+    */
+    listaConteudos.forEach(function (conteudo) {
+
+        // Cria um elemento <article> para representar o card.
+        const card = document.createElement("article");
+
+        // Adiciona uma classe para podermos estilizar depois.
+        card.classList.add("card-conteudo");
+
+
+        // -------------------------------------------------
+        // TIPO DO CONTEÚDO
+        // -------------------------------------------------
+
+        const tipo = document.createElement("p");
+
+        // Adiciona uma classe para estilizar a etiqueta "Filme" ou "Série".
+        tipo.classList.add("tipo-card");
+        /*
+            Se o tipo for "filme", mostra "Filme".
+            Caso contrário, mostra "Série".
+        */
+        tipo.textContent =
+            conteudo.tipo === "filme"
+                ? "Filme"
+                : "Série";
+
+
+        // -------------------------------------------------
+        // TÍTULO
+        // -------------------------------------------------
+
+        const titulo = document.createElement("h3");
+
+        titulo.textContent = conteudo.titulo;
+
+
+        // -------------------------------------------------
+        // GÊNERO
+        // -------------------------------------------------
+
+        const genero = document.createElement("p");
+
+        genero.textContent =
+            "Gênero: " + conteudo.genero;
+
+
+        // -------------------------------------------------
+        // STREAMING
+        // -------------------------------------------------
+
+        const streaming = document.createElement("p");
+
+        streaming.textContent =
+            "Streaming: " + conteudo.streaming;
+
+
+        // -------------------------------------------------
+        // DATA DE LANÇAMENTO
+        // -------------------------------------------------
+
+        const lancamento = document.createElement("p");
+
+        lancamento.textContent =
+            "Lançamento: " + conteudo.lancamento;
+
+
+        // -------------------------------------------------
+        // DIRETOR
+        // -------------------------------------------------
+
+        const diretor = document.createElement("p");
+
+        diretor.textContent =
+            "Diretor: " + conteudo.diretor;
+
+
+        // -------------------------------------------------
+        // DURAÇÃO / TEMPORADAS / EPISÓDIOS
+        // -------------------------------------------------
+
+        const detalhes = document.createElement("p");
+
+        if (conteudo.tipo === "filme") {
+
+            detalhes.textContent =
+                "Duração: " + conteudo.duracao + " min";
+
+        } else {
+
+            detalhes.textContent =
+                conteudo.temporadas +
+                " temporada(s) • " +
+                conteudo.episodios +
+                " episódio(s)";
+        }
+
+
+        // -------------------------------------------------
+        // MONTAGEM DO CARD
+        // -------------------------------------------------
+
+        /*
+            Agora colocamos todos os elementos
+            que criamos dentro do card.
+        */
+        card.appendChild(tipo);
+        card.appendChild(titulo);
+        card.appendChild(genero);
+        card.appendChild(detalhes);
+        card.appendChild(streaming);
+        card.appendChild(lancamento);
+        card.appendChild(diretor);
+
+
+        /*
+            Por último, colocamos o card
+            dentro da seção "Minha Lista".
+        */
+        listaConteudosHTML.appendChild(card);
+    });
+}
+
 formulario.addEventListener("submit", function (event) {
 
     // Impede que a página seja recarregada após o envio.
@@ -238,6 +436,12 @@ formulario.addEventListener("submit", function (event) {
 */
 listaConteudos.push(conteudo);
 
+// Salva a lista atualizada no navegador.
+salvarLista();
+
+// Atualiza visualmente a seção "Minha Lista".
+renderizarLista();
+
 
 // -------------------------------------------------
 // TESTES NO CONSOLE
@@ -252,3 +456,14 @@ console.log(conteudo);
 console.log("Lista atual:");
 console.log(listaConteudos);
 });
+
+// -----------------------------------------------------
+// CARREGAMENTO INICIAL DA LISTA
+// -----------------------------------------------------
+
+/*
+    Quando a página é aberta ou atualizada,
+    esta função exibe os conteúdos que já foram
+    recuperados do localStorage.
+*/
+renderizarLista();
