@@ -227,40 +227,66 @@
         FILTROS DA MINHA LISTA
         =================================================== -->
 
-        <div class="filtros-lista">
+        <!-- ==================================================
+     FILTROS DA MINHA LISTA
+=================================================== -->
 
-         <!--
-            "Todos" começa ativo porque,
-            ao abrir o site, queremos mostrar
-            filmes e séries juntos.
-            -->
-            <button
-                type="button"
-                class="filtro-btn ativo"
-                id="filtro-todos"
-            >
-                Todos
-            </button>
+<div class="filtros-lista">
 
-            <!-- Mostra somente filmes -->
-            <button
-                type="button"
-                class="filtro-btn"
-                id="filtro-filmes"
-            >
-                Filmes
-            </button>
+    <!-- Mostra filmes e séries -->
+    <button
+        type="button"
+        class="filtro-btn ativo"
+        id="filtro-todos"
+    >
+        Todos
 
-            <!-- Mostra somente séries -->
-            <button
-                type="button"
-                class="filtro-btn"
-                id="filtro-series"
-            >
-                Séries
-            </button>
+        <!-- Quantidade total de conteúdos -->
+        <span
+            class="contador-filtro"
+            id="contador-todos"
+        >
+            0
+        </span>
+    </button>
 
-        </div>
+
+    <!-- Mostra somente filmes -->
+    <button
+        type="button"
+        class="filtro-btn"
+        id="filtro-filmes"
+    >
+        Filmes
+
+        <!-- Quantidade de filmes cadastrados -->
+        <span
+            class="contador-filtro"
+            id="contador-filmes"
+        >
+            0
+        </span>
+    </button>
+
+
+    <!-- Mostra somente séries -->
+    <button
+        type="button"
+        class="filtro-btn"
+        id="filtro-series"
+    >
+        Séries
+
+        <!-- Quantidade de séries cadastradas -->
+        <span
+            class="contador-filtro"
+            id="contador-series"
+        >
+            0
+        </span>
+    </button>
+
+</div>
 
 
 

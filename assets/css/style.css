@@ -792,6 +792,56 @@ body {
         box-shadow 0.25s ease;
 }
 
+/* ==================================================
+   CONTADORES DOS FILTROS
+================================================== */
+
+.contador-filtro {
+    /*
+        Cria um pequeno círculo/etiqueta
+        ao lado do nome do filtro.
+    */
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    /*
+        Cria um pequeno espaço entre
+        o texto e o número.
+    */
+    margin-left: 6px;
+
+    /*
+        Garante um tamanho mínimo
+        para números de 1 ou 2 dígitos.
+    */
+    min-width: 22px;
+
+    height: 22px;
+
+    padding: 0 6px;
+
+    border-radius: 20px;
+
+    background: rgba(255, 255, 255, 0.12);
+
+    color: white;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+
+/*
+    Quando o botão estiver ativo,
+    o contador ganha um pouco mais de destaque.
+*/
+.filtro-btn.ativo .contador-filtro {
+    background: rgba(255, 255, 255, 0.22);
+}
 
 /* Efeito quando o mouse passa pelo botão */
 .filtro-btn:hover {

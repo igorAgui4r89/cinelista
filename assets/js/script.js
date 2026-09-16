@@ -40,6 +40,20 @@ const btnFiltroFilmes =
 const btnFiltroSeries =
     document.getElementById("filtro-series");
 
+
+/*
+    Elementos que exibem as quantidades
+    de conteúdos em cada filtro.
+*/
+const contadorTodos =
+    document.getElementById("contador-todos");
+
+const contadorFilmes =
+    document.getElementById("contador-filmes");
+
+const contadorSeries =
+    document.getElementById("contador-series");
+
 // Botão principal do formulário.
 const btnSalvar = document.querySelector(".btn-salvar");
 
@@ -121,6 +135,61 @@ function salvarLista() {
         JSON.stringify(listaConteudos)
     );
 }
+
+// -----------------------------------------------------
+// CONTADORES DA MINHA LISTA
+// -----------------------------------------------------
+
+function atualizarContadores() {
+
+    /*
+        O total é simplesmente a quantidade
+        de elementos existentes no array.
+    */
+    const totalConteudos =
+        listaConteudos.length;
+
+
+    /*
+        filter() cria temporariamente uma lista
+        apenas com os conteúdos do tipo "filme".
+
+        length informa quantos existem.
+    */
+    const totalFilmes =
+        listaConteudos.filter(function (conteudo) {
+
+            return conteudo.tipo === "filme";
+
+        }).length;
+
+
+    /*
+        Fazemos a mesma coisa para as séries.
+    */
+    const totalSeries =
+        listaConteudos.filter(function (conteudo) {
+
+            return conteudo.tipo === "serie";
+
+        }).length;
+
+
+    /*
+        Atualizamos os números exibidos
+        dentro dos três botões.
+    */
+    contadorTodos.textContent =
+        totalConteudos;
+
+    contadorFilmes.textContent =
+        totalFilmes;
+
+    contadorSeries.textContent =
+        totalSeries;
+}
+
+
 
 // -----------------------------------------------------
 // EXCLUSÃO DE CONTEÚDO
@@ -422,6 +491,12 @@ function renderizarLista() {
         Isso evita que os cards sejam duplicados.
     */
     listaConteudosHTML.innerHTML = "";
+
+    /*
+    Atualiza os números dos filtros sempre
+    que a lista for renderizada.
+    */
+    atualizarContadores();
 
     // -----------------------------------------------------
 // FILTRO DA BUSCA
