@@ -23,6 +23,10 @@ const formulario = document.getElementById("formulario-cadastro");
 // Área do HTML onde os filmes e séries cadastrados serão exibidos.
 const listaConteudosHTML = document.getElementById("lista-conteudos");
 
+// Campo utilizado para pesquisar  filmes e séries pelo título.
+
+const campoBusca = document.getElementById("busca-titulo");
+
 // Botão principal do formulário.
 const btnSalvar = document.querySelector(".btn-salvar");
 
@@ -283,6 +287,20 @@ btnFilmes.addEventListener("click", mostrarCamposFilme);
 // Executa a função de série quando o botão Séries for clicado.
 btnSeries.addEventListener("click", mostrarCamposSerie);
 
+// -----------------------------------------------------
+// EVENTO DE BUSCA
+// -----------------------------------------------------
+
+/*
+    Sempre que o usuário digitar ou apagar
+    alguma coisa no campo de busca,
+    a lista será atualizada.
+*/
+campoBusca.addEventListener("input", function () {
+
+    renderizarLista();
+
+});
 
 // -----------------------------------------------------
 // 5. VALIDAÇÃO E CAPTURA DOS DADOS
@@ -301,6 +319,48 @@ function renderizarLista() {
         Isso evita que os cards sejam duplicados.
     */
     listaConteudosHTML.innerHTML = "";
+
+    // -----------------------------------------------------
+// FILTRO DA BUSCA
+// -----------------------------------------------------
+
+/*
+    Recupera o que o usuário digitou.
+
+    trim() remove espaços desnecessários
+    no começo e no final.
+
+    toLowerCase() transforma tudo em minúsculas
+    para a pesquisa não diferenciar maiúsculas
+    de minúsculas.
+*/
+const termoBusca =
+    campoBusca.value.trim().toLowerCase();
+
+
+/*
+    Criamos uma lista temporária apenas com
+    os conteúdos que correspondem à pesquisa.
+
+    Também preservamos o índice original de cada item,
+    porque os botões Editar e Excluir dependem dele.
+*/
+const conteudosFiltrados = listaConteudos
+    .map(function (conteudo, indiceOriginal) {
+
+        return {
+            conteudo: conteudo,
+            indiceOriginal: indiceOriginal
+        };
+
+    })
+    .filter(function (item) {
+
+        return item.conteudo.titulo
+            .toLowerCase()
+            .includes(termoBusca);
+
+    });
 
 
     /*
@@ -322,12 +382,43 @@ function renderizarLista() {
         return;
     }
 
+    /*
+    Se existem conteúdos cadastrados,
+    mas nenhum corresponde à pesquisa,
+    mostramos outra mensagem.
+*/
+    if (conteudosFiltrados.length === 0) {
+
+        const mensagem = document.createElement("p");
+
+        mensagem.classList.add("lista-vazia");
+
+        mensagem.textContent =
+            "Nenhum título encontrado.";
+
+        listaConteudosHTML.appendChild(mensagem);
+
+    return;
+}
+
 
     /*
         Percorre todos os objetos armazenados
         dentro do array listaConteudos.
     */
-        listaConteudos.forEach(function (conteudo, indice) {    
+        /*
+    Percorre somente os conteúdos que
+    passaram pelo filtro da busca.
+*/
+        conteudosFiltrados.forEach(function (item) {
+
+    /*
+        Recuperamos o conteúdo e também
+        sua posição original no array.
+    */
+        const conteudo = item.conteudo;
+
+        const indice = item.indiceOriginal; 
 
         // Cria um elemento <article> para representar o card.
         const card = document.createElement("article");

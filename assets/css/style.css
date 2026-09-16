@@ -356,12 +356,73 @@ body {
     couberem no espaço disponível.
 */
 .lista-conteudos {
+    /* Organiza os conteúdos em formato de grade */
     display: grid;
 
-    grid-template-columns:
-        repeat(auto-fit, minmax(240px, 1fr));
+    /*
+        Cria exatamente 4 colunas com a mesma largura.
+        Assim teremos até 4 conteúdos em cada linha.
+    */
+    grid-template-columns: repeat(4, minmax(0, 1fr));
 
-    gap: 20px;
+    /* Espaço entre os cards */
+    gap: 18px;
+
+    /*
+        Limita a altura visível da lista.
+
+        O valor poderá ser ajustado depois,
+        dependendo da altura final dos nossos cards.
+    */
+    max-height: 690px;
+
+    /*
+        Se os cards ultrapassarem essa altura,
+        aparece uma barra de rolagem vertical.
+    */
+    overflow-y: auto;
+
+    /*
+        Evita barra horizontal.
+    */
+    overflow-x: hidden;
+
+    /*
+        Cria um pequeno espaço para a barra de rolagem
+        não ficar grudada nos cards.
+    */
+    padding-right: 8px;
+}
+
+/* ==================================================
+   BARRA DE ROLAGEM DA MINHA LISTA
+================================================== */
+
+/* Largura da barra */
+.lista-conteudos::-webkit-scrollbar {
+    width: 7px;
+}
+
+
+/* Fundo por onde a barra desliza */
+.lista-conteudos::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.04);
+
+    border-radius: 10px;
+}
+
+
+/* Parte móvel da barra */
+.lista-conteudos::-webkit-scrollbar-thumb {
+    background: rgba(185, 92, 255, 0.45);
+
+    border-radius: 10px;
+}
+
+
+/* Cor quando o mouse passa pela barra */
+.lista-conteudos::-webkit-scrollbar-thumb:hover {
+    background: rgba(185, 92, 255, 0.70);
 }
 
 
@@ -629,6 +690,61 @@ body {
 }
 
 
+/* ==================================================
+   BUSCA DA MINHA LISTA
+================================================== */
+
+.busca-lista {
+    width: 100%;
+
+    margin-bottom: 22px;
+}
+
+
+/* Campo de busca */
+.busca-lista input {
+    width: 100%;
+
+    padding: 12px 14px;
+
+    border: 1px solid rgba(255, 255, 255, 0.15);
+
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.07);
+
+    color: white;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        background-color 0.25s ease;
+}
+
+
+/* Cor do texto de exemplo */
+.busca-lista input::placeholder {
+    color: rgba(255, 255, 255, 0.38);
+}
+
+
+/* Destaque quando o usuário estiver digitando */
+.busca-lista input:focus {
+    border-color: #b95cff;
+
+    background: rgba(255, 255, 255, 0.10);
+
+    box-shadow:
+        0 0 0 3px rgba(185, 92, 255, 0.12),
+        0 0 14px rgba(185, 92, 255, 0.22);
+}
+
+
 
 /* ==================================================
    RESPONSIVIDADE
@@ -783,12 +899,31 @@ body {
         No celular mostramos apenas
         um card por linha.
     */
-    .lista-conteudos {
-        grid-template-columns: 1fr;
+    /* --------------------------------------------------
+   MINHA LISTA NO MOBILE
+-------------------------------------------------- */
 
-        gap: 16px;
-    }
+.lista-conteudos {
+    /*
+        No celular mostramos apenas
+        um conteúdo por linha.
+    */
+    grid-template-columns: 1fr;
 
+    gap: 16px;
+
+    /*
+        Deixa aproximadamente dois cards visíveis.
+
+        A partir do terceiro, o usuário rola
+        somente dentro da Minha Lista.
+    */
+    max-height: 720px;
+
+    overflow-y: auto;
+
+    overflow-x: hidden;
+}
 
     /* --------------------------------------------------
        CARDS
