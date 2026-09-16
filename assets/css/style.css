@@ -186,7 +186,8 @@ body {
     font-size: 14px;
 }
 
-.campo input {
+.campo input,
+.campo select {
     width: 100%;
 
     padding: 13px 14px;
@@ -214,7 +215,9 @@ body {
         background-color 0.25s ease;
 }
 
-.campo input:focus {
+
+.campo input:focus,
+.campo select:focus {
     /* Realça o campo selecionado */
     border-color: #b95cff;
 
@@ -529,6 +532,34 @@ body {
 /* Efeito ao passar o mouse */
 .btn-editar:hover {
     background: rgba(185, 92, 255, 0.16);
+
+    color: white;
+}
+
+/* ==================================================
+   SELECT
+   Ajustes específicos das listas de seleção
+================================================== */
+
+.campo select {
+    /*
+        Permite utilizar nossa própria aparência,
+        mantendo o comportamento normal do select.
+    */
+    cursor: pointer;
+
+    /* Mantém o visual coerente com o restante do formulário */
+    color: white;
+}
+
+
+/*
+    As opções precisam de um fundo escuro,
+    porque alguns navegadores ignoram
+    a transparência do próprio select.
+*/
+.campo select option {
+    background-color: #171126;
 
     color: white;
 }

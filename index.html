@@ -18,7 +18,7 @@
 
     <link rel="stylesheet" href="assets/css/style.css">
 
-    <link rel="stylesheet" href="assets/css/style.css">
+   
 </head>
 
 
@@ -112,15 +112,48 @@
 
 </div>
 
-            <div class="campo">
-                <label for="streaming">Streaming disponível</label>
-                <input
-                    type="text"
-                    id="streaming"
-                    placeholder="Ex.: Netflix"
-                    required
-                >
-            </div>
+            <!-- ==================================================
+     STREAMING
+     Lista padronizada de plataformas disponíveis
+=================================================== -->
+
+<div class="campo">
+
+    <label for="streaming">
+        Streaming disponível
+    </label>
+
+    <select
+        id="streaming"
+        required
+    >
+
+        <!--
+            A primeira opção funciona como orientação
+            e não pode ser escolhida como valor válido.
+        -->
+        <option value="" disabled selected>
+            Selecione um streaming
+        </option>
+
+        <!-- Plataformas padronizadas -->
+        <option value="Netflix">Netflix</option>
+        <option value="Prime Video">Prime Video</option>
+        <option value="Disney+">Disney+</option>
+        <option value="HBO Max">HBO Max</option>
+        <option value="Apple TV+">Apple TV+</option>
+        <option value="Paramount+">Paramount+</option>
+        <option value="Globoplay">Globoplay</option>
+        <option value="MUBI">MUBI</option>
+        <option value="Crunchyroll">Crunchyroll</option>
+        <option value="Telecine">Telecine</option>
+
+        <!-- Para casos que ainda não estejam previstos -->
+        <option value="Outro">Outro</option>
+
+    </select>
+
+</div>
 
             <div class="campo">
                 <label for="lancamento">Data de lançamento</label>
