@@ -221,7 +221,48 @@
             aria-label="Buscar filme ou série pelo título"
         >
 
-</div>
+        </div>
+
+        <!-- ==================================================
+        FILTROS DA MINHA LISTA
+        =================================================== -->
+
+        <div class="filtros-lista">
+
+         <!--
+            "Todos" começa ativo porque,
+            ao abrir o site, queremos mostrar
+            filmes e séries juntos.
+            -->
+            <button
+                type="button"
+                class="filtro-btn ativo"
+                id="filtro-todos"
+            >
+                Todos
+            </button>
+
+            <!-- Mostra somente filmes -->
+            <button
+                type="button"
+                class="filtro-btn"
+                id="filtro-filmes"
+            >
+                Filmes
+            </button>
+
+            <!-- Mostra somente séries -->
+            <button
+                type="button"
+                class="filtro-btn"
+                id="filtro-series"
+            >
+                Séries
+            </button>
+
+        </div>
+
+
 
         <div class="lista-conteudos" id="lista-conteudos">
 

@@ -745,6 +745,77 @@ body {
 }
 
 
+/* ==================================================
+   FILTROS DA MINHA LISTA
+================================================== */
+
+.filtros-lista {
+    /* Coloca os botões lado a lado */
+    display: flex;
+
+    /* Espaço entre os botões */
+    gap: 10px;
+
+    /* Espaço entre os filtros e os cards */
+    margin-bottom: 22px;
+
+    /*
+        Permite que os botões quebrem de linha
+        em telas muito pequenas.
+    */
+    flex-wrap: wrap;
+}
+
+
+/* Botões dos filtros */
+.filtro-btn {
+    padding: 8px 18px;
+
+    border: 1px solid rgba(185, 92, 255, 0.35);
+
+    border-radius: 20px;
+
+    background: rgba(255, 255, 255, 0.05);
+
+    color: rgba(255, 255, 255, 0.75);
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+/* Efeito quando o mouse passa pelo botão */
+.filtro-btn:hover {
+    border-color: #b95cff;
+
+    color: white;
+}
+
+
+/*
+    Botão atualmente selecionado.
+    No começo será "Todos".
+*/
+.filtro-btn.ativo {
+    background: #8f2cff;
+
+    border-color: #b95cff;
+
+    color: white;
+
+    box-shadow:
+        0 0 12px rgba(185, 92, 255, 0.25);
+}
+
 
 /* ==================================================
    RESPONSIVIDADE

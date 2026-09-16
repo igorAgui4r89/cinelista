@@ -27,6 +27,19 @@ const listaConteudosHTML = document.getElementById("lista-conteudos");
 
 const campoBusca = document.getElementById("busca-titulo");
 
+/*
+    Botões utilizados para filtrar
+    os conteúdos da Minha Lista.
+*/
+const btnFiltroTodos =
+    document.getElementById("filtro-todos");
+
+const btnFiltroFilmes =
+    document.getElementById("filtro-filmes");
+
+const btnFiltroSeries =
+    document.getElementById("filtro-series");
+
 // Botão principal do formulário.
 const btnSalvar = document.querySelector(".btn-salvar");
 
@@ -47,6 +60,15 @@ let tipoSelecionado = "filme";
     editando um item que já existe no array.
 */
 let indiceEmEdicao = null;
+
+/*
+    Controla qual filtro da Minha Lista
+    está selecionado.
+
+    Começamos com "todos" para mostrar
+    filmes e séries juntos.
+*/
+let filtroTipo = "todos";
 
 
 
@@ -303,6 +325,87 @@ campoBusca.addEventListener("input", function () {
 });
 
 // -----------------------------------------------------
+// FILTROS: TODOS / FILMES / SÉRIES
+// -----------------------------------------------------
+
+
+/*
+    Remove a classe "ativo" dos três botões.
+
+    Essa função será usada antes de marcar
+    qual botão acabou de ser selecionado.
+*/
+function limparFiltroAtivo() {
+
+    btnFiltroTodos.classList.remove("ativo");
+
+    btnFiltroFilmes.classList.remove("ativo");
+
+    btnFiltroSeries.classList.remove("ativo");
+
+}
+
+
+/*
+    FILTRO: TODOS
+*/
+btnFiltroTodos.addEventListener("click", function () {
+
+    // Define que queremos mostrar todos os conteúdos.
+    filtroTipo = "todos";
+
+    // Remove o destaque dos outros botões.
+    limparFiltroAtivo();
+
+    // Destaca o botão Todos.
+    btnFiltroTodos.classList.add("ativo");
+
+    // Atualiza os cards exibidos.
+    renderizarLista();
+
+});
+
+
+/*
+    FILTRO: FILMES
+*/
+btnFiltroFilmes.addEventListener("click", function () {
+
+    // Define que queremos mostrar somente filmes.
+    filtroTipo = "filme";
+
+    // Remove o destaque dos outros botões.
+    limparFiltroAtivo();
+
+    // Destaca o botão Filmes.
+    btnFiltroFilmes.classList.add("ativo");
+
+    // Atualiza os cards exibidos.
+    renderizarLista();
+
+});
+
+
+/*
+    FILTRO: SÉRIES
+*/
+btnFiltroSeries.addEventListener("click", function () {
+
+    // Define que queremos mostrar somente séries.
+    filtroTipo = "serie";
+
+    // Remove o destaque dos outros botões.
+    limparFiltroAtivo();
+
+    // Destaca o botão Séries.
+    btnFiltroSeries.classList.add("ativo");
+
+    // Atualiza os cards exibidos.
+    renderizarLista();
+
+});
+
+// -----------------------------------------------------
 // 5. VALIDAÇÃO E CAPTURA DOS DADOS
 // -----------------------------------------------------
 
@@ -345,6 +448,16 @@ const termoBusca =
     Também preservamos o índice original de cada item,
     porque os botões Editar e Excluir dependem dele.
 */
+/*
+    Criamos uma lista temporária contendo
+    apenas os conteúdos que atendem:
+
+    1. ao texto digitado na busca;
+    2. ao filtro Todos / Filmes / Séries.
+
+    Também preservamos o índice original,
+    pois Editar e Excluir dependem dele.
+*/
 const conteudosFiltrados = listaConteudos
     .map(function (conteudo, indiceOriginal) {
 
@@ -356,12 +469,54 @@ const conteudosFiltrados = listaConteudos
     })
     .filter(function (item) {
 
-        return item.conteudo.titulo
-            .toLowerCase()
-            .includes(termoBusca);
+        /*
+            Verifica se o título contém
+            aquilo que foi digitado na busca.
+        */
+        const correspondeBusca =
+            item.conteudo.titulo
+                .toLowerCase()
+                .includes(termoBusca);
+
+
+        /*
+            Por padrão consideramos que
+            o conteúdo corresponde ao filtro.
+        */
+        let correspondeTipo = true;
+
+
+        /*
+            Se o filtro selecionado for "filme",
+            somente conteúdos do tipo filme passam.
+        */
+        if (filtroTipo === "filme") {
+
+            correspondeTipo =
+                item.conteudo.tipo === "filme";
+
+        }
+
+
+        /*
+            Se o filtro selecionado for "serie",
+            somente conteúdos do tipo série passam.
+        */
+        if (filtroTipo === "serie") {
+
+            correspondeTipo =
+                item.conteudo.tipo === "serie";
+
+        }
+
+
+        /*
+            O item só aparece se atender
+            à busca E ao filtro de tipo.
+        */
+        return correspondeBusca && correspondeTipo;
 
     });
-
 
     /*
         Se o array estiver vazio, mostramos
