@@ -563,3 +563,8 @@ body {
 
     color: white;
 }
+
+/* Espaço acima do campo de status das séries */
+.campo-status-serie {
+    margin-top: 18px;
+}

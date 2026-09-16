@@ -202,36 +202,74 @@ function mostrarCamposSerie() {
     // Remove o destaque do botão Filmes.
     btnFilmes.classList.remove("ativo");
 
-    // Insere os campos específicos de séries.
-    camposDuracao.innerHTML = `
-        <div class="campo">
+  // Exibe os campos específicos de séries.
+camposDuracao.innerHTML = `
 
-            <label for="temporadas">Temporadas</label>
+    <!-- Número de temporadas -->
+    <div class="campo">
 
-            <input
-                type="number"
-                id="temporadas"
-                min="1"
-                placeholder="Ex.: 5"
-                required
-            >
+        <label for="temporadas">
+            Temporadas
+        </label>
 
-        </div>
+        <input
+            type="number"
+            id="temporadas"
+            min="1"
+            placeholder="Ex.: 5"
+            required
+        >
 
-        <div class="campo campo-episodios">
+    </div>
 
-            <label for="episodios">Episódios</label>
 
-            <input
-                type="number"
-                id="episodios"
-                min="1"
-                placeholder="Ex.: 62"
-                required
-            >
+    <!-- Número total de episódios -->
+    <div class="campo campo-episodios">
 
-        </div>
-    `;
+        <label for="episodios">
+            Episódios
+        </label>
+
+        <input
+            type="number"
+            id="episodios"
+            min="1"
+            placeholder="Ex.: 62"
+            required
+        >
+
+    </div>
+
+
+    <!-- Situação atual da série -->
+    <div class="campo campo-status-serie">
+
+        <label for="status-serie">
+            Status da série
+        </label>
+
+        <select
+            id="status-serie"
+            required
+        >
+
+            <!-- Opção inicial sem valor -->
+            <option value="" disabled selected>
+                Selecione o status
+            </option>
+
+            <option value="Em andamento">
+                Em andamento
+            </option>
+
+            <option value="Encerrada">
+                Encerrada
+            </option>
+
+        </select>
+
+    </div>
+`;
 }
 
 
@@ -352,7 +390,7 @@ function renderizarLista() {
         const lancamento = document.createElement("p");
 
         lancamento.textContent =
-            "Lançamento: " + conteudo.lancamento;
+        "Lançamento: " + formatarData(conteudo.lancamento);
 
 
         // -------------------------------------------------
@@ -385,6 +423,23 @@ function renderizarLista() {
                 " episódio(s)";
         }
 
+
+// -------------------------------------------------
+// STATUS DA SÉRIE
+// -------------------------------------------------
+
+// Cria o elemento que poderá exibir o status.
+const statusSerie = document.createElement("p");
+
+/*
+    O status só deve aparecer nos cards
+    que representam séries.
+*/
+if (conteudo.tipo === "serie") {
+
+    statusSerie.textContent =
+        "Status: " + conteudo.statusSerie;
+}
 
 // -------------------------------------------------
 // BOTÃO EDITAR
@@ -524,6 +579,10 @@ function editarConteudo(indice) {
 
         document.getElementById("episodios").value =
             conteudo.episodios;
+
+        // Recupera também o status que estava salvo.
+        document.getElementById("status-serie").value =
+         conteudo.statusSerie;    
     }
 
 
@@ -560,6 +619,12 @@ function editarConteudo(indice) {
         card.appendChild(titulo);
         card.appendChild(genero);
         card.appendChild(detalhes);
+
+        // O status existe apenas para séries.
+        if (conteudo.tipo === "serie") {
+        card.appendChild(statusSerie);
+        }
+
         card.appendChild(streaming);
         card.appendChild(lancamento);
         card.appendChild(diretor);
@@ -661,6 +726,10 @@ formulario.addEventListener("submit", function (event) {
         conteudo.episodios = Number(
             document.getElementById("episodios").value
         );
+
+        // Recupera o status atual da série.
+        conteudo.statusSerie =
+        document.getElementById("status-serie").value;
     }
 
 
@@ -735,3 +804,45 @@ console.log(conteudo);
 console.log("Lista atual:");
 console.log(listaConteudos);
 });
+
+
+// -----------------------------------------------------
+// FORMATAÇÃO DE DATA
+// -----------------------------------------------------
+
+/*
+    Recebe uma data no formato padrão do input date:
+    AAAA-MM-DD
+
+    E devolve no formato brasileiro:
+    DD/MM/AAAA
+*/
+function formatarData(data) {
+
+    /*
+        Se não existir uma data,
+        devolvemos uma string vazia.
+    */
+    if (!data) {
+        return "";
+    }
+
+    /*
+        Separamos a data usando o hífen.
+
+        Exemplo:
+        "2022-09-02"
+
+        vira:
+
+        ano = "2022"
+        mes = "09"
+        dia = "02"
+    */
+    const [ano, mes, dia] = data.split("-");
+
+    /*
+        Retorna a data no formato brasileiro.
+    */
+    return `${dia}/${mes}/${ano}`;
+}
