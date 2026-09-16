@@ -832,7 +832,7 @@ formulario.addEventListener("submit", function (event) {
     O método push() adiciona o novo objeto
     ao final do array listaConteudos.
 */
-listaConteudos.push(conteudo);/*
+/*
     Se indiceEmEdicao for null,
     estamos fazendo um novo cadastro.
 */
