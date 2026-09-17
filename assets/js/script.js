@@ -57,6 +57,35 @@ const contadorSeries =
 // Botão principal do formulário.
 const btnSalvar = document.querySelector(".btn-salvar");
 
+/*
+    Elemento do Dashboard responsável
+    por exibir o total de conteúdos cadastrados.
+*/
+const dashboardTotal =
+    document.getElementById("dashboard-total");
+
+/*
+    Elemento do Dashboard responsável
+    por exibir o total de filmes cadastrados.
+*/
+const dashboardFilmes =
+    document.getElementById("dashboard-filmes");
+
+/*
+    Elemento do Dashboard responsável
+    por exibir o total de séries cadastradas.
+*/
+const dashboardSeries =
+    document.getElementById("dashboard-series");
+
+/*
+    Elemento do Dashboard responsável
+    por exibir a soma dos episódios
+    das séries cadastradas.
+*/
+const dashboardEpisodios =
+    document.getElementById("dashboard-episodios");
+
 // -----------------------------------------------------
 // TIPO DE CONTEÚDO SELECIONADO
 // -----------------------------------------------------
@@ -189,7 +218,132 @@ function atualizarContadores() {
         totalSeries;
 }
 
+// -----------------------------------------------------
+// DASHBOARD
+// -----------------------------------------------------
 
+// -----------------------------------------------------
+// DASHBOARD
+// -----------------------------------------------------
+
+/*
+    Atualiza os primeiros indicadores
+    exibidos no Dashboard.
+*/
+// -----------------------------------------------------
+// DASHBOARD
+// -----------------------------------------------------
+
+/*
+    Atualiza os indicadores
+    exibidos no Dashboard.
+*/
+// -----------------------------------------------------
+// DASHBOARD
+// -----------------------------------------------------
+
+/*
+    Atualiza os indicadores
+    exibidos no Dashboard.
+*/
+function atualizarDashboardTotal() {
+
+    /*
+        Total geral de conteúdos cadastrados.
+    */
+    const totalConteudos =
+        listaConteudos.length;
+
+
+    /*
+        Conta apenas os conteúdos
+        cujo tipo é "filme".
+    */
+    const totalFilmes =
+        listaConteudos.filter(function (conteudo) {
+
+            return conteudo.tipo === "filme";
+
+        }).length;
+
+
+    /*
+        Conta apenas os conteúdos
+        cujo tipo é "serie".
+    */
+    const totalSeries =
+        listaConteudos.filter(function (conteudo) {
+
+            return conteudo.tipo === "serie";
+
+        }).length;
+
+
+    /*
+        Começamos a soma dos episódios em zero.
+
+        Depois vamos percorrer todas as séries
+        e acrescentar seus episódios a esse valor.
+    */
+    let totalEpisodios = 0;
+
+
+    /*
+        Percorre todos os conteúdos cadastrados.
+    */
+    listaConteudos.forEach(function (conteudo) {
+
+        /*
+            Apenas as séries possuem
+            número de episódios.
+        */
+        if (conteudo.tipo === "serie") {
+
+            /*
+                Soma os episódios desta série
+                ao total já calculado.
+
+                Number() garante que o valor seja
+                tratado como número.
+
+                || 0 evita problemas caso algum
+                cadastro antigo não tenha episódios.
+            */
+            totalEpisodios +=
+                Number(conteudo.episodios) || 0;
+
+        }
+
+    });
+
+
+    /*
+        Atualiza o card de Conteúdos.
+    */
+    dashboardTotal.textContent =
+        totalConteudos;
+
+
+    /*
+        Atualiza o card de Filmes.
+    */
+    dashboardFilmes.textContent =
+        totalFilmes;
+
+
+    /*
+        Atualiza o card de Séries.
+    */
+    dashboardSeries.textContent =
+        totalSeries;
+
+
+    /*
+        Atualiza o card de Episódios.
+    */
+    dashboardEpisodios.textContent =
+        totalEpisodios;
+}
 
 // -----------------------------------------------------
 // EXCLUSÃO DE CONTEÚDO
@@ -497,6 +651,12 @@ function renderizarLista() {
     que a lista for renderizada.
     */
     atualizarContadores();
+
+    /*
+    Atualiza o total exibido
+    no Dashboard.
+    */
+    atualizarDashboardTotal();
 
     // -----------------------------------------------------
 // FILTRO DA BUSCA

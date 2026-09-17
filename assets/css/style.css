@@ -866,6 +866,203 @@ body {
         0 0 12px rgba(185, 92, 255, 0.25);
 }
 
+/* ==================================================
+   DASHBOARD
+   Área de resumo dos dados cadastrados
+================================================== */
+
+.dashboard {
+    /*
+        O dashboard ocupa toda a largura disponível
+        abaixo de Cadastro + Minha Lista.
+    */
+    width: 100%;
+
+    /*
+        Espaçamento interno para o conteúdo
+        não ficar encostado nas bordas.
+    */
+    padding: 28px;
+
+    /*
+        Mantém o mesmo visual dos outros
+        blocos principais do CineLista.
+    */
+    background: rgba(15, 10, 25, 0.90);
+
+    border: 1px solid rgba(185, 92, 255, 0.30);
+
+    border-radius: 18px;
+
+    /*
+        Pequeno efeito de profundidade.
+    */
+    box-shadow:
+        0 0 25px rgba(110, 40, 170, 0.10);
+}
+
+
+/* --------------------------------------------------
+   CABEÇALHO DO DASHBOARD
+-------------------------------------------------- */
+
+.dashboard-cabecalho {
+    /*
+        Cria espaço entre o título
+        e os cards de indicadores.
+    */
+    margin-bottom: 24px;
+}
+
+
+.dashboard-cabecalho h2 {
+    /*
+        Tamanho semelhante ao título
+        da seção Minha Lista.
+    */
+    font-size: 24px;
+
+    margin-bottom: 6px;
+
+    color: white;
+}
+
+
+.dashboard-cabecalho p {
+    /*
+        Texto secundário mais discreto.
+    */
+    font-size: 14px;
+
+    color: rgba(255, 255, 255, 0.55);
+}
+
+
+/* --------------------------------------------------
+   GRADE DOS INDICADORES
+-------------------------------------------------- */
+
+.dashboard-cards {
+    /*
+        Grid organiza os quatro indicadores
+        lado a lado no desktop.
+    */
+    display: grid;
+
+    /*
+        Quatro colunas com o mesmo tamanho.
+    */
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    /* Espaço entre os cards */
+    gap: 18px;
+}
+
+
+/* --------------------------------------------------
+   CARD INDIVIDUAL
+-------------------------------------------------- */
+
+.dashboard-card {
+    /*
+        Altura mínima para deixar todos
+        os indicadores visualmente iguais.
+    */
+    min-height: 120px;
+
+    padding: 20px;
+
+    /*
+        Organiza número e legenda
+        um abaixo do outro.
+    */
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    /*
+        Visual semelhante aos cards
+        da Minha Lista.
+    */
+    background: rgba(255, 255, 255, 0.04);
+
+    border: 1px solid rgba(185, 92, 255, 0.22);
+
+    border-radius: 14px;
+
+    /*
+        Prepara uma transição suave
+        para o efeito de hover.
+    */
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+/*
+    Pequeno efeito quando o mouse
+    passa sobre um indicador.
+*/
+.dashboard-card:hover {
+    transform: translateY(-3px);
+
+    border-color: rgba(185, 92, 255, 0.55);
+
+    box-shadow:
+        0 8px 25px rgba(120, 40, 180, 0.15);
+}
+
+
+/* --------------------------------------------------
+   NÚMERO DO INDICADOR
+-------------------------------------------------- */
+
+.dashboard-numero {
+    /*
+        O número é a informação principal,
+        por isso recebe maior destaque.
+    */
+    font-size: 34px;
+
+    font-weight: 700;
+
+    color: #c985ff;
+}
+
+
+/* --------------------------------------------------
+   NOME DO INDICADOR
+-------------------------------------------------- */
+
+.dashboard-label {
+    font-size: 13px;
+
+    color: rgba(255, 255, 255, 0.65);
+
+    /*
+        Deixa as legendas com aparência
+        mais semelhante a indicadores.
+    */
+    text-transform: uppercase;
+
+    letter-spacing: 0.8px;
+}
+
+
+
+
+
+
+
 
 /* ==================================================
    RESPONSIVIDADE
@@ -1075,6 +1272,44 @@ body {
         */
         background-size: cover;
     }
+/* --------------------------------------------------
+   DASHBOARD NO MOBILE
+-------------------------------------------------- */
+
+.dashboard {
+    /*
+        Reduz o espaço interno do dashboard
+        em telas menores.
+    */
+    padding: 22px 18px;
+}
+
+
+/*
+    Em telas de até 768px,
+    os quatro cards deixam de ficar
+    todos lado a lado.
+
+    Passamos para duas colunas.
+*/
+.dashboard-cards {
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 14px;
+}
+
+
+/*
+    Reduz um pouco o tamanho do número
+    para manter o equilíbrio visual.
+*/
+.dashboard-numero {
+    font-size: 30px;
+}
+
+
+
 }
 
 /* ==================================================
@@ -1129,4 +1364,55 @@ body {
     .btn-salvar {
         width: 100%;
     }
+
+/* --------------------------------------------------
+   DASHBOARD EM TELAS MUITO PEQUENAS
+-------------------------------------------------- */
+
+.dashboard {
+    /*
+        Reduz ainda mais o espaço interno.
+    */
+    padding: 20px 15px;
+}
+
+
+.dashboard-cards {
+    /*
+        Mantemos dois cards por linha,
+        mesmo em celulares pequenos.
+    */
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+}
+
+
+.dashboard-card {
+    /*
+        Cards um pouco mais compactos.
+    */
+    min-height: 105px;
+
+    padding: 14px 10px;
+}
+
+
+.dashboard-numero {
+    font-size: 28px;
+}
+
+
+.dashboard-label {
+    /*
+        Reduz a legenda para evitar
+        que fique apertada.
+    */
+    font-size: 11px;
+
+    letter-spacing: 0.5px;
+}
+
+
 }
