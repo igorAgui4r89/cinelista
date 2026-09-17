@@ -397,6 +397,53 @@
 
     </div>
 
+<!-- ==================================================
+     GRÁFICOS DO DASHBOARD
+=================================================== -->
+
+<div class="dashboard-graficos">
+
+    <!--
+        Primeiro gráfico do projeto:
+        comparação entre filmes e séries cadastrados.
+    -->
+    <article class="grafico-card">
+
+        <!-- Título do gráfico -->
+        <div class="grafico-cabecalho">
+
+            <h3>
+                Filmes x Séries
+            </h3>
+
+            <p>
+                Distribuição dos conteúdos cadastrados
+            </p>
+
+        </div>
+
+
+        <!--
+            O elemento canvas será utilizado
+            posteriormente pelo JavaScript
+            para desenhar o gráfico.
+        -->
+        <div class="grafico-container">
+
+            <canvas
+                id="grafico-filmes-series"
+            >
+            </canvas>
+
+        </div>
+
+    </article>
+
+</div>
+
+
+
+
 </section>
 
 
@@ -405,12 +452,21 @@
 
 
 
+<!-- ==================================================
+     CHART.JS
+     Biblioteca responsável pelos gráficos do Dashboard
+=================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"
+></script>
 
 
+<!-- ==================================================
+     JAVASCRIPT DO CINELISTA
+=================================================== -->
 
-
-    <!-- Arquivo responsável pelo comportamento da aplicação -->
-    <script src="assets/js/script.js"></script>
+<script src="assets/js/script.js"></script>
 </body>
 
 </html>

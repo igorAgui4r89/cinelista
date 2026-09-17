@@ -85,7 +85,12 @@ const dashboardSeries =
 */
 const dashboardEpisodios =
     document.getElementById("dashboard-episodios");
-
+/*
+    Canvas utilizado pelo Chart.js
+    para desenhar o gráfico Filmes x Séries.
+*/
+const graficoFilmesSeriesCanvas =
+    document.getElementById("grafico-filmes-series");
 // -----------------------------------------------------
 // TIPO DE CONTEÚDO SELECIONADO
 // -----------------------------------------------------
@@ -246,7 +251,7 @@ function atualizarContadores() {
     Atualiza os indicadores
     exibidos no Dashboard.
 */
-function atualizarDashboardTotal() {
+function atualizarDashboard() {
 
     /*
         Total geral de conteúdos cadastrados.
@@ -313,8 +318,8 @@ function atualizarDashboardTotal() {
                 Number(conteudo.episodios) || 0;
 
         }
-
-    });
+  
+        });
 
 
     /*
@@ -344,6 +349,147 @@ function atualizarDashboardTotal() {
     dashboardEpisodios.textContent =
         totalEpisodios;
 }
+
+function criarGraficoFilmesSeriesTeste() {
+
+    /*
+        new Chart() cria um novo gráfico.
+
+        O primeiro argumento informa
+        em qual canvas ele será desenhado.
+    */
+    new Chart(
+        graficoFilmesSeriesCanvas,
+
+        /*
+            O segundo argumento é a configuração
+            completa do gráfico.
+        */
+        {
+
+            /*
+                "doughnut" cria um gráfico
+                em formato de rosca.
+            */
+            type: "doughnut",
+
+
+            /*
+                Aqui ficam os dados
+                que o gráfico vai representar.
+            */
+            data: {
+
+                /*
+                    Nomes das duas categorias.
+                */
+                labels: [
+                    "Filmes",
+                    "Séries"
+                ],
+
+
+                /*
+                    datasets são os valores
+                    que serão desenhados.
+                */
+                datasets: [
+                    {
+
+                        /*
+                            Filmes = 7
+                            Séries = 4
+                        */
+                        data: [
+                            7,
+                            4
+                        ],
+
+
+                        /*
+                            Cores das duas partes
+                            do gráfico.
+                        */
+                        backgroundColor: [
+                            "#8f2cff",
+                            "#c985ff"
+                        ],
+
+
+                        /*
+                            Cor da borda das partes.
+                        */
+                        borderColor: [
+                            "#b95cff",
+                            "#e0b6ff"
+                        ],
+
+                        borderWidth: 1
+                    }
+                ]
+            },
+
+
+            /*
+                Opções de aparência
+                e comportamento do gráfico.
+            */
+            options: {
+
+                /*
+                    Faz o gráfico se adaptar
+                    ao tamanho do container.
+                */
+                responsive: true,
+
+
+                /*
+                    Permite que o gráfico utilize
+                    a altura que definimos no CSS.
+                */
+                maintainAspectRatio: false,
+
+
+                /*
+                    Define o tamanho do buraco
+                    central da rosca.
+                */
+                cutout: "65%",
+
+
+                /*
+                    Configurações dos elementos
+                    extras do gráfico.
+                */
+                plugins: {
+
+                    /*
+                        Configura a legenda.
+                    */
+                    legend: {
+
+                        /*
+                            Coloca Filmes e Séries
+                            abaixo do gráfico.
+                        */
+                        position: "bottom",
+
+                        labels: {
+
+                            /*
+                                Cor do texto da legenda
+                                para combinar com o site escuro.
+                            */
+                            color: "#ffffff"
+                        }
+                    }
+                }
+            }
+        }
+    );
+}
+ 
+
 
 // -----------------------------------------------------
 // EXCLUSÃO DE CONTEÚDO
@@ -398,6 +544,12 @@ function excluirConteudo(indice) {
 
 // Atualiza visualmente a seção "Minha Lista".
 renderizarLista();
+
+/*
+    Cria o gráfico de teste
+    quando a página é carregada.
+*/
+criarGraficoFilmesSeriesTeste();
 
 
 
@@ -656,7 +808,11 @@ function renderizarLista() {
     Atualiza o total exibido
     no Dashboard.
     */
-    atualizarDashboardTotal();
+    /*
+    Atualiza os indicadores
+    exibidos no Dashboard.
+    */
+    atualizarDashboard();
 
     // -----------------------------------------------------
 // FILTRO DA BUSCA
@@ -921,6 +1077,7 @@ if (conteudo.tipo === "serie") {
     statusSerie.textContent =
         "Status: " + conteudo.statusSerie;
 }
+
 
 // -------------------------------------------------
 // BOTÃO EDITAR

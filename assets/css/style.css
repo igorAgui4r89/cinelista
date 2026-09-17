@@ -1057,7 +1057,119 @@ body {
     letter-spacing: 0.8px;
 }
 
+/* ==================================================
+   ÁREA DE GRÁFICOS DO DASHBOARD
+================================================== */
 
+.dashboard-graficos {
+    /*
+        Cria uma nova área abaixo
+        dos indicadores numéricos.
+    */
+    margin-top: 24px;
+
+    /*
+        Já deixamos preparada uma grade com
+        duas colunas para, futuramente,
+        colocarmos outro gráfico ao lado.
+    */
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+}
+
+
+/* --------------------------------------------------
+   CARD DO GRÁFICO
+-------------------------------------------------- */
+
+.grafico-card {
+    /*
+        Mantém o mesmo padrão visual
+        dos outros elementos do Dashboard.
+    */
+    padding: 22px;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    border: 1px solid rgba(185, 92, 255, 0.22);
+
+    border-radius: 14px;
+}
+
+
+/* --------------------------------------------------
+   CABEÇALHO DO GRÁFICO
+-------------------------------------------------- */
+
+.grafico-cabecalho {
+    /*
+        Separa o título do espaço
+        onde ficará o gráfico.
+    */
+    margin-bottom: 18px;
+}
+
+
+.grafico-cabecalho h3 {
+    font-size: 18px;
+
+    margin-bottom: 5px;
+
+    color: white;
+}
+
+
+.grafico-cabecalho p {
+    font-size: 13px;
+
+    color: rgba(255, 255, 255, 0.55);
+}
+
+
+/* --------------------------------------------------
+   ESPAÇO ONDE O GRÁFICO SERÁ DESENHADO
+-------------------------------------------------- */
+
+.grafico-container {
+    /*
+        Esta altura limita o espaço reservado
+        ao gráfico e evita que ele faça
+        o Dashboard crescer demais.
+    */
+    height: 280px;
+
+    width: 100%;
+
+    /*
+        Centraliza o conteúdo do gráfico.
+    */
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    /*
+        position: relative será útil quando
+        o Chart.js controlar o canvas.
+    */
+    position: relative;
+}
+
+
+/*
+    Faz o canvas respeitar o tamanho
+    definido pelo seu container.
+*/
+.grafico-container canvas {
+    max-width: 100%;
+
+    max-height: 100%;
+}
 
 
 
@@ -1308,6 +1420,29 @@ body {
     font-size: 30px;
 }
 
+/* --------------------------------------------------
+   GRÁFICOS DO DASHBOARD NO MOBILE
+-------------------------------------------------- */
+
+.dashboard-graficos {
+    /*
+        No celular, os gráficos deixam
+        de ficar lado a lado.
+    */
+    grid-template-columns: 1fr;
+
+    gap: 14px;
+}
+
+
+.grafico-container {
+    /*
+        Reduz um pouco a altura
+        reservada ao gráfico no mobile.
+    */
+    height: 250px;
+}
+
 
 
 }
@@ -1414,5 +1549,14 @@ body {
     letter-spacing: 0.5px;
 }
 
+/* Gráfico em celulares pequenos */
+.grafico-card {
+    padding: 18px 15px;
+}
+
+
+.grafico-container {
+    height: 230px;
+}
 
 }
