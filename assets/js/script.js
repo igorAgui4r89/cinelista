@@ -97,7 +97,14 @@ const graficoFilmesSeriesCanvas =
     para desenhar o gráfico de streamings.
 */
 const graficoStreamingCanvas =
-    document.getElementById("grafico-streaming");   
+    document.getElementById("grafico-streaming"); 
+    
+/*
+    Canvas utilizado pelo Chart.js
+    para desenhar o gráfico de gêneros.
+*/
+const graficoGenerosCanvas =
+    document.getElementById("grafico-generos");
 // -----------------------------------------------------
 // TIPO DE CONTEÚDO SELECIONADO
 // -----------------------------------------------------
@@ -140,6 +147,14 @@ let graficoFilmesSeries = null;
     ainda não foi criado.
 */
 let graficoStreaming = null;
+
+/*
+    Guarda a instância do gráfico de gêneros.
+
+    Começa como null porque o gráfico
+    ainda não foi criado.
+*/
+let graficoGeneros = null;
 
 
 
@@ -967,6 +982,427 @@ function atualizarGraficoStreaming() {
 
 
 
+// -----------------------------------------------------
+// CONTAGEM DOS GÊNEROS
+// -----------------------------------------------------
+
+/*
+    Conta quantas vezes cada gênero aparece
+    nos conteúdos cadastrados.
+*/
+function contarGeneros() {
+
+    /*
+        Objeto onde armazenaremos a contagem.
+
+        Exemplo:
+
+        {
+            "Ação": 4,
+            "Drama": 3,
+            "Fantasia": 2
+        }
+    */
+    const contagemGeneros = {};
+
+
+    /*
+        Percorre todos os filmes e séries
+        cadastrados na CineLista.
+    */
+    listaConteudos.forEach(function (conteudo) {
+
+        /*
+            O campo gênero pode conter vários gêneros.
+
+            Exemplo:
+            "Ação / Aventura / Fantasia"
+
+            split("/") divide esse texto sempre
+            que encontra uma barra.
+        /*
+    Separa os gêneros tanto quando foram
+    cadastrados com "/" quanto com ",".
+
+    Exemplos:
+
+    "Ação / Aventura / Fantasia"
+
+    e
+
+    "Ação, Aventura, Fantasia"
+
+    passam a ser tratados da mesma forma.
+*/
+const generos =
+    conteudo.genero.split(/[\/,]/);
+
+        /*
+            Agora percorremos cada gênero
+            encontrado nesse conteúdo.
+        */
+        generos.forEach(function (genero) {
+
+            /*
+                trim() remove espaços extras.
+
+                Exemplo:
+                " Aventura " vira "Aventura".
+            */
+            const generoLimpo =
+                genero.trim();
+
+
+            /*
+                Se esse gênero já apareceu,
+                aumentamos sua contagem.
+            */
+            if (contagemGeneros[generoLimpo]) {
+
+                contagemGeneros[generoLimpo]++;
+
+            } else {
+
+                /*
+                    Se for a primeira ocorrência,
+                    começamos em 1.
+                */
+                contagemGeneros[generoLimpo] = 1;
+
+            }
+
+        });
+
+    });
+
+
+    /*
+        Devolve o objeto final
+        com todos os gêneros e suas quantidades.
+    */
+    return contagemGeneros;
+}
+
+
+// -----------------------------------------------------
+// PREPARAÇÃO DOS DADOS DO GRÁFICO DE GÊNEROS
+// -----------------------------------------------------
+
+/*
+    Organiza os gêneros do mais frequente
+    para o menos frequente e prepara
+    os dados para o Chart.js.
+*/
+function prepararDadosGraficoGeneros() {
+
+    /*
+        Recupera o objeto criado pela função
+        contarGeneros().
+
+        Exemplo:
+
+        {
+            "Ação": 8,
+            "Aventura": 7,
+            "Drama": 4
+        }
+    */
+    const contagemGeneros =
+        contarGeneros();
+
+
+    /*
+        Object.entries() transforma o objeto
+        em uma lista de pares.
+
+        Exemplo:
+
+        [
+            ["Ação", 8],
+            ["Aventura", 7],
+            ["Drama", 4]
+        ]
+    */
+    const generosOrdenados =
+        Object.entries(contagemGeneros);
+
+
+    /*
+        Ordena do maior valor
+        para o menor valor.
+
+        a[1] e b[1] representam
+        as quantidades de cada gênero.
+    */
+    generosOrdenados.sort(function (a, b) {
+
+        return b[1] - a[1];
+
+    });
+
+
+    /*
+        Recupera somente os nomes
+        dos gêneros.
+    */
+    const labels =
+        generosOrdenados.map(function (item) {
+
+            return item[0];
+
+        });
+
+
+    /*
+        Recupera somente as quantidades.
+    */
+    const dados =
+        generosOrdenados.map(function (item) {
+
+            return item[1];
+
+        });
+
+
+    /*
+        Devolve as duas listas
+        prontas para o gráfico.
+    */
+    return {
+        labels: labels,
+        dados: dados
+    };
+}
+
+
+
+
+// -----------------------------------------------------
+// GRÁFICO: GÊNEROS MAIS CADASTRADOS
+// -----------------------------------------------------
+
+function atualizarGraficoGeneros() {
+
+    /*
+        Recupera os gêneros já separados,
+        contados e ordenados.
+
+        O resultado possui este formato:
+
+        {
+            labels: ["Ação", "Aventura", "Fantasia", ...],
+            dados: [8, 7, 5, ...]
+        }
+    */
+    const dadosGeneros =
+        prepararDadosGraficoGeneros();
+
+
+    /*
+        Se o gráfico já existe,
+        não criamos outro.
+
+        Apenas substituímos seus dados.
+    */
+    if (graficoGeneros !== null) {
+
+        /*
+            Atualiza os nomes dos gêneros.
+        */
+        graficoGeneros.data.labels =
+            dadosGeneros.labels;
+
+
+        /*
+            Atualiza as quantidades.
+        */
+        graficoGeneros.data.datasets[0].data =
+            dadosGeneros.dados;
+
+
+        /*
+            Redesenha o gráfico
+            com os novos valores.
+        */
+        graficoGeneros.update();
+
+        return;
+    }
+
+
+    /*
+        Se o gráfico ainda não existe,
+        criamos uma nova instância.
+    */
+    graficoGeneros = new Chart(
+
+        graficoGenerosCanvas,
+
+        {
+
+            /*
+                Utilizamos gráfico de barras.
+            */
+            type: "bar",
+
+
+            /*
+                Dados utilizados pelo gráfico.
+            */
+            data: {
+
+                /*
+                    Nomes dos gêneros.
+                */
+                labels:
+                    dadosGeneros.labels,
+
+
+                /*
+                    Quantidades de cada gênero.
+                */
+                datasets: [
+                    {
+
+                        label: "Conteúdos",
+
+
+                        /*
+                            Valores correspondentes
+                            a cada gênero.
+                        */
+                        data:
+                            dadosGeneros.dados,
+
+
+                        /*
+                            Mantemos o padrão roxo
+                            utilizado no Dashboard.
+                        */
+                        backgroundColor:
+                            "#8f2cff",
+
+                        borderColor:
+                            "#b95cff",
+
+                        borderWidth: 1,
+
+
+                        /*
+                            Arredonda as extremidades
+                            das barras.
+                        */
+                        borderRadius: 6
+
+                    }
+                ]
+            },
+
+
+            /*
+                Configurações visuais.
+            */
+            options: {
+
+                /*
+                    Deixa as barras horizontais.
+                */
+                indexAxis: "y",
+
+
+                /*
+                    Faz o gráfico se adaptar
+                    ao tamanho disponível.
+                */
+                responsive: true,
+
+
+                /*
+                    Permite utilizar a altura
+                    definida no CSS.
+                */
+                maintainAspectRatio: false,
+
+
+                plugins: {
+
+                    /*
+                        Não precisamos mostrar
+                        uma legenda "Conteúdos".
+                    */
+                    legend: {
+                        display: false
+                    }
+
+                },
+
+
+                /*
+                    Configurações dos eixos.
+                */
+                scales: {
+
+                    /*
+                        Eixo horizontal:
+                        quantidade de ocorrências.
+                    */
+                    x: {
+
+                        /*
+                            A contagem começa em zero.
+                        */
+                        beginAtZero: true,
+
+                        grid: {
+
+                            /*
+                                Linhas discretas,
+                                adequadas ao fundo escuro.
+                            */
+                            color:
+                                "rgba(255, 255, 255, 0.08)"
+                        },
+
+                        ticks: {
+
+                            color:
+                                "rgba(255, 255, 255, 0.65)",
+
+                            /*
+                                Não queremos valores
+                                decimais como 1.5 gêneros.
+                            */
+                            precision: 0
+                        }
+                    },
+
+
+                    /*
+                        Eixo vertical:
+                        nomes dos gêneros.
+                    */
+                    y: {
+
+                        grid: {
+                            display: false
+                        },
+
+                        ticks: {
+
+                            color:
+                                "rgba(255, 255, 255, 0.75)"
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+    );
+}
+
 
 
 
@@ -1314,6 +1750,12 @@ function renderizarLista() {
     de conteúdos por streaming.
     */
     atualizarGraficoStreaming();
+
+    /*
+    Atualiza o gráfico
+    de gêneros cadastrados.
+    */
+    atualizarGraficoGeneros();
 
     // -----------------------------------------------------
 // FILTRO DA BUSCA
