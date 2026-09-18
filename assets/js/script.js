@@ -118,6 +118,14 @@ let indiceEmEdicao = null;
 */
 let filtroTipo = "todos";
 
+/*
+    Guarda a instância do gráfico Filmes x Séries.
+
+    Começa como null porque, quando a página
+    acaba de abrir, o gráfico ainda não existe.
+*/
+let graficoFilmesSeries = null;
+
 
 
 // -----------------------------------------------------
@@ -350,7 +358,61 @@ function atualizarDashboard() {
         totalEpisodios;
 }
 
-function criarGraficoFilmesSeriesTeste() {
+function atualizarGraficoFilmesSeries() {
+
+
+    const totalFilmes =
+        listaConteudos.filter(function (conteudo) {
+
+            return conteudo.tipo === "filme";
+
+        }).length;
+
+
+    /*
+        Conta quantos conteúdos cadastrados
+        são do tipo "serie".
+    */
+    const totalSeries =
+        listaConteudos.filter(function (conteudo) {
+
+            return conteudo.tipo === "serie";
+
+        }).length;
+
+        /*
+    Se o gráfico já existe,
+    não criamos outro.
+
+    Apenas substituímos os valores
+    pelos números atuais da lista.
+*/
+if (graficoFilmesSeries !== null) {
+
+    /*
+        Atualiza os dados:
+        posição 0 = Filmes
+        posição 1 = Séries
+    */
+    graficoFilmesSeries.data.datasets[0].data = [
+        totalFilmes,
+        totalSeries
+    ];
+
+
+    /*
+        Pede ao Chart.js para redesenhar
+        o gráfico com os novos valores.
+    */
+    graficoFilmesSeries.update();
+
+
+    /*
+        Como o gráfico já foi atualizado,
+        encerramos a função aqui.
+    */
+    return;
+}
 
     /*
         new Chart() cria um novo gráfico.
@@ -358,8 +420,12 @@ function criarGraficoFilmesSeriesTeste() {
         O primeiro argumento informa
         em qual canvas ele será desenhado.
     */
-    new Chart(
-        graficoFilmesSeriesCanvas,
+    /*
+    Como ainda não existe gráfico,
+    criamos um e guardamos sua referência.
+*/
+        graficoFilmesSeries = new Chart(
+            graficoFilmesSeriesCanvas,
 
         /*
             O segundo argumento é a configuração
@@ -396,14 +462,15 @@ function criarGraficoFilmesSeriesTeste() {
                 datasets: [
                     {
 
-                        /*
-                            Filmes = 7
-                            Séries = 4
-                        */
-                        data: [
-                            7,
-                            4
-                        ],
+                      /*
+                    Agora o gráfico utiliza os valores
+                    calculados diretamente a partir
+                    da lista de conteúdos.
+                    */
+                    data: [
+                        totalFilmes,
+                        totalSeries
+                    ],
 
 
                         /*
@@ -491,6 +558,168 @@ function criarGraficoFilmesSeriesTeste() {
  
 
 
+
+// -----------------------------------------------------
+// DADOS DO GRÁFICO: CONTEÚDOS POR STREAMING
+// -----------------------------------------------------
+
+/*
+    Conta quantos conteúdos cadastrados
+    existem em cada plataforma de streaming.
+*/
+function contarConteudosPorStreaming() {
+
+    /*
+        Criamos um objeto vazio.
+
+        Nele vamos armazenar algo como:
+
+        {
+            "Netflix": 2,
+            "Disney+": 3,
+            "HBO Max": 4
+        }
+    */
+    const contagemStreamings = {};
+
+
+    /*
+        Percorre todos os filmes e séries
+        cadastrados na CineLista.
+    */
+    listaConteudos.forEach(function (conteudo) {
+
+        /*
+            Recupera o streaming deste conteúdo.
+        */
+        /*
+    Recupera o streaming deste conteúdo.
+
+    trim() remove possíveis espaços extras
+    no início ou no final do texto.
+*/
+let streaming = conteudo.streaming.trim();
+
+
+/*
+    Alguns conteúdos antigos foram cadastrados
+    antes da padronização do campo de streaming.
+
+    Para o Dashboard, tratamos esses nomes antigos
+    como a plataforma atualmente utilizada.
+*/
+if (
+    streaming === "HBO +" ||
+    streaming === "HBO+"
+) {
+
+    streaming = "HBO Max";
+}
+
+
+        /*
+            Se esse streaming já apareceu antes,
+            aumentamos sua quantidade em 1.
+        */
+        if (contagemStreamings[streaming]) {
+
+            contagemStreamings[streaming]++;
+
+        } else {
+
+            /*
+                Se for a primeira vez que encontramos
+                esse streaming, começamos a contagem em 1.
+            */
+            contagemStreamings[streaming] = 1;
+
+        }
+
+    });
+
+
+    /*
+        Devolve o objeto pronto para ser
+        utilizado posteriormente pelo gráfico.
+    */
+    return contagemStreamings;
+}
+
+
+// -----------------------------------------------------
+// PREPARAÇÃO DOS DADOS DO GRÁFICO DE STREAMING
+// -----------------------------------------------------
+
+/*
+    Transforma a contagem dos streamings
+    em duas listas:
+
+    1. nomes das plataformas;
+    2. quantidades de conteúdos.
+
+    Esse é o formato que utilizaremos
+    posteriormente no Chart.js.
+*/
+function prepararDadosGraficoStreaming() {
+
+    /*
+        Primeiro recuperamos o objeto produzido
+        pela função contarConteudosPorStreaming().
+    */
+    const contagemStreamings =
+        contarConteudosPorStreaming();
+
+
+    /*
+        Object.keys() recupera os nomes
+        das propriedades do objeto.
+
+        Exemplo:
+
+        {
+            "Disney+": 2,
+            "HBO Max": 3
+        }
+
+        vira:
+
+        ["Disney+", "HBO Max"]
+    */
+    const labels =
+        Object.keys(contagemStreamings);
+
+
+    /*
+        Object.values() recupera os valores
+        correspondentes às propriedades.
+
+        No mesmo exemplo:
+
+        [2, 3]
+    */
+    const dados =
+        Object.values(contagemStreamings);
+
+
+    /*
+        Devolvemos as duas informações juntas
+        para podermos utilizá-las no gráfico.
+    */
+    return {
+        labels: labels,
+        dados: dados
+    };
+}
+
+
+
+
+
+
+
+
+
+
 // -----------------------------------------------------
 // EXCLUSÃO DE CONTEÚDO
 // -----------------------------------------------------
@@ -549,7 +778,7 @@ renderizarLista();
     Cria o gráfico de teste
     quando a página é carregada.
 */
-criarGraficoFilmesSeriesTeste();
+
 
 
 
@@ -813,6 +1042,12 @@ function renderizarLista() {
     exibidos no Dashboard.
     */
     atualizarDashboard();
+
+    /*
+    Atualiza também o gráfico
+    Filmes x Séries.
+    */
+    atualizarGraficoFilmesSeries();
 
     // -----------------------------------------------------
 // FILTRO DA BUSCA
