@@ -91,6 +91,13 @@ const dashboardEpisodios =
 */
 const graficoFilmesSeriesCanvas =
     document.getElementById("grafico-filmes-series");
+
+/*
+    Canvas utilizado pelo Chart.js
+    para desenhar o gráfico de streamings.
+*/
+const graficoStreamingCanvas =
+    document.getElementById("grafico-streaming");   
 // -----------------------------------------------------
 // TIPO DE CONTEÚDO SELECIONADO
 // -----------------------------------------------------
@@ -125,6 +132,14 @@ let filtroTipo = "todos";
     acaba de abrir, o gráfico ainda não existe.
 */
 let graficoFilmesSeries = null;
+
+/*
+    Guarda a instância do gráfico de streamings.
+
+    Começa como null porque o gráfico
+    ainda não foi criado.
+*/
+let graficoStreaming = null;
 
 
 
@@ -711,6 +726,251 @@ function prepararDadosGraficoStreaming() {
     };
 }
 
+// -----------------------------------------------------
+// GRÁFICO: CONTEÚDOS POR STREAMING
+// -----------------------------------------------------
+
+function atualizarGraficoStreaming() {
+
+    /*
+        Recupera os dados que já preparamos.
+
+        O resultado possui este formato:
+
+        {
+            labels: ["Disney+", "HBO Max", ...],
+            dados: [3, 5, ...]
+        }
+    */
+    const dadosStreaming =
+        prepararDadosGraficoStreaming();
+
+
+    /*
+        Se o gráfico já existe,
+        apenas atualizamos seus dados.
+    */
+    if (graficoStreaming !== null) {
+
+        /*
+            Atualiza os nomes das plataformas.
+        */
+        graficoStreaming.data.labels =
+            dadosStreaming.labels;
+
+
+        /*
+            Atualiza as quantidades.
+        */
+        graficoStreaming.data.datasets[0].data =
+            dadosStreaming.dados;
+
+
+        /*
+            Pede ao Chart.js para redesenhar
+            o gráfico com os novos valores.
+        */
+        graficoStreaming.update();
+
+        return;
+    }
+
+
+    /*
+        Se o gráfico ainda não existe,
+        criamos uma nova instância.
+    */
+    graficoStreaming = new Chart(
+
+        graficoStreamingCanvas,
+
+        {
+
+            /*
+                Tipo básico do gráfico.
+            */
+            type: "bar",
+
+
+            /*
+                Dados que serão representados.
+            */
+            data: {
+
+                /*
+                    Nomes das plataformas.
+                */
+                labels:
+                    dadosStreaming.labels,
+
+
+                /*
+                    Valores correspondentes
+                    a cada plataforma.
+                */
+                datasets: [
+                    {
+
+                        /*
+                            Nome utilizado pelo Chart.js
+                            para identificar os valores.
+                        */
+                        label: "Conteúdos",
+
+
+                        /*
+                            Quantidades de conteúdos.
+                        */
+                        data:
+                            dadosStreaming.dados,
+
+
+                        /*
+                            Cor das barras.
+                        */
+                        backgroundColor:
+                            "#8f2cff",
+
+
+                        /*
+                            Cor das bordas.
+                        */
+                        borderColor:
+                            "#b95cff",
+
+                        borderWidth: 1,
+
+
+                        /*
+                            Arredonda levemente
+                            as extremidades das barras.
+                        */
+                        borderRadius: 6
+
+                    }
+                ]
+            },
+
+
+            /*
+                Configurações visuais e
+                de comportamento.
+            */
+            options: {
+
+                /*
+                    Transforma as barras
+                    em barras horizontais.
+                */
+                indexAxis: "y",
+
+
+                /*
+                    Faz o gráfico se adaptar
+                    ao tamanho do container.
+                */
+                responsive: true,
+
+
+                /*
+                    Permite utilizar a altura
+                    definida no CSS.
+                */
+                maintainAspectRatio: false,
+
+
+                plugins: {
+
+                    /*
+                        Não precisamos mostrar
+                        uma legenda "Conteúdos",
+                        pois o título do gráfico
+                        já explica o que ele representa.
+                    */
+                    legend: {
+                        display: false
+                    }
+
+                },
+
+
+                /*
+                    Configuração dos eixos.
+                */
+                scales: {
+
+                    /*
+                        Eixo horizontal:
+                        mostra as quantidades.
+                    */
+                    x: {
+
+                        /*
+                            A contagem sempre começa em zero.
+                        */
+                        beginAtZero: true,
+
+                        /*
+                            As linhas da grade ficam discretas
+                            para combinar com o tema escuro.
+                        */
+                        grid: {
+                            color:
+                                "rgba(255, 255, 255, 0.08)"
+                        },
+
+                        ticks: {
+
+                            /*
+                                Cor dos números do eixo.
+                            */
+                            color:
+                                "rgba(255, 255, 255, 0.65)",
+
+                            /*
+                                Como estamos contando conteúdos,
+                                queremos apenas números inteiros.
+                            */
+                            precision: 0
+                        }
+                    },
+
+
+                    /*
+                        Eixo vertical:
+                        mostra os nomes dos streamings.
+                    */
+                    y: {
+
+                        grid: {
+                            display: false
+                        },
+
+                        ticks: {
+
+                            /*
+                                Cor dos nomes das plataformas.
+                            */
+                            color:
+                                "rgba(255, 255, 255, 0.75)"
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+    );
+}
+
+
+
+
+
+
+
 
 
 
@@ -1048,6 +1308,12 @@ function renderizarLista() {
     Filmes x Séries.
     */
     atualizarGraficoFilmesSeries();
+
+    /*
+    Atualiza o gráfico
+    de conteúdos por streaming.
+    */
+    atualizarGraficoStreaming();
 
     // -----------------------------------------------------
 // FILTRO DA BUSCA
