@@ -105,6 +105,102 @@ const graficoStreamingCanvas =
 */
 const graficoGenerosCanvas =
     document.getElementById("grafico-generos");
+
+/*
+    Botão utilizado para encerrar
+    a sessão do usuário.
+*/
+const btnSair =
+    document.getElementById("btn-sair");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// -----------------------------------------------------
+// VERIFICAÇÃO DE AUTENTICAÇÃO
+// -----------------------------------------------------
+
+/*
+    Confere se existe um usuário autenticado.
+
+    Se não existir, o usuário é enviado
+    para a página de login.
+*/
+async function verificarUsuarioLogado() {
+
+    const {
+        data: { session }
+    } = await supabaseClient.auth.getSession();
+
+
+    /*
+        Se não houver sessão ativa,
+        bloqueamos o acesso ao CineLista.
+    */
+    if (!session) {
+
+        window.location.href =
+            "login.html";
+
+        return;
+    }
+
+
+    /*
+        Se chegou até aqui,
+        existe um usuário autenticado.
+    */
+    console.log(
+        "Usuário autenticado:",
+        session.user
+    );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // -----------------------------------------------------
 // TIPO DE CONTEÚDO SELECIONADO
 // -----------------------------------------------------
@@ -1466,14 +1562,123 @@ function excluirConteudo(indice) {
     // Atualiza visualmente a seção "Minha Lista".
     renderizarLista();
 }
-
-// Atualiza visualmente a seção "Minha Lista".
-renderizarLista();
+// -----------------------------------------------------
+// INICIALIZAÇÃO DA APLICAÇÃO
+// -----------------------------------------------------
 
 /*
-    Cria o gráfico de teste
-    quando a página é carregada.
+    Esta função é executada quando
+    a página principal do CineLista abre.
+
+    Primeiro verificamos se existe
+    um usuário autenticado.
+
+    Somente depois disso carregamos
+    a aplicação.
 */
+async function iniciarAplicacao() {
+
+    /*
+        Consulta o Supabase para descobrir
+        se existe uma sessão ativa.
+    */
+    const {
+        data: { session }
+    } = await supabaseClient.auth.getSession();
+
+
+    /*
+        Se não existe sessão,
+        significa que o usuário não está logado.
+    */
+    if (!session) {
+
+        /*
+            Envia o usuário para
+            a página de login.
+        */
+        window.location.replace(
+            "login.html"
+        );
+
+        return;
+    }
+
+
+    /*
+        Se existe uma sessão,
+        mostramos no Console qual usuário
+        está autenticado.
+    */
+    console.log(
+        "Usuário autenticado:",
+        session.user
+    );
+
+
+    /*
+        Agora sim carregamos normalmente
+        a lista do CineLista.
+    */
+    renderizarLista();
+}
+
+
+/*
+    Inicia a aplicação.
+*/
+iniciarAplicacao();
+
+
+// -----------------------------------------------------
+// LOGOUT
+// -----------------------------------------------------
+
+/*
+    Ao clicar em Sair,
+    encerramos a sessão atual no Supabase.
+*/
+btnSair.addEventListener(
+    "click",
+    async function () {
+
+        /*
+            signOut() remove a sessão
+            do usuário autenticado.
+        */
+        const { error } =
+            await supabaseClient.auth.signOut();
+
+
+        /*
+            Se ocorrer algum problema,
+            mostramos o erro no Console.
+        */
+        if (error) {
+
+            console.error(
+                "Erro ao sair:",
+                error
+            );
+
+            alert(
+                "Não foi possível sair da conta."
+            );
+
+            return;
+        }
+
+
+        /*
+            Depois que a sessão é encerrada,
+            voltamos para a tela de login.
+        */
+        window.location.replace(
+            "login.html"
+        );
+
+    }
+);
 
 
 

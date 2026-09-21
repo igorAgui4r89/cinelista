@@ -291,3 +291,98 @@ formCadastro.addEventListener(
 
     }
 );
+
+
+// -----------------------------------------------------
+// 6. LOGIN COM E-MAIL E SENHA
+// -----------------------------------------------------
+
+/*
+    Quando o usuário envia o formulário
+    de login, esta função é executada.
+*/
+formLogin.addEventListener(
+    "submit",
+    async function (event) {
+
+        /*
+            Impede que a página
+            seja recarregada.
+        */
+        event.preventDefault();
+
+
+        // -------------------------------------------------
+        // RECUPERA OS DADOS DO FORMULÁRIO
+        // -------------------------------------------------
+
+        const email =
+            document.getElementById(
+                "login-email"
+            ).value.trim();
+
+
+        const senha =
+            document.getElementById(
+                "login-senha"
+            ).value;
+
+
+        // -------------------------------------------------
+        // LOGIN NO SUPABASE
+        // -------------------------------------------------
+
+        /*
+            signInWithPassword() verifica
+            o e-mail e a senha no Supabase.
+        */
+        const { data, error } =
+            await supabaseClient.auth
+                .signInWithPassword({
+
+                    email: email,
+
+                    password: senha
+
+                });
+
+
+        // -------------------------------------------------
+        // TRATAMENTO DE ERRO
+        // -------------------------------------------------
+
+        if (error) {
+
+            console.error(
+                "Erro ao entrar:",
+                error
+            );
+
+            alert(
+                "Não foi possível entrar. Verifique seu e-mail e sua senha."
+            );
+
+            return;
+        }
+
+
+        // -------------------------------------------------
+        // LOGIN REALIZADO
+        // -------------------------------------------------
+
+        console.log(
+            "Login realizado:",
+            data.user
+        );
+
+
+        /*
+            Depois que o login dá certo,
+            enviamos o usuário para
+            a página principal do CineLista.
+        */
+        window.location.href =
+            "index.html";
+
+    }
+);

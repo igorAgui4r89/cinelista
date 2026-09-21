@@ -1743,6 +1743,54 @@ body {
     }
 
 
+
+    /* --------------------------------------------------
+   BOTÃO SAIR
+-------------------------------------------------- */
+
+.btn-sair {
+    /*
+        Mantém o botão visualmente integrado
+        aos links do cabeçalho.
+    */
+    padding: 8px 14px;
+
+    border:
+        1px solid rgba(185, 92, 255, 0.45);
+
+    border-radius: 8px;
+
+    background:
+        rgba(255, 255, 255, 0.04);
+
+    color: white;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.20s ease;
+}
+
+
+/*
+    Efeito ao passar o mouse.
+*/
+.btn-sair:hover {
+    background:
+        rgba(185, 92, 255, 0.16);
+
+    border-color: #b95cff;
+
+    transform: translateY(-1px);
+}
+
+
     /* --------------------------------------------------
        CONTEÚDO PRINCIPAL
     -------------------------------------------------- */
