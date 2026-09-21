@@ -1289,6 +1289,388 @@ body {
     max-height: 100%;
 }
 
+/* ==================================================
+   PÁGINA DE AUTENTICAÇÃO
+   Login e criação de conta
+================================================== */
+
+
+/* --------------------------------------------------
+   FUNDO DA PÁGINA
+-------------------------------------------------- */
+
+.pagina-auth {
+    /*
+        Garante que a página ocupe
+        toda a altura da tela.
+    */
+    min-height: 100vh;
+
+    /*
+        Centraliza o card de autenticação.
+    */
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    /*
+        Espaço de segurança nas bordas,
+        principalmente em telas menores.
+    */
+    padding: 30px 20px;
+}
+
+
+/* --------------------------------------------------
+   CONTAINER PRINCIPAL
+-------------------------------------------------- */
+
+.auth-container {
+    width: 100%;
+
+    /*
+        Limita a largura da área de login.
+    */
+    max-width: 480px;
+
+    margin: 0 auto;
+}
+
+
+/* --------------------------------------------------
+   CARD DE LOGIN / CADASTRO
+-------------------------------------------------- */
+
+.auth-card {
+    width: 100%;
+
+    padding: 32px;
+
+    /*
+        Fundo escuro translúcido,
+        seguindo a identidade do CineLista.
+    */
+    background: rgba(12, 7, 24, 0.94);
+
+    border:
+        1px solid rgba(185, 92, 255, 0.40);
+
+    border-radius: 20px;
+
+    /*
+        Efeito de vidro.
+    */
+    backdrop-filter: blur(12px);
+
+    /*
+        Sombra + brilho roxo discreto.
+    */
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.35),
+        0 0 30px rgba(143, 44, 255, 0.12);
+}
+
+
+/* --------------------------------------------------
+   LOGO
+-------------------------------------------------- */
+
+.auth-logo {
+    /*
+        Centraliza a logo.
+    */
+    display: flex;
+
+    justify-content: center;
+
+    margin-bottom: 26px;
+}
+
+
+.auth-logo img {
+    /*
+        Resolve aquela logo gigantesca
+        que apareceu no seu print.
+    */
+    width: 230px;
+
+    max-width: 100%;
+
+    height: auto;
+
+    display: block;
+}
+
+
+/* --------------------------------------------------
+   CABEÇALHO
+-------------------------------------------------- */
+
+.auth-cabecalho {
+    text-align: center;
+
+    margin-bottom: 26px;
+}
+
+
+.auth-cabecalho h1 {
+    margin-bottom: 8px;
+
+    font-size: 26px;
+
+    color: white;
+}
+
+
+.auth-cabecalho p {
+    font-size: 14px;
+
+    line-height: 1.6;
+
+    color: rgba(255, 255, 255, 0.58);
+}
+
+
+/* --------------------------------------------------
+   ABAS: ENTRAR / CRIAR CONTA
+-------------------------------------------------- */
+
+.auth-abas {
+    /*
+        Coloca os dois botões lado a lado.
+    */
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+
+    margin-bottom: 26px;
+}
+
+
+.auth-aba {
+    padding: 11px 14px;
+
+    border:
+        1px solid rgba(185, 92, 255, 0.40);
+
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    color: rgba(255, 255, 255, 0.72);
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+/* Aba selecionada */
+.auth-aba.ativo {
+    background:
+        linear-gradient(
+            90deg,
+            #7d24ff,
+            #b235ff
+        );
+
+    border-color: #b95cff;
+
+    color: white;
+
+    box-shadow:
+        0 0 18px rgba(185, 92, 255, 0.24);
+}
+
+
+/* Efeito ao passar o mouse */
+.auth-aba:not(.ativo):hover {
+    border-color: #b95cff;
+
+    color: white;
+}
+
+
+/* --------------------------------------------------
+   FORMULÁRIOS
+-------------------------------------------------- */
+
+.auth-form {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 18px;
+}
+
+
+/*
+    O formulário de cadastro começa escondido.
+
+    Depois o JavaScript fará a troca
+    entre Login e Criar conta.
+*/
+.auth-form-oculto {
+    display: none;
+}
+
+
+/* --------------------------------------------------
+   CAMPOS DA AUTENTICAÇÃO
+-------------------------------------------------- */
+
+.auth-card .campo {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+
+.auth-card .campo label {
+    font-size: 14px;
+
+    color: rgba(255, 255, 255, 0.88);
+}
+
+
+.auth-card .campo input {
+    width: 100%;
+
+    padding: 13px 14px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.15);
+
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.07);
+
+    color: white;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        background-color 0.25s ease;
+}
+
+
+/* Texto de exemplo dentro do campo */
+.auth-card .campo input::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+
+/* Destaque quando o usuário clica no campo */
+.auth-card .campo input:focus {
+    border-color: #b95cff;
+
+    background: rgba(255, 255, 255, 0.10);
+
+    box-shadow:
+        0 0 0 3px rgba(185, 92, 255, 0.12);
+}
+
+
+/* --------------------------------------------------
+   BOTÃO PRINCIPAL
+-------------------------------------------------- */
+
+.auth-btn {
+    width: 100%;
+
+    margin-top: 6px;
+
+    padding: 13px 18px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #7d24ff,
+            #b235ff
+        );
+
+    color: white;
+
+    font-family: inherit;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 0 18px rgba(143, 44, 255, 0.20);
+
+    transition:
+        transform 0.20s ease,
+        box-shadow 0.20s ease;
+}
+
+
+.auth-btn:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 24px rgba(143, 44, 255, 0.28);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

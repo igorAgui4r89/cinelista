@@ -4,11 +4,11 @@
 // =====================================================
 
 const SUPABASE_URL =
-    "https://xxxxxxxxxxxxxxxxxxxx.supabase.co";
+    "https://fnkjwvgpkualklkytdgn.supabase.co";
 
 
 const SUPABASE_PUBLISHABLE_KEY =
-    "sb_publishable_xxxxxxxxxxxxxxxxx";
+    "sb_publishable_FtNDg7AGLBdKP_-yU_ZLBA_9sFysBbl";
 
 
 /*

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <!--
+        Faz a página se adaptar corretamente
+        a celulares e tablets.
+    -->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Entrar | CineLista</title>
+
+
+    <!--
+        Reutilizamos o CSS principal do CineLista.
+
+        No próximo passo criaremos nele
+        os estilos específicos desta página.
+    -->
+    <link
+        rel="stylesheet"
+        href="assets/css/style.css"
+    >
+
+</head>
+
+
+<body class="pagina-auth">
+
+
+    <!-- ==================================================
+         ÁREA DE AUTENTICAÇÃO
+    =================================================== -->
+
+    <main class="auth-container">
+
+
+        <!--
+            Card principal da página de autenticação.
+        -->
+        <section class="auth-card">
+
+
+            <!-- ==================================================
+                 LOGO
+            =================================================== -->
+
+            <div class="auth-logo">
+
+                <!--
+                    Utilizamos a mesma logo
+                    da aplicação principal.
+                -->
+                <img
+                    src="assets/imagens/logos/logo-cinelista.png"
+                    alt="CineLista"
+                >
+
+            </div>
+
+
+            <!-- ==================================================
+                 TÍTULO
+            =================================================== -->
+
+            <div class="auth-cabecalho">
+
+                <h1>
+                    Bem-vindo ao CineLista
+                </h1>
+
+                <p>
+                    Entre na sua conta ou crie seu cadastro
+                    para organizar sua lista de filmes e séries.
+                </p>
+
+            </div>
+
+
+            <!-- ==================================================
+                 BOTÕES: ENTRAR / CRIAR CONTA
+            =================================================== -->
+
+            <div class="auth-abas">
+
+                <!--
+                    A aba Entrar começa selecionada.
+
+                    Mais tarde o JavaScript fará
+                    a troca entre os dois formulários.
+                -->
+                <button
+                    type="button"
+                    class="auth-aba ativo"
+                    id="btn-login"
+                >
+                    Entrar
+                </button>
+
+
+                <button
+                    type="button"
+                    class="auth-aba"
+                    id="btn-cadastro"
+                >
+                    Criar conta
+                </button>
+
+            </div>
+
+
+            <!-- ==================================================
+                 FORMULÁRIO DE LOGIN
+            =================================================== -->
+
+            <form
+                class="auth-form"
+                id="form-login"
+            >
+
+                <!-- E-mail -->
+                <div class="campo">
+
+                    <label for="login-email">
+                        E-mail
+                    </label>
+
+                    <input
+                        type="email"
+                        id="login-email"
+                        placeholder="seuemail@exemplo.com"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Senha -->
+                <div class="campo">
+
+                    <label for="login-senha">
+                        Senha
+                    </label>
+
+                    <input
+                        type="password"
+                        id="login-senha"
+                        placeholder="Digite sua senha"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                </div>
+
+
+                <!--
+                    Neste momento o botão ainda
+                    não fará login de verdade.
+
+                    Ligaremos este formulário
+                    ao Supabase posteriormente.
+                -->
+                <button
+                    type="submit"
+                    class="auth-btn"
+                >
+                    Entrar
+                </button>
+
+            </form>
+
+
+            <!-- ==================================================
+                 FORMULÁRIO DE CADASTRO
+            =================================================== -->
+
+            <form
+                class="auth-form auth-form-oculto"
+                id="form-cadastro"
+            >
+
+                <!-- Nome do usuário -->
+                <div class="campo">
+
+                    <label for="cadastro-nome">
+                        Nome
+                    </label>
+
+                    <input
+                        type="text"
+                        id="cadastro-nome"
+                        placeholder="Digite seu nome"
+                        autocomplete="name"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- E-mail -->
+                <div class="campo">
+
+                    <label for="cadastro-email">
+                        E-mail
+                    </label>
+
+                    <input
+                        type="email"
+                        id="cadastro-email"
+                        placeholder="seuemail@exemplo.com"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Senha -->
+                <div class="campo">
+
+                    <label for="cadastro-senha">
+                        Senha
+                    </label>
+
+                    <input
+                        type="password"
+                        id="cadastro-senha"
+                        placeholder="Crie uma senha"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Confirmação da senha -->
+                <div class="campo">
+
+                    <label for="cadastro-confirmar-senha">
+                        Confirmar senha
+                    </label>
+
+                    <input
+                        type="password"
+                        id="cadastro-confirmar-senha"
+                        placeholder="Digite a senha novamente"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required
+                    >
+
+                </div>
+
+
+                <!--
+                    Posteriormente este botão
+                    criará o usuário no Supabase Auth.
+                -->
+                <button
+                    type="submit"
+                    class="auth-btn"
+                >
+                    Criar conta
+                </button>
+
+            </form>
+
+
+        </section>
+
+    </main>
+
+<!-- ==================================================
+     SUPABASE
+     Biblioteca utilizada para autenticação
+=================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
+
+
+<!-- ==================================================
+     CONFIGURAÇÃO DO SUPABASE
+=================================================== -->
+
+<script src="assets/js/supabase-client.js"></script>
+
+
+<!-- ==================================================
+     JAVASCRIPT DA PÁGINA DE AUTENTICAÇÃO
+=================================================== -->
+
+<script src="assets/js/auth.js"></script>
+
+
+
+
+</body>
+
+</html>
+
