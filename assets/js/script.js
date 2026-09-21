@@ -120,6 +120,15 @@ const btnSair =
 const usuarioLogado =
     document.getElementById("usuario-logado");
 
+/*
+    Mensagem exibida enquanto os conteúdos
+    estão sendo carregados do Supabase.
+*/
+const mensagemCarregamento =
+    document.getElementById(
+        "mensagem-carregamento"
+    );
+
 
 
 
@@ -2069,6 +2078,22 @@ if (nomeUsuario) {
 
 
 /*
+    Enquanto buscamos os dados,
+    mantemos a mensagem de carregamento visível.
+*/
+mensagemCarregamento.style.display =
+    "block";
+
+
+/*
+    Remove temporariamente o texto inicial
+    da lista para não aparecer
+    "Nenhum filme ou série cadastrado"
+    enquanto o Supabase ainda está carregando.
+*/
+listaConteudosHTML.innerHTML = "";
+
+/*
     Busca os conteúdos que já estão
     armazenados no Supabase.
 */
@@ -2101,7 +2126,14 @@ listaConteudos.push(
     ...conteudosSupabase
 );
 
+/*
+    Os dados já chegaram.
 
+    Agora podemos esconder
+    a mensagem de carregamento.
+*/
+mensagemCarregamento.style.display =
+    "none";
 /*
     Agora a Minha Lista, os contadores
     e os gráficos são renderizados
