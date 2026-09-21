@@ -279,30 +279,15 @@ let graficoGeneros = null;
 
     Se ainda não existir nada salvo, usamos [].
 */
-const listaConteudos =
-    JSON.parse(localStorage.getItem("cinelistaConteudos")) || [];
-
-// -----------------------------------------------------
-// SALVAMENTO NO LOCALSTORAGE
-// -----------------------------------------------------
-
 /*
-    Esta função será responsável por salvar
-    a lista de filmes e séries no navegador.
+    Array que armazenará temporariamente
+    os conteúdos carregados do Supabase.
+
+    A partir de agora, o localStorage
+    deixa de ser a fonte principal dos dados.
 */
-function salvarLista() {
+const listaConteudos = [];
 
-    /*
-        O localStorage só consegue armazenar texto.
-
-        Por isso usamos JSON.stringify() para
-        transformar o array listaConteudos em texto.
-    */
-    localStorage.setItem(
-        "cinelistaConteudos",
-        JSON.stringify(listaConteudos)
-    );
-}
 
 // -----------------------------------------------------
 // SALVAR CONTEÚDO NO SUPABASE
@@ -362,10 +347,21 @@ async function salvarConteudoNoSupabase(conteudo) {
         Envia o registro para a tabela
         "conteudos" no Supabase.
     */
-    const { error } =
-        await supabaseClient
-            .from("conteudos")
-            .insert(registroSupabase);
+    /*
+    Salva o conteúdo no banco.
+
+    .select() faz o Supabase devolver
+    o registro que acabou de ser criado.
+
+    .single() informa que esperamos
+    apenas um registro.
+*/
+const { data, error } =
+    await supabaseClient
+        .from("conteudos")
+        .insert(registroSupabase)
+        .select()
+        .single();
 
 
     /*
@@ -379,21 +375,148 @@ async function salvarConteudoNoSupabase(conteudo) {
             error
         );
 
-        return false;
+        return null;
+    }
+
+
+/*
+    Mostra no Console o registro criado,
+    agora já contendo o ID gerado pelo banco.
+*/
+console.log(
+    "Conteúdo salvo no Supabase:",
+    data
+);
+
+
+/*
+    Devolve o registro criado.
+
+    Isso será útil para sabermos
+    qual ID o Supabase atribuiu ao conteúdo.
+*/
+return data;
+}
+
+
+
+
+
+
+
+// -----------------------------------------------------
+// ATUALIZAR CONTEÚDO NO SUPABASE
+// -----------------------------------------------------
+
+/*
+    Atualiza no banco um filme ou série
+    que já existe.
+
+    Recebemos:
+    - o ID do registro no Supabase;
+    - os novos dados do conteúdo.
+*/
+async function atualizarConteudoNoSupabase(
+    idSupabase,
+    conteudo
+) {
+
+    /*
+        Montamos novamente o objeto usando
+        os nomes das colunas existentes
+        na tabela do Supabase.
+    */
+    const registroSupabase = {
+
+        tipo: conteudo.tipo,
+
+        titulo: conteudo.titulo,
+
+        genero: conteudo.genero,
+
+        streaming: conteudo.streaming,
+
+        lancamento: conteudo.lancamento,
+
+        diretor: conteudo.diretor,
+
+        /*
+            Campos específicos de filme.
+        */
+        duracao:
+            conteudo.duracao ?? null,
+
+        /*
+            Campos específicos de série.
+        */
+        temporadas:
+            conteudo.temporadas ?? null,
+
+        episodios:
+            conteudo.episodios ?? null,
+
+        status_serie:
+            conteudo.statusSerie ?? null
+    };
+
+
+    /*
+        Atualiza somente o registro cujo
+        ID corresponde ao conteúdo editado.
+    */
+    const { data, error } =
+        await supabaseClient
+            .from("conteudos")
+            .update(registroSupabase)
+            .eq(
+                "id",
+                idSupabase
+            )
+            .select()
+            .single();
+
+
+    /*
+        Se ocorrer algum erro,
+        mostramos no Console.
+    */
+    if (error) {
+
+        console.error(
+            "Erro ao atualizar conteúdo no Supabase:",
+            error
+        );
+
+        return null;
     }
 
 
     /*
-        Se chegou até aqui,
-        o registro foi salvo.
+        Mostra o registro atualizado
+        para facilitar nosso teste.
     */
     console.log(
-        "Conteúdo salvo no Supabase:",
-        registroSupabase
+        "Conteúdo atualizado no Supabase:",
+        data
     );
 
-    return true;
+
+    /*
+        Devolve o registro atualizado.
+    */
+    return data;
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -527,6 +650,7 @@ async function buscarConteudosDoSupabase() {
     */
     return conteudosConvertidos;
 }
+
 
 // -----------------------------------------------------
 // CONTADORES DA MINHA LISTA
@@ -1740,24 +1864,37 @@ function atualizarGraficoGeneros() {
 // EXCLUSÃO DE CONTEÚDO
 // -----------------------------------------------------
 
+// -----------------------------------------------------
+// EXCLUIR CONTEÚDO DO SUPABASE
+// -----------------------------------------------------
+
 /*
-    Esta função recebe a posição do conteúdo
-    dentro do array e remove esse item.
+    Exclui um filme ou série
+    tanto do banco quanto da interface.
 */
-function excluirConteudo(indice) {
+async function excluirConteudo(indice) {
 
     /*
-        Antes de excluir, pedimos uma confirmação
-        para evitar remoções acidentais.
+        Primeiro recuperamos o conteúdo
+        correspondente ao card clicado.
     */
-    const confirmarExclusao = confirm(
-        "Deseja realmente excluir este conteúdo?"
-    );
+    const conteudo =
+        listaConteudos[indice];
 
 
     /*
-        Se o usuário clicar em "Cancelar",
-        interrompemos a função.
+        Pedimos confirmação antes
+        de excluir definitivamente.
+    */
+    const confirmarExclusao =
+        confirm(
+            `Deseja realmente excluir "${conteudo.titulo}"?`
+        );
+
+
+    /*
+        Se o usuário cancelar,
+        encerramos a função.
     */
     if (!confirmarExclusao) {
         return;
@@ -1765,26 +1902,84 @@ function excluirConteudo(indice) {
 
 
     /*
-        splice() remove elementos de um array.
+        Recuperamos o ID gerado pelo Supabase.
 
-        O primeiro valor indica a posição inicial.
-        O segundo indica quantos elementos serão removidos.
-
-        Portanto:
-        splice(indice, 1)
-
-        significa:
-        "remova 1 item a partir desta posição".
+        Esse ID identifica exatamente
+        qual registro deve ser apagado.
     */
-    listaConteudos.splice(indice, 1);
+    const idSupabase =
+        conteudo.idSupabase;
 
 
-    // Atualiza os dados armazenados no navegador.
-    salvarLista();
+    /*
+        Exclui da tabela "conteudos"
+        somente o registro com esse ID.
+    */
+    const { error } =
+        await supabaseClient
+            .from("conteudos")
+            .delete()
+            .eq(
+                "id",
+                idSupabase
+            );
 
 
-    // Atualiza visualmente a seção "Minha Lista".
+    /*
+        Se ocorrer algum erro,
+        não alteramos a lista da tela.
+    */
+    if (error) {
+
+        console.error(
+            "Erro ao excluir conteúdo do Supabase:",
+            error
+        );
+
+        alert(
+            "Não foi possível excluir o conteúdo."
+        );
+
+        return;
+    }
+
+
+    /*
+        Depois da exclusão,
+        buscamos novamente no Supabase
+        a lista oficial do usuário.
+    */
+    const conteudosAtualizados =
+        await buscarConteudosDoSupabase();
+
+
+    /*
+        Limpa o array atual.
+    */
+    listaConteudos.length = 0;
+
+
+    /*
+        Preenche novamente com os registros
+        que continuam existentes no banco.
+    */
+    listaConteudos.push(
+        ...conteudosAtualizados
+    );
+
+
+
+    /*
+        Atualiza os cards, contadores
+        e gráficos da interface.
+    */
     renderizarLista();
+
+
+    console.log(
+        "Conteúdo excluído do Supabase:",
+        conteudo.titulo
+    );
 }
 // -----------------------------------------------------
 // INICIALIZAÇÃO DA APLICAÇÃO
@@ -1839,16 +2034,46 @@ async function iniciarAplicacao() {
         session.user
     );
 
-    /*
-    Busca os conteúdos deste usuário
-    armazenados no Supabase.*/
+/*
+    Busca os conteúdos que já estão
+    armazenados no Supabase.
+*/
+/*
+    Busca no Supabase os conteúdos
+    pertencentes ao usuário logado.
+*/
+const conteudosSupabase =
     await buscarConteudosDoSupabase();
 
-    /*
-        Agora sim carregamos normalmente
-        a lista do CineLista.
-    */
-    renderizarLista();
+
+/*
+    Limpa o array utilizado pela interface.
+
+    Neste momento ele já começa vazio,
+    mas esta linha também será útil
+    quando recarregarmos os dados no futuro.
+*/
+listaConteudos.length = 0;
+
+
+/*
+    Copia para listaConteudos todos
+    os registros recebidos do Supabase.
+
+    O operador ... espalha os itens
+    dentro do nosso array.
+*/
+listaConteudos.push(
+    ...conteudosSupabase
+);
+
+
+/*
+    Agora a Minha Lista, os contadores
+    e os gráficos são renderizados
+    utilizando os dados do Supabase.
+*/
+renderizarLista();
 }
 
 
@@ -2764,46 +2989,143 @@ formulario.addEventListener(
 if (indiceEmEdicao === null) {
 
     /*
-        Primeiro tentamos salvar
-        o novo conteúdo no Supabase.
+        Salva o novo conteúdo no Supabase
+        e recebe de volta o registro criado.
     */
-    await salvarConteudoNoSupabase(
-        conteudo
-    );
+    const conteudoSalvo =
+        await salvarConteudoNoSupabase(
+            conteudo
+        );
 
 
     /*
-        Por enquanto também continuamos
-        salvando no array local.
+        Se ocorreu algum erro no banco,
+        interrompemos o cadastro.
 
-        Assim não quebramos o funcionamento
-        atual do CineLista durante a migração.
+        Assim evitamos mostrar na tela
+        um conteúdo que não foi realmente salvo.
     */
-    listaConteudos.push(conteudo);
+    if (!conteudoSalvo) {
+
+        alert(
+            "Não foi possível salvar o conteúdo."
+        );
+
+        return;
+    }
+
+
+    /*
+        Agora buscamos novamente a lista
+        diretamente do Supabase.
+
+        Assim a interface sempre reflete
+        exatamente o que existe no banco.
+    */
+    const conteudosAtualizados =
+        await buscarConteudosDoSupabase();
+
+
+    /*
+        Limpa o array atual.
+    */
+    listaConteudos.length = 0;
+
+
+    /*
+        Coloca no array os dados
+        recém-carregados do banco.
+    */
+    listaConteudos.push(
+        ...conteudosAtualizados
+    );
 
 } else {
 
     /*
-        Se houver um índice,
-        substituímos o conteúdo antigo
-        pelo conteúdo atualizado.
+        Recuperamos o conteúdo que está
+        sendo editado antes de alterá-lo.
     */
-    listaConteudos[indiceEmEdicao] = conteudo;
+    const conteudoEmEdicao =
+        listaConteudos[indiceEmEdicao];
 
 
     /*
-        Depois da atualização, voltamos
-        ao modo normal de cadastro.
+        Quando carregamos os dados do Supabase,
+        guardamos o ID de cada registro
+        na propriedade idSupabase.
+
+        É esse ID que identifica exatamente
+        qual linha deve ser atualizada.
+    */
+    const idSupabase =
+        conteudoEmEdicao.idSupabase;
+
+
+    /*
+        Envia os novos dados
+        para o Supabase.
+    */
+    const conteudoAtualizado =
+        await atualizarConteudoNoSupabase(
+            idSupabase,
+            conteudo
+        );
+
+
+    /*
+        Se a atualização falhar,
+        interrompemos o processo.
+
+        Assim não alteramos somente a tela
+        sem alterar também o banco.
+    */
+    if (!conteudoAtualizado) {
+
+        alert(
+            "Não foi possível atualizar o conteúdo."
+        );
+
+        return;
+    }
+
+
+    /*
+        Depois da atualização,
+        buscamos novamente a lista oficial
+        diretamente do Supabase.
+    */
+    const conteudosAtualizados =
+        await buscarConteudosDoSupabase();
+
+
+    /*
+        Esvazia o array atual.
+    */
+    listaConteudos.length = 0;
+
+
+    /*
+        Preenche novamente o array
+        com os dados vindos do banco.
+    */
+    listaConteudos.push(
+        ...conteudosAtualizados
+    );
+
+
+    /*
+        Saímos do modo de edição.
     */
     indiceEmEdicao = null;
 
 
-    // O botão volta a se chamar Salvar.
+    /*
+        O botão volta a se chamar Salvar.
+    */
     btnSalvar.textContent = "Salvar";
 }
 
-// Salva a lista atualizada no navegador.
-salvarLista();
 // Atualiza visualmente a seção "Minha Lista".
 
 renderizarLista();
