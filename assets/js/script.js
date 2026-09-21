@@ -305,6 +305,230 @@ function salvarLista() {
 }
 
 // -----------------------------------------------------
+// SALVAR CONTEÚDO NO SUPABASE
+// -----------------------------------------------------
+
+/*
+    Salva um novo filme ou série
+    na tabela "conteudos" do Supabase.
+*/
+async function salvarConteudoNoSupabase(conteudo) {
+
+    /*
+        O objeto usado no JavaScript possui
+        o campo statusSerie.
+
+        No banco, a coluna se chama status_serie.
+
+        Por isso montamos um novo objeto
+        com os nomes das colunas do Supabase.
+    */
+    const registroSupabase = {
+
+        tipo: conteudo.tipo,
+
+        titulo: conteudo.titulo,
+
+        genero: conteudo.genero,
+
+        streaming: conteudo.streaming,
+
+        lancamento: conteudo.lancamento,
+
+        diretor: conteudo.diretor,
+
+        /*
+            Se for filme, teremos duração.
+            Se não existir, enviamos null.
+        */
+        duracao:
+            conteudo.duracao ?? null,
+
+        /*
+            Campos específicos de séries.
+        */
+        temporadas:
+            conteudo.temporadas ?? null,
+
+        episodios:
+            conteudo.episodios ?? null,
+
+        status_serie:
+            conteudo.statusSerie ?? null
+    };
+
+
+    /*
+        Envia o registro para a tabela
+        "conteudos" no Supabase.
+    */
+    const { error } =
+        await supabaseClient
+            .from("conteudos")
+            .insert(registroSupabase);
+
+
+    /*
+        Se o Supabase devolver algum erro,
+        mostramos no Console.
+    */
+    if (error) {
+
+        console.error(
+            "Erro ao salvar no Supabase:",
+            error
+        );
+
+        return false;
+    }
+
+
+    /*
+        Se chegou até aqui,
+        o registro foi salvo.
+    */
+    console.log(
+        "Conteúdo salvo no Supabase:",
+        registroSupabase
+    );
+
+    return true;
+}
+
+
+
+// -----------------------------------------------------
+// BUSCAR CONTEÚDOS NO SUPABASE
+// -----------------------------------------------------
+
+/*
+    Busca no Supabase os filmes e séries
+    pertencentes ao usuário que está logado.
+*/
+async function buscarConteudosDoSupabase() {
+
+    /*
+        Consulta a tabela "conteudos".
+
+        O RLS que configuramos no Supabase
+        garante que o usuário receba somente
+        os próprios registros.
+    */
+    const { data, error } =
+        await supabaseClient
+            .from("conteudos")
+            .select(`
+                id,
+                tipo,
+                titulo,
+                genero,
+                streaming,
+                lancamento,
+                diretor,
+                duracao,
+                temporadas,
+                episodios,
+                status_serie
+            `)
+            .order(
+                "id",
+                {
+                    ascending: true
+                }
+            );
+
+
+    /*
+        Se ocorrer algum problema na consulta,
+        mostramos o erro no Console.
+    */
+    if (error) {
+
+        console.error(
+            "Erro ao buscar conteúdos no Supabase:",
+            error
+        );
+
+        return [];
+    }
+
+
+    /*
+        O Supabase usa o nome status_serie.
+
+        Nosso JavaScript já utiliza statusSerie.
+
+        Aqui fazemos essa pequena adaptação
+        para manter o padrão do CineLista.
+    */
+    const conteudosConvertidos =
+        data.map(function (registro) {
+
+            return {
+
+                /*
+                    Guardamos também o ID do banco.
+
+                    Ele será importante depois
+                    para editar e excluir registros.
+                */
+                idSupabase:
+                    registro.id,
+
+                tipo:
+                    registro.tipo,
+
+                titulo:
+                    registro.titulo,
+
+                genero:
+                    registro.genero,
+
+                streaming:
+                    registro.streaming,
+
+                lancamento:
+                    registro.lancamento,
+
+                diretor:
+                    registro.diretor,
+
+                duracao:
+                    registro.duracao,
+
+                temporadas:
+                    registro.temporadas,
+
+                episodios:
+                    registro.episodios,
+
+                statusSerie:
+                    registro.status_serie
+
+            };
+
+        });
+
+
+    /*
+        Teste temporário.
+
+        Por enquanto queremos apenas verificar
+        se os dados estão chegando corretamente.
+    */
+    console.log(
+        "Conteúdos recebidos do Supabase:",
+        conteudosConvertidos
+    );
+
+
+    /*
+        Devolve os conteúdos encontrados.
+    */
+    return conteudosConvertidos;
+}
+
+// -----------------------------------------------------
 // CONTADORES DA MINHA LISTA
 // -----------------------------------------------------
 
@@ -1615,6 +1839,10 @@ async function iniciarAplicacao() {
         session.user
     );
 
+    /*
+    Busca os conteúdos deste usuário
+    armazenados no Supabase.*/
+    await buscarConteudosDoSupabase();
 
     /*
         Agora sim carregamos normalmente
@@ -2428,7 +2656,9 @@ function editarConteudo(indice) {
     });
 }
 
-formulario.addEventListener("submit", function (event) {
+formulario.addEventListener(
+    "submit",
+    async function (event) {
 
     // Impede que a página seja recarregada após o envio.
     event.preventDefault();
@@ -2533,6 +2763,22 @@ formulario.addEventListener("submit", function (event) {
 */
 if (indiceEmEdicao === null) {
 
+    /*
+        Primeiro tentamos salvar
+        o novo conteúdo no Supabase.
+    */
+    await salvarConteudoNoSupabase(
+        conteudo
+    );
+
+
+    /*
+        Por enquanto também continuamos
+        salvando no array local.
+
+        Assim não quebramos o funcionamento
+        atual do CineLista durante a migração.
+    */
     listaConteudos.push(conteudo);
 
 } else {
