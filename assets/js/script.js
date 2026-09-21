@@ -113,6 +113,13 @@ const graficoGenerosCanvas =
 const btnSair =
     document.getElementById("btn-sair");
 
+/*
+    Área do cabeçalho onde será exibido
+    o nome do usuário autenticado.
+*/
+const usuarioLogado =
+    document.getElementById("usuario-logado");
+
 
 
 
@@ -2033,6 +2040,33 @@ async function iniciarAplicacao() {
         "Usuário autenticado:",
         session.user
     );
+
+/*
+    Recupera o nome que foi salvo
+    nos metadados do usuário
+    no momento do cadastro.
+*/
+const nomeUsuario =
+    session.user.user_metadata.nome;
+
+
+/*
+    Se existir um nome cadastrado,
+    mostramos uma saudação no cabeçalho.
+
+    Caso contrário, mostramos apenas "Olá!".
+*/
+if (nomeUsuario) {
+
+    usuarioLogado.textContent =
+        `Olá, ${nomeUsuario}!`;
+
+} else {
+
+    usuarioLogado.textContent =
+        "Olá!";
+}
+
 
 /*
     Busca os conteúdos que já estão

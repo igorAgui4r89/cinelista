@@ -1591,6 +1591,39 @@ body {
 }
 
 
+/* -----------------------------------------------------
+   MENSAGENS DE AUTENTICAÇÃO
+----------------------------------------------------- */
+
+/*
+    Área onde serão exibidas mensagens
+    de sucesso ou erro no login/cadastro.
+*/
+.auth-mensagem {
+    min-height: 20px;
+    margin: 12px 0;
+    font-size: 14px;
+    text-align: center;
+}
+
+
+/*
+    Mensagem utilizada quando
+    alguma operação dá certo.
+*/
+.auth-mensagem.sucesso {
+    color: #9be7a8;
+}
+
+
+/*
+    Mensagem utilizada quando
+    acontece algum erro.
+*/
+.auth-mensagem.erro {
+    color: #ff9b9b;
+}
+
 /* --------------------------------------------------
    BOTÃO PRINCIPAL
 -------------------------------------------------- */
@@ -1640,7 +1673,64 @@ body {
 }
 
 
+/* -----------------------------------------------------
+   RECUPERAÇÃO DE SENHA
+----------------------------------------------------- */
 
+/*
+    Botão com aparência de link
+    para recuperação de senha.
+*/
+.auth-recuperar-senha {
+    align-self: flex-end;
+
+    /*
+        Remove a aparência padrão
+        de botão.
+    */
+    border: none;
+    background: transparent;
+
+    /*
+        Aparência de link discreto.
+    */
+    color: #c9a7ff;
+    font-family: inherit;
+    font-size: 13px;
+
+    /*
+        Mantém o botão compacto.
+    */
+    padding: 0;
+    margin: -4px 0 14px;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        text-shadow 0.2s ease;
+}
+
+
+/*
+    Destaque ao passar o mouse.
+*/
+.auth-recuperar-senha:hover {
+    color: white;
+    text-shadow:
+        0 0 8px rgba(185, 92, 255, 0.65);
+}
+
+
+/*
+    Mantém um indicativo visual
+    para navegação por teclado.
+*/
+.auth-recuperar-senha:focus-visible {
+    outline: 2px solid #b95cff;
+    outline-offset: 4px;
+    border-radius: 4px;
+}
 
 
 
@@ -1741,6 +1831,38 @@ body {
 
         gap: 30px;
     }
+
+
+
+/* -----------------------------------------------------
+   USUÁRIO LOGADO
+----------------------------------------------------- */
+
+/*
+    Texto que identifica quem está
+    utilizando o CineLista.
+*/
+.usuario-logado {
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+
+    /*
+        Evita que o nome fique grudado
+        no botão Sair.
+    */
+    margin-left: 12px;
+
+    /*
+        Mantém o texto em uma única linha.
+    */
+    white-space: nowrap;
+}
+
+
+
+
+
 
 
 

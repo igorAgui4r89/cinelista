@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Redefinir senha | CineLista
+    </title>
+
+    <!--
+        Utilizamos o mesmo CSS
+        das outras páginas do CineLista.
+    -->
+    <link
+        rel="stylesheet"
+        href="assets/css/style.css"
+    >
+
+</head>
+
+
+<body class="pagina-auth">
+
+    <!--
+        Container principal da página
+        de redefinição de senha.
+    -->
+    <main class="auth-container">
+
+        <section class="auth-card">
+
+            <!--
+                Logo do CineLista.
+            -->
+            <div class="auth-logo">
+
+                <img
+                    src="assets/imagens/logos/logo-cinelista.png"
+                    alt="CineLista"
+                >
+
+            </div>
+
+
+            <!--
+                Cabeçalho da página.
+            -->
+            <div class="auth-cabecalho">
+
+                <h1>
+                    Redefinir senha
+                </h1>
+
+                <p>
+                    Digite abaixo a sua nova senha.
+                </p>
+
+            </div>
+
+
+            <!--
+                Área onde o JavaScript mostrará
+                mensagens de sucesso ou erro.
+            -->
+            <p
+                class="auth-mensagem"
+                id="redefinir-mensagem"
+            ></p>
+
+
+            <!--
+                Formulário para criação
+                da nova senha.
+            -->
+            <form
+                class="auth-form"
+                id="form-redefinir-senha"
+            >
+
+                <!-- Nova senha -->
+                <div class="campo">
+
+                    <label for="nova-senha">
+                        Nova senha
+                    </label>
+
+                    <input
+                        type="password"
+                        id="nova-senha"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Confirmação da nova senha -->
+                <div class="campo">
+
+                    <label for="confirmar-nova-senha">
+                        Confirmar nova senha
+                    </label>
+
+                    <input
+                        type="password"
+                        id="confirmar-nova-senha"
+                        required
+                    >
+
+                </div>
+
+
+                <!--
+                    Este botão enviará a nova senha
+                    ao Supabase no próximo passo.
+                -->
+                <button
+                    type="submit"
+                    class="auth-btn"
+                >
+                    Salvar nova senha
+                </button>
+
+            </form>
+
+        </section>
+
+    </main>
+
+<!--
+    Biblioteca oficial do Supabase.
+-->
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
+
+
+<!--
+    Configuração do projeto CineLista.
+-->
+<script
+    src="assets/js/supabase-client.js"
+></script>
+
+
+<!--
+    Lógica da página de redefinição de senha.
+-->
+<script
+    src="assets/js/redefinir-senha.js"
+></script>
+
+
+
+
+
+
+
+
+</body>
+
+</html>

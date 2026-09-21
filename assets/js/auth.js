@@ -38,12 +38,79 @@ const formLogin =
 const formCadastro =
     document.getElementById("form-cadastro");
 
+/*
+    Área da página onde exibiremos
+    mensagens de sucesso ou erro.
+*/
+const authMensagem =
+    document.getElementById("auth-mensagem");
+
+/*
+    Botão usado para solicitar
+    a recuperação de senha.
+*/
+const btnRecuperarSenha =
+    document.getElementById(
+        "btn-recuperar-senha"
+    );
+
+
+
+// -----------------------------------------------------
+// MENSAGENS DE AUTENTICAÇÃO
+// -----------------------------------------------------
+
+/*
+    Exibe uma mensagem dentro
+    da própria página de login.
+
+    Recebemos:
+    - texto: aquilo que será mostrado;
+    - tipo: "sucesso" ou "erro".
+*/
+function mostrarMensagem(texto, tipo) {
+
+    /*
+        Coloca o texto dentro
+        do elemento <p>.
+    */
+    authMensagem.textContent =
+        texto;
+
+
+    /*
+        Primeiro removemos qualquer
+        estilo de mensagem anterior.
+    */
+    authMensagem.classList.remove(
+        "sucesso",
+        "erro"
+    );
+
+
+    /*
+        Depois adicionamos a classe
+        correspondente ao tipo recebido.
+    */
+    authMensagem.classList.add(
+        tipo
+    );
+}
+
+
+
+
+
+
+
 
 // -----------------------------------------------------
 // 2. MOSTRAR FORMULÁRIO DE LOGIN
 // -----------------------------------------------------
 
 function mostrarLogin() {
+
+    limparMensagem();
 
     /*
         Mostra o formulário de login.
@@ -80,6 +147,10 @@ function mostrarLogin() {
 
 function mostrarCadastro() {
 
+
+    limparMensagem();
+
+
     /*
         Esconde o formulário de login.
     */
@@ -110,6 +181,32 @@ function mostrarCadastro() {
 
 
 // -----------------------------------------------------
+// LIMPAR MENSAGEM DE AUTENTICAÇÃO
+// -----------------------------------------------------
+
+/*
+    Remove qualquer mensagem exibida
+    anteriormente na página.
+*/
+function limparMensagem() {
+
+    /*
+        Remove o texto.
+    */
+    authMensagem.textContent = "";
+
+
+    /*
+        Remove também as classes visuais
+        usadas para sucesso ou erro.
+    */
+    authMensagem.classList.remove(
+        "sucesso",
+        "erro"
+    );
+}
+
+// -----------------------------------------------------
 // 4. EVENTOS DOS BOTÕES
 // -----------------------------------------------------
 
@@ -130,6 +227,94 @@ btnLogin.addEventListener(
 btnCadastro.addEventListener(
     "click",
     mostrarCadastro
+);
+
+// -----------------------------------------------------
+// RECUPERAÇÃO DE SENHA
+// -----------------------------------------------------
+
+/*
+    Ao clicar em "Esqueci minha senha",
+    usamos o e-mail já digitado no
+    formulário de login.
+*/
+btnRecuperarSenha.addEventListener(
+    "click",
+    async function () {
+
+        /*
+            Recupera o e-mail digitado.
+        */
+        const email =
+            document
+                .getElementById("login-email")
+                .value
+                .trim();
+
+
+        /*
+            Se o usuário ainda não digitou
+            um e-mail, pedimos que informe.
+        */
+        if (!email) {
+
+            mostrarMensagem(
+                "Digite seu e-mail para recuperar a senha.",
+                "erro"
+            );
+
+            return;
+        }
+
+
+        /*
+            Solicita ao Supabase
+            o envio do e-mail de recuperação.
+
+            Depois, o link levará o usuário
+            para uma página que ainda vamos criar.
+        */
+        const { error } =
+            await supabaseClient.auth
+                .resetPasswordForEmail(
+                    email,
+                    {
+                        redirectTo:
+                            `${window.location.origin}/redefinir-senha.html`
+                    }
+                );
+
+
+        /*
+            Se ocorrer algum erro,
+            mostramos na própria página.
+        */
+        if (error) {
+
+            console.error(
+                "Erro ao solicitar recuperação de senha:",
+                error
+            );
+
+            mostrarMensagem(
+                "Não foi possível enviar o e-mail de recuperação.",
+                "erro"
+            );
+
+            return;
+        }
+
+
+        /*
+            Por segurança, mostramos uma mensagem
+            neutra, independentemente de existir
+            ou não uma conta com esse e-mail.
+        */
+        mostrarMensagem(
+            "Se houver uma conta associada a esse e-mail, você receberá as instruções para redefinir a senha.",
+            "sucesso"
+        );
+    }
 );
 
 
@@ -181,18 +366,20 @@ formCadastro.addEventListener(
             ).value;
 
 
-        // -------------------------------------------------
-        // CONFERE SE AS SENHAS SÃO IGUAIS
-        // -------------------------------------------------
+/*
+    Antes de enviar o cadastro,
+    verificamos se as duas senhas
+    digitadas são iguais.
+*/
+if (senha !== confirmarSenha) {
 
-        if (senha !== confirmarSenha) {
+    mostrarMensagem(
+        "As senhas digitadas não são iguais.",
+        "erro"
+    );
 
-            alert(
-                "As senhas digitadas não são iguais."
-            );
-
-            return;
-        }
+    return;
+}
 
 
         // -------------------------------------------------
@@ -228,20 +415,25 @@ formCadastro.addEventListener(
         // TRATAMENTO DE ERRO
         // -------------------------------------------------
 
-        if (error) {
+if (error) {
 
-            console.error(
-                "Erro ao criar conta:",
-                error
-            );
+    console.error(
+        "Erro ao criar conta:",
+        error
+    );
 
-            alert(
-                "Não foi possível criar a conta: " +
-                error.message
-            );
+    /*
+        Mostra o erro dentro
+        da própria página.
+    */
+    mostrarMensagem(
+        "Não foi possível criar a conta: " +
+        error.message,
+        "erro"
+    );
 
-            return;
-        }
+    return;
+}
 
 
         // -------------------------------------------------
@@ -263,24 +455,25 @@ formCadastro.addEventListener(
             mas ainda não possui uma sessão
             até confirmar o e-mail.
         */
-        if (data.session === null) {
+/*
+    Se não existe sessão imediatamente após
+    o cadastro, significa que o usuário ainda
+    precisa confirmar o e-mail.
+*/
+if (data.session === null) {
 
-            alert(
-                "Conta criada! Verifique seu e-mail para confirmar o cadastro."
-            );
+    mostrarMensagem(
+        "Conta criada! Verifique seu e-mail para confirmar o cadastro.",
+        "sucesso"
+    );
 
-        } else {
+} else {
 
-            /*
-                Se a confirmação de e-mail
-                estiver desativada, o usuário
-                já recebe uma sessão imediatamente.
-            */
-            alert(
-                "Conta criada com sucesso!"
-            );
-
-        }
+    mostrarMensagem(
+        "Conta criada com sucesso!",
+        "sucesso"
+    );
+}
 
 
         /*
@@ -351,21 +544,24 @@ formLogin.addEventListener(
         // TRATAMENTO DE ERRO
         // -------------------------------------------------
 
-        if (error) {
+if (error) {
 
-            console.error(
-                "Erro ao entrar:",
-                error
-            );
+    console.error(
+        "Erro ao entrar:",
+        error
+    );
 
-            alert(
-                "Não foi possível entrar. Verifique seu e-mail e sua senha."
-            );
+    /*
+        Mostra o erro dentro
+        da própria página.
+    */
+    mostrarMensagem(
+        "Não foi possível entrar. Verifique seu e-mail e sua senha.",
+        "erro"
+    );
 
-            return;
-        }
-
-
+    return;
+}
         // -------------------------------------------------
         // LOGIN REALIZADO
         // -------------------------------------------------
