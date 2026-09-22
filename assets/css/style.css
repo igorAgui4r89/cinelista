@@ -1339,23 +1339,28 @@ body {
     display: grid;
 
     /*
-        No desktop, mostramos
-        três recomendações lado a lado.
+        Três cards pequenos lado a lado.
+        Cada um terá 130px de largura.
     */
     grid-template-columns:
-        repeat(3, 1fr);
+        repeat(3, 130px);
 
-    gap: 12px;
+    /*
+        Centraliza o conjunto
+        dentro do quadrante.
+    */
+    justify-content: center;
+
+    gap: 14px;
 
     margin-bottom: 20px;
 }
-
 
 /*
     Card individual de cada filme.
 */
 .recomendacao-item {
-    padding: 14px;
+    padding: 8px;
 
     border:
         1px solid rgba(185, 92, 255, 0.28);
