@@ -285,6 +285,15 @@ let graficoStreaming = null;
 */
 let graficoGeneros = null;
 
+/*
+    Guarda os IDs dos filmes exibidos
+    na última rodada de recomendações.
+
+    Assim evitamos repetir imediatamente
+    os mesmos títulos no próximo clique.
+*/
+let idsUltimasRecomendacoes = [];
+
 
 
 // -----------------------------------------------------
@@ -1186,11 +1195,8 @@ filmesPontuados.sort(
 
 
 /*
-    Selecionamos primeiro os filmes
+    Selecionamos os 8 candidatos
     com melhor pontuação.
-
-    Usaremos no máximo os 8 melhores
-    como candidatos finais.
 */
 const melhoresCandidatos =
     filmesPontuados.slice(
@@ -1200,14 +1206,42 @@ const melhoresCandidatos =
 
 
 /*
-    Criamos uma cópia do array.
+    Tentamos retirar os filmes
+    que apareceram na rodada anterior.
+*/
+const candidatosSemRepeticao =
+    melhoresCandidatos.filter(
+        function (filme) {
 
-    Assim podemos embaralhar os candidatos
-    sem alterar a ordem original
-    de filmesPontuados.
+            return !idsUltimasRecomendacoes
+                .includes(
+                    filme.id
+                );
+        }
+    );
+
+
+/*
+    Normalmente ainda teremos candidatos
+    suficientes depois da exclusão.
+
+    Mas, se sobrarem menos de 3,
+    usamos novamente a lista completa
+    dos melhores candidatos.
+*/
+const candidatosDisponiveis =
+    candidatosSemRepeticao.length >= 3
+        ? candidatosSemRepeticao
+        : melhoresCandidatos;
+
+
+/*
+    Criamos uma cópia para poder
+    embaralhar sem modificar
+    o array original.
 */
 const candidatosEmbaralhados = [
-    ...melhoresCandidatos
+    ...candidatosDisponiveis
 ];
 
 
@@ -1265,6 +1299,26 @@ const filmesRecomendados =
         0,
         3
     );
+
+
+
+/*
+    Guarda os IDs desta rodada.
+
+    No próximo clique,
+    tentaremos não mostrar
+    esses mesmos filmes novamente.
+*/
+idsUltimasRecomendacoes =
+    filmesRecomendados.map(
+        function (filme) {
+
+            return filme.id;
+        }
+    );
+
+
+
 
 
 /*
