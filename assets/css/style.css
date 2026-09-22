@@ -1376,6 +1376,8 @@ body {
         transform 0.2s ease,
         border-color 0.2s ease,
         background-color 0.2s ease;
+
+    
 }
 
 
@@ -3028,4 +3030,48 @@ body {
     .modal-recomendacao-nota {
         margin-bottom: 14px;
     }
+}
+
+
+/* ==================================================
+   INTERAÇÃO DOS CARDS DE RECOMENDAÇÃO
+================================================== */
+
+/*
+    Indica que cada recomendação
+    pode ser clicada para abrir os detalhes.
+*/
+.recomendacoes-card .recomendacao-item {
+    cursor: pointer;
+}
+
+
+/*
+    Destaque visual ao passar o mouse
+    sobre uma recomendação.
+*/
+.recomendacoes-card .recomendacao-item:hover {
+    transform: translateY(-3px);
+
+    border-color:
+        rgba(185, 92, 255, 0.75);
+
+    background:
+        rgba(143, 44, 255, 0.12);
+
+    box-shadow:
+        0 6px 18px
+        rgba(143, 44, 255, 0.12);
+}
+
+
+/*
+    Destaque equivalente para quem
+    navega utilizando o teclado.
+*/
+.recomendacoes-card .recomendacao-item:focus-visible {
+    outline:
+        2px solid #b95cff;
+
+    outline-offset: 3px;
 }
