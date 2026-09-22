@@ -610,6 +610,92 @@
 
 </section>
 
+<!-- ==================================================
+     MODAL - DETALHES DA RECOMENDAÇÃO
+=================================================== -->
+
+<div
+    class="modal-recomendacao"
+    id="modal-recomendacao"
+    hidden
+>
+
+    <!--
+        Fundo escuro do modal.
+        Depois o JavaScript permitirá
+        fechar clicando nessa área.
+    -->
+    <div class="modal-recomendacao-overlay"></div>
+
+
+    <!--
+        Caixa principal com as informações
+        do filme recomendado.
+    -->
+    <div
+        class="modal-recomendacao-conteudo"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-recomendacao-titulo"
+    >
+
+        <!-- Botão para fechar o modal -->
+        <button
+            type="button"
+            class="modal-recomendacao-fechar"
+            id="modal-recomendacao-fechar"
+            aria-label="Fechar detalhes"
+        >
+            ×
+        </button>
+
+
+        <!-- Pôster -->
+        <img
+            class="modal-recomendacao-poster"
+            id="modal-recomendacao-poster"
+            src=""
+            alt=""
+        >
+
+
+        <!-- Informações do filme -->
+        <div class="modal-recomendacao-info">
+
+            <h3 id="modal-recomendacao-titulo">
+                Título do filme
+            </h3>
+
+
+            <p
+                class="modal-recomendacao-ano"
+                id="modal-recomendacao-ano"
+            >
+                Ano
+            </p>
+
+
+            <p
+                class="modal-recomendacao-nota"
+                id="modal-recomendacao-nota"
+            >
+                Nota
+            </p>
+
+
+            <p
+                class="modal-recomendacao-sinopse"
+                id="modal-recomendacao-sinopse"
+            >
+                Sinopse do filme.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
 
 
     </main>
