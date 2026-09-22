@@ -1,9 +1,9 @@
 // =====================================================
-// TMDB - FILMES POPULARES
+// TMDB - FILMES PARA RECOMENDAÇÃO
 // Função segura executada pelo Netlify
 // =====================================================
 
-export default async function () {
+export default async function (request) {
 
     /*
         Recupera o token armazenado
@@ -31,20 +31,136 @@ export default async function () {
     }
 
 
+    /*
+        Lê os parâmetros enviados
+        na URL da nossa função.
+
+        Exemplo:
+        ?generos=28|18
+    */
+    const urlRecebida =
+        new URL(request.url);
+
+    const generos =
+        urlRecebida.searchParams.get(
+            "generos"
+        );
+
+
     try {
 
         /*
-            Faz uma requisição ao TMDb.
+            Se recebemos gêneros,
+            usamos o endpoint "discover".
 
-            Neste primeiro teste,
-            buscamos filmes populares
-            em português do Brasil.
+            Se não recebemos,
+            mantemos a lista de populares
+            como alternativa.
+        */
+        let urlTMDb;
+
+
+        if (generos) {
+
+            urlTMDb =
+                new URL(
+                    "https://api.themoviedb.org/3/discover/movie"
+                );
+
+
+            /*
+                Configura a busca personalizada.
+            */
+            urlTMDb.searchParams.set(
+                "language",
+                "pt-BR"
+            );
+
+            urlTMDb.searchParams.set(
+                "page",
+                "1"
+            );
+
+            urlTMDb.searchParams.set(
+                "include_adult",
+                "false"
+            );
+
+
+            /*
+                Filtra pelos gêneros recebidos.
+            */
+            urlTMDb.searchParams.set(
+                "with_genres",
+                generos
+            );
+
+
+            /*
+                Prioriza filmes mais populares.
+            */
+            urlTMDb.searchParams.set(
+                "sort_by",
+                "popularity.desc"
+            );
+
+
+            /*
+                Evita recomendações baseadas
+                em pouquíssimos votos.
+            */
+            urlTMDb.searchParams.set(
+                "vote_count.gte",
+                "100"
+            );
+
+
+            /*
+                Evita recomendar filmes
+                que ainda não foram lançados.
+            */
+            const hoje =
+                new Date()
+                    .toISOString()
+                    .slice(0, 10);
+
+            urlTMDb.searchParams.set(
+                "primary_release_date.lte",
+                hoje
+            );
+
+        } else {
+
+            /*
+                Caso nenhum gênero seja enviado,
+                usamos filmes populares.
+            */
+            urlTMDb =
+                new URL(
+                    "https://api.themoviedb.org/3/movie/popular"
+                );
+
+            urlTMDb.searchParams.set(
+                "language",
+                "pt-BR"
+            );
+
+            urlTMDb.searchParams.set(
+                "page",
+                "1"
+            );
+        }
+
+
+        /*
+            Faz a requisição ao TMDb.
         */
         const resposta =
             await fetch(
-                "https://api.themoviedb.org/3/movie/popular?language=pt-BR&page=1",
+                urlTMDb.toString(),
                 {
                     headers: {
+
                         Authorization:
                             `Bearer ${token}`,
 
@@ -55,18 +171,13 @@ export default async function () {
             );
 
 
-        /*
-            Converte a resposta do TMDb
-            para um objeto JavaScript.
-        */
         const dados =
             await resposta.json();
 
 
         /*
-            Se o TMDb responder com erro,
-            devolvemos esse erro para facilitar
-            o nosso teste.
+            Se o TMDb devolver erro,
+            repassamos para facilitar o teste.
         */
         if (!resposta.ok) {
 
@@ -87,11 +198,8 @@ export default async function () {
 
 
         /*
-            Por enquanto devolvemos apenas
-            alguns campos úteis dos filmes.
-
-            Depois a IA trabalhará
-            com esses dados.
+            Mantemos somente os campos
+            úteis para o CineLista.
         */
         const filmes =
             dados.results.map(
@@ -124,16 +232,24 @@ export default async function () {
                             filme.vote_average
 
                     };
-
                 }
             );
 
 
         /*
-            Resposta enviada para o navegador.
+            Envia os filmes para o frontend.
+
+            Também devolvemos os gêneros
+            utilizados apenas para facilitar
+            nossos testes agora.
         */
         return Response.json({
-            filmes: filmes
+
+            generosUsados:
+                generos || null,
+
+            filmes:
+                filmes
         });
 
 
