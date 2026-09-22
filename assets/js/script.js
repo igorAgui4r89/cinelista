@@ -148,6 +148,66 @@ const listaRecomendacoes =
         "lista-recomendacoes"
     );
 
+// -----------------------------------------------------
+// MODAL DE DETALHES DA RECOMENDAÇÃO
+// -----------------------------------------------------
+
+/*
+    Elemento principal do modal.
+*/
+const modalRecomendacao =
+    document.getElementById(
+        "modal-recomendacao"
+    );
+
+
+/*
+    Botão X utilizado para fechar o modal.
+*/
+const modalRecomendacaoFechar =
+    document.getElementById(
+        "modal-recomendacao-fechar"
+    );
+
+
+/*
+    Fundo escuro atrás do modal.
+*/
+const modalRecomendacaoOverlay =
+    document.querySelector(
+        ".modal-recomendacao-overlay"
+    );
+
+
+/*
+    Elementos que receberão
+    os dados do filme selecionado.
+*/
+const modalRecomendacaoPoster =
+    document.getElementById(
+        "modal-recomendacao-poster"
+    );
+
+const modalRecomendacaoTitulo =
+    document.getElementById(
+        "modal-recomendacao-titulo"
+    );
+
+const modalRecomendacaoAno =
+    document.getElementById(
+        "modal-recomendacao-ano"
+    );
+
+const modalRecomendacaoNota =
+    document.getElementById(
+        "modal-recomendacao-nota"
+    );
+
+const modalRecomendacaoSinopse =
+    document.getElementById(
+        "modal-recomendacao-sinopse"
+    );
+
 
 
 
@@ -1350,6 +1410,62 @@ console.log(
                     "recomendacao-item"
                 );
                 
+/*
+    Faz o card inteiro funcionar
+    como área clicável.
+*/
+item.addEventListener(
+    "click",
+    function () {
+
+        /*
+            Abre os detalhes exatamente
+            do filme correspondente
+            a este card.
+        */
+        abrirModalRecomendacao(
+            filme
+        );
+    }
+);
+
+
+/*
+    Permite também abrir o filme
+    utilizando o teclado.
+*/
+item.tabIndex = 0;
+
+item.setAttribute(
+    "role",
+    "button"
+);
+
+item.setAttribute(
+    "aria-label",
+    `Ver detalhes de ${filme.titulo}`
+);
+
+
+/*
+    Enter também abre o modal.
+*/
+item.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            abrirModalRecomendacao(
+                filme
+            );
+        }
+    }
+);
+
+
                 /*
     Cria o pôster do filme.
 */
@@ -1516,6 +1632,172 @@ if (filme.poster) {
             "Gerar recomendações";
     }
 }
+
+// -----------------------------------------------------
+// ABRIR MODAL DE RECOMENDAÇÃO
+// -----------------------------------------------------
+
+/*
+    Recebe o filme clicado e preenche
+    o modal com suas informações.
+*/
+function abrirModalRecomendacao(filme) {
+
+    /*
+        Título.
+    */
+    modalRecomendacaoTitulo.textContent =
+        filme.titulo;
+
+
+    /*
+        Ano de lançamento.
+    */
+    if (filme.dataLancamento) {
+
+        modalRecomendacaoAno.textContent =
+            filme.dataLancamento.slice(
+                0,
+                4
+            );
+
+    } else {
+
+        modalRecomendacaoAno.textContent =
+            "Ano não informado";
+    }
+
+
+    /*
+        Nota recebida do TMDb.
+    */
+    const nota =
+        Number(filme.nota);
+
+    if (Number.isFinite(nota)) {
+
+        modalRecomendacaoNota.textContent =
+            `★ ${nota.toFixed(1)} / 10`;
+
+    } else {
+
+        modalRecomendacaoNota.textContent =
+            "Nota não disponível";
+    }
+
+
+    /*
+        Sinopse.
+
+        Alguns filmes podem não possuir
+        sinopse em português no TMDb.
+    */
+    modalRecomendacaoSinopse.textContent =
+        filme.sinopse ||
+        "Sinopse não disponível para este título.";
+
+
+    /*
+        Pôster.
+    */
+    if (filme.poster) {
+
+        modalRecomendacaoPoster.src =
+            "https://image.tmdb.org/t/p/w342" +
+            filme.poster;
+
+        modalRecomendacaoPoster.alt =
+            `Pôster de ${filme.titulo}`;
+
+        modalRecomendacaoPoster.hidden =
+            false;
+
+    } else {
+
+        /*
+            Se não existir pôster,
+            escondemos a imagem.
+        */
+        modalRecomendacaoPoster.hidden =
+            true;
+    }
+
+
+    /*
+        Exibe o modal.
+    */
+    modalRecomendacao.hidden =
+        false;
+
+
+    /*
+        Impede a página de rolar
+        enquanto o modal estiver aberto.
+    */
+    document.body.style.overflow =
+        "hidden";
+}
+
+
+// -----------------------------------------------------
+// FECHAR MODAL DE RECOMENDAÇÃO
+// -----------------------------------------------------
+
+function fecharModalRecomendacao() {
+
+    /*
+        Esconde novamente o modal.
+    */
+    modalRecomendacao.hidden =
+        true;
+
+
+    /*
+        Libera a rolagem da página.
+    */
+    document.body.style.overflow =
+        "";
+}
+
+/*
+    Fecha ao clicar no X.
+*/
+modalRecomendacaoFechar.addEventListener(
+    "click",
+    fecharModalRecomendacao
+);
+
+
+/*
+    Fecha ao clicar no fundo escuro.
+*/
+modalRecomendacaoOverlay.addEventListener(
+    "click",
+    fecharModalRecomendacao
+);
+
+
+/*
+    Fecha também ao pressionar Esc.
+*/
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key === "Escape" &&
+            !modalRecomendacao.hidden
+        ) {
+
+            fecharModalRecomendacao();
+        }
+    }
+);
+
+
+
+
+
 
 
 /*
