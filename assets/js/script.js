@@ -813,6 +813,86 @@ async function carregarRecomendacoes() {
                 item.classList.add(
                     "recomendacao-item"
                 );
+                
+                /*
+    Cria o pôster do filme.
+*/
+if (filme.poster) {
+
+    const imagem =
+        document.createElement(
+            "img"
+        );
+
+
+    /*
+        Monta a URL completa da imagem
+        usando o poster_path retornado
+        pelo TMDb.
+    */
+    imagem.src =
+        "https://image.tmdb.org/t/p/w342" +
+        filme.poster;
+
+
+    /*
+        Texto alternativo da imagem.
+    */
+    imagem.alt =
+        `Pôster de ${filme.titulo}`;
+
+
+    /*
+        Classe usada no CSS.
+    */
+    imagem.classList.add(
+        "recomendacao-poster"
+    );
+
+
+    /*
+        Faz o navegador carregar a imagem
+        somente quando ela estiver próxima
+        da área visível da página.
+    */
+    imagem.loading =
+        "lazy";
+
+
+    /*
+        Adiciona o pôster ao card.
+    */
+    item.appendChild(
+        imagem
+    );
+
+} else {
+
+    /*
+        Caso o TMDb não tenha pôster,
+        mostramos um espaço substituto.
+    */
+    const semPoster =
+        document.createElement(
+            "div"
+        );
+
+    semPoster.classList.add(
+        "recomendacao-sem-poster"
+    );
+
+    semPoster.textContent =
+        "Sem pôster";
+
+    item.appendChild(
+        semPoster
+    );
+}
+
+
+
+
+
 
 
                 /*
