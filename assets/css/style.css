@@ -3075,3 +3075,89 @@ body {
 
     outline-offset: 3px;
 }
+
+
+/* ==================================================
+   BOTÃO - ADICIONAR À CINELISTA
+================================================== */
+
+/*
+    Botão exibido dentro do modal
+    de detalhes da recomendação.
+*/
+.modal-recomendacao-adicionar {
+    margin-top: 22px;
+
+    align-self: flex-start;
+
+    padding: 11px 16px;
+
+    border:
+        1px solid rgba(185, 92, 255, 0.55);
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #7a2cff,
+            #b344ff
+        );
+
+    color: white;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+/*
+    Efeito ao passar o mouse.
+*/
+.modal-recomendacao-adicionar:hover {
+    transform: translateY(-2px);
+
+    border-color: #c985ff;
+
+    box-shadow:
+        0 6px 18px
+        rgba(143, 44, 255, 0.22);
+}
+
+
+/*
+    Destaque para navegação
+    utilizando o teclado.
+*/
+.modal-recomendacao-adicionar:focus-visible {
+    outline:
+        2px solid #c985ff;
+
+    outline-offset: 3px;
+}
+
+
+/* ==================================================
+   BOTÃO - MOBILE
+================================================== */
+
+@media (max-width: 700px) {
+
+    /*
+        No celular o botão ocupa
+        toda a largura disponível.
+    */
+    .modal-recomendacao-adicionar {
+        width: 100%;
+
+        align-self: stretch;
+    }
+}
