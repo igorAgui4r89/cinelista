@@ -129,7 +129,24 @@ const mensagemCarregamento =
         "mensagem-carregamento"
     );
 
+/*
+    Botão utilizado para solicitar
+    novas recomendações.
+*/
+const btnRecomendacoes =
+    document.getElementById(
+        "btn-recomendacoes"
+    );
 
+
+/*
+    Área onde os filmes recomendados
+    serão exibidos.
+*/
+const listaRecomendacoes =
+    document.getElementById(
+        "lista-recomendacoes"
+    );
 
 
 
@@ -666,6 +683,239 @@ async function buscarConteudosDoSupabase() {
     */
     return conteudosConvertidos;
 }
+
+
+
+
+// -----------------------------------------------------
+// RECOMENDAÇÕES - TESTE COM TMDB
+// -----------------------------------------------------
+
+/*
+    Busca filmes reais através
+    da Netlify Function que criamos.
+
+    Nesta primeira etapa ainda não existe IA.
+    Estamos apenas testando a integração
+    entre CineLista, Netlify e TMDb.
+*/
+async function carregarRecomendacoes() {
+
+    /*
+        Enquanto buscamos os filmes,
+        desativamos temporariamente o botão.
+    */
+    btnRecomendacoes.disabled = true;
+
+    btnRecomendacoes.textContent =
+        "Buscando...";
+
+
+    /*
+        Limpa recomendações anteriores.
+    */
+    listaRecomendacoes.innerHTML = "";
+
+
+    try {
+
+        /*
+            Chama a função segura hospedada
+            no próprio Netlify.
+        */
+        const resposta =
+            await fetch(
+                "/.netlify/functions/tmdb-filmes"
+            );
+
+
+        /*
+            Se a função responder com erro,
+            interrompemos o processo.
+        */
+        if (!resposta.ok) {
+
+            throw new Error(
+                "Não foi possível buscar os filmes."
+            );
+        }
+
+
+        /*
+            Converte o JSON recebido
+            para objeto JavaScript.
+        */
+        const dados =
+            await resposta.json();
+
+
+        /*
+            Cria uma lista apenas com os títulos
+            que o usuário já cadastrou.
+
+            Usaremos isso para não recomendar
+            algo que já está na CineLista.
+        */
+        const titulosCadastrados =
+            listaConteudos.map(
+                function (conteudo) {
+
+                    return conteudo.titulo
+                        .trim()
+                        .toLowerCase();
+
+                }
+            );
+
+
+        /*
+            Remove filmes que o usuário
+            já possui na própria lista.
+
+            Depois escolhemos somente
+            os três primeiros.
+        */
+        const filmesRecomendados =
+            dados.filmes
+                .filter(
+                    function (filme) {
+
+                        const tituloFilme =
+                            filme.titulo
+                                .trim()
+                                .toLowerCase();
+
+
+                        return !titulosCadastrados
+                            .includes(
+                                tituloFilme
+                            );
+                    }
+                )
+                .slice(0, 3);
+
+
+        /*
+            Cria visualmente uma pequena
+            recomendação para cada filme.
+        */
+        filmesRecomendados.forEach(
+            function (filme) {
+
+                /*
+                    Container de uma recomendação.
+                */
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+                item.classList.add(
+                    "recomendacao-item"
+                );
+
+
+                /*
+                    Título do filme.
+                */
+                const titulo =
+                    document.createElement(
+                        "h4"
+                    );
+
+                titulo.textContent =
+                    filme.titulo;
+
+
+                /*
+                    Ano de lançamento.
+                */
+                const ano =
+                    document.createElement(
+                        "p"
+                    );
+
+                if (filme.dataLancamento) {
+
+                    ano.textContent =
+                        filme.dataLancamento
+                            .slice(0, 4);
+
+                } else {
+
+                    ano.textContent =
+                        "Ano não informado";
+                }
+
+
+                /*
+                    Monta a recomendação.
+                */
+                item.appendChild(
+                    titulo
+                );
+
+                item.appendChild(
+                    ano
+                );
+
+
+                /*
+                    Coloca a recomendação
+                    dentro do card.
+                */
+                listaRecomendacoes
+                    .appendChild(
+                        item
+                    );
+
+            }
+        );
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao buscar recomendações:",
+            erro
+        );
+
+
+        /*
+            Informa o erro dentro
+            do próprio card.
+        */
+        listaRecomendacoes.textContent =
+            "Não foi possível carregar as recomendações.";
+
+    } finally {
+
+        /*
+            Independentemente de sucesso ou erro,
+            o botão volta ao estado normal.
+        */
+        btnRecomendacoes.disabled = false;
+
+        btnRecomendacoes.textContent =
+            "Gerar recomendações";
+    }
+}
+
+
+/*
+    Executa a busca quando
+    o usuário clicar no botão.
+*/
+btnRecomendacoes.addEventListener(
+    "click",
+    carregarRecomendacoes
+);
+
+
+
+
+
+
 
 
 // -----------------------------------------------------
