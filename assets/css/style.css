@@ -2009,7 +2009,82 @@ body {
 
 
 
+/* ==================================================
+   TAMANHO DAS RECOMENDAÇÕES NO DESKTOP
+================================================== */
 
+.recomendacoes-card .lista-recomendacoes {
+    width: 100%;
+
+    display: grid;
+
+    /*
+        Três recomendações pequenas
+        lado a lado.
+    */
+    grid-template-columns:
+        repeat(3, 105px);
+
+    justify-content: center;
+
+    gap: 16px;
+
+    margin-bottom: 18px;
+}
+
+
+/*
+    Cada card fica limitado
+    à largura definida acima.
+*/
+.recomendacoes-card .recomendacao-item {
+    width: 105px;
+
+    padding: 7px;
+
+    min-width: 0;
+
+    overflow: hidden;
+}
+
+
+/*
+    Pôster pequeno e proporcional.
+*/
+.recomendacoes-card .recomendacao-poster {
+    width: 100%;
+
+    aspect-ratio: 2 / 3;
+
+    object-fit: cover;
+
+    display: block;
+
+    border-radius: 7px;
+
+    margin-bottom: 8px;
+}
+
+
+/*
+    Título um pouco menor para
+    combinar com o novo tamanho.
+*/
+.recomendacoes-card .recomendacao-item h4 {
+    font-size: 12px;
+
+    line-height: 1.25;
+
+    margin-bottom: 5px;
+}
+
+
+/*
+    Ano do filme.
+*/
+.recomendacoes-card .recomendacao-item p {
+    font-size: 11px;
+}
 
 
 
