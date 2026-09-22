@@ -684,7 +684,241 @@ async function buscarConteudosDoSupabase() {
     return conteudosConvertidos;
 }
 
+// -----------------------------------------------------
+// GÊNEROS PREFERIDOS PARA RECOMENDAÇÃO
+// -----------------------------------------------------
 
+/*
+    Analisa os gêneros presentes na CineLista
+    e identifica os três gêneros mais frequentes.
+
+    Depois converte os nomes utilizados
+    pelo CineLista para os IDs usados pelo TMDb.
+*/
+function obterGenerosPreferidosTMDb() {
+
+    /*
+        Relação entre os nomes dos gêneros
+        e os IDs oficiais utilizados pelo TMDb.
+    */
+    const mapaGeneros = {
+
+        "acao": 28,
+
+        "aventura": 12,
+
+        "animacao": 16,
+
+        "comedia": 35,
+
+        "crime": 80,
+
+        "documentario": 99,
+
+        "drama": 18,
+
+        "familia": 10751,
+
+        "fantasia": 14,
+
+        "historia": 36,
+
+        "terror": 27,
+
+        "horror": 27,
+
+        "musica": 10402,
+
+        "misterio": 9648,
+
+        "romance": 10749,
+
+        "ficcao cientifica": 878,
+
+        "sci-fi": 878,
+
+        "suspense": 53,
+
+        "thriller": 53,
+
+        "guerra": 10752,
+
+        "western": 37,
+
+        /*
+            Alguns gêneros usados no CineLista
+            não existem como categoria própria
+            no TMDb.
+
+            Nesse caso associamos ao gênero
+            mais próximo.
+        */
+        "super-herois": 28,
+
+        "super herois": 28,
+
+        "luta": 28,
+
+        "artes marciais": 28
+    };
+
+
+    /*
+        Objeto onde contaremos
+        quantas vezes cada gênero aparece.
+    */
+    const contagemGeneros = {};
+
+
+    /*
+        Percorre todos os filmes e séries
+        cadastrados pelo usuário.
+    */
+    listaConteudos.forEach(
+        function (conteudo) {
+
+            /*
+                Um conteúdo pode possuir
+                vários gêneros separados
+                por "/" ou ",".
+            */
+            const generos =
+                conteudo.genero.split(
+                    /[\/,]/
+                );
+
+
+            /*
+                Evita contar duas vezes o mesmo
+                gênero dentro de um único conteúdo.
+
+                Exemplo:
+                Ação / Luta / Artes marciais
+
+                Os três podem virar o ID 28,
+                mas queremos contar apenas uma vez
+                para aquele filme.
+            */
+            const idsDoConteudo =
+                new Set();
+
+
+            generos.forEach(
+                function (genero) {
+
+                    /*
+                        Normaliza o texto:
+
+                        "Ficção científica"
+                        vira
+                        "ficcao cientifica"
+                    */
+                    const generoNormalizado =
+                        genero
+                            .normalize("NFD")
+                            .replace(
+                                /[\u0300-\u036f]/g,
+                                ""
+                            )
+                            .trim()
+                            .toLowerCase();
+
+
+                    /*
+                        Procura o ID correspondente
+                        no mapa acima.
+                    */
+                    const idGenero =
+                        mapaGeneros[
+                            generoNormalizado
+                        ];
+
+
+                    /*
+                        Se encontramos um gênero
+                        reconhecido pelo TMDb,
+                        guardamos seu ID.
+                    */
+                    if (idGenero) {
+
+                        idsDoConteudo.add(
+                            idGenero
+                        );
+                    }
+                }
+            );
+
+
+            /*
+                Agora contamos os gêneros
+                encontrados neste conteúdo.
+            */
+            idsDoConteudo.forEach(
+                function (idGenero) {
+
+                    if (
+                        contagemGeneros[
+                            idGenero
+                        ]
+                    ) {
+
+                        contagemGeneros[
+                            idGenero
+                        ]++;
+
+                    } else {
+
+                        contagemGeneros[
+                            idGenero
+                        ] = 1;
+                    }
+                }
+            );
+        }
+    );
+
+
+    /*
+        Transforma a contagem em uma lista,
+        ordena do gênero mais frequente
+        para o menos frequente
+        e mantém somente os três primeiros.
+    */
+    const generosMaisFrequentes =
+        Object.entries(
+            contagemGeneros
+        )
+            .sort(
+                function (a, b) {
+
+                    return b[1] - a[1];
+                }
+            )
+            .slice(0, 3)
+            .map(
+                function (item) {
+
+                    /*
+                        item[0] é o ID do gênero.
+                    */
+                    return item[0];
+                }
+            );
+
+
+    /*
+        O TMDb espera algo como:
+
+        28|18|12
+
+        significando:
+
+        Ação OU Drama OU Aventura.
+    */
+    return generosMaisFrequentes.join(
+        "|"
+    );
+}
 
 
 // -----------------------------------------------------
@@ -723,11 +957,64 @@ async function carregarRecomendacoes() {
             Chama a função segura hospedada
             no próprio Netlify.
         */
-        const resposta =
-            await fetch(
-                "/.netlify/functions/tmdb-filmes"
-            );
+        /*
+    Analisa a CineLista e descobre
+    os gêneros predominantes do usuário.
+*/
+const generosPreferidos =
+    obterGenerosPreferidosTMDb();
 
+
+/*
+    Começamos com a URL padrão
+    da nossa Netlify Function.
+*/
+let urlRecomendacoes =
+    "/.netlify/functions/tmdb-filmes";
+
+
+/*
+    Se encontramos gêneros na lista,
+    enviamos esses IDs para a função.
+
+    encodeURIComponent transforma:
+
+    28|18|12
+
+    em uma forma segura para a URL.
+*/
+if (generosPreferidos) {
+
+    urlRecomendacoes +=
+        "?generos=" +
+        encodeURIComponent(
+            generosPreferidos
+        );
+}
+
+
+/*
+    Mostra no Console quais gêneros
+    estão sendo utilizados.
+
+    Este console é temporário,
+    apenas para nosso teste.
+*/
+console.log(
+    "Gêneros usados nas recomendações:",
+    generosPreferidos ||
+        "Nenhum gênero identificado"
+);
+
+
+/*
+    Chama nossa Netlify Function
+    usando os gêneros daquele usuário.
+*/
+const resposta =
+    await fetch(
+        urlRecomendacoes
+    );
 
         /*
             Se a função responder com erro,
