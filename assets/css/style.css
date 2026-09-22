@@ -1215,7 +1215,114 @@ body {
     height: 280px;
 }
 
+/* ==================================================
+   CARD DE RECOMENDAÇÕES
+================================================== */
 
+/*
+    Faz o card de recomendações
+    se organizar verticalmente.
+*/
+.recomendacoes-card {
+    display: flex;
+    flex-direction: column;
+}
+
+
+/*
+    Área interna que futuramente
+    receberá os filmes recomendados.
+*/
+.recomendacoes-conteudo {
+    /*
+        Ocupa o espaço restante do card.
+    */
+    flex: 1;
+
+    /*
+        Centraliza o conteúdo temporário.
+    */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    /*
+        Mantém uma altura semelhante
+        à área ocupada pelos gráficos.
+    */
+    min-height: 280px;
+
+    padding: 24px;
+
+    text-align: center;
+
+    /*
+        Cria um brilho roxo muito discreto
+        no centro do card.
+    */
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(143, 44, 255, 0.10),
+            transparent 65%
+        );
+
+    border-radius: 12px;
+}
+
+
+/*
+    Texto introdutório exibido
+    enquanto a IA ainda não está conectada.
+*/
+.recomendacoes-texto {
+    max-width: 480px;
+
+    margin-bottom: 24px;
+
+    color: rgba(255, 255, 255, 0.68);
+
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
+/*
+    Botão que futuramente acionará
+    a geração das recomendações.
+*/
+.btn-recomendacoes {
+    padding: 11px 18px;
+
+    border:
+        1px solid rgba(185, 92, 255, 0.45);
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #7a2cff,
+            #b344ff
+        );
+
+    color: white;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/*
+    Enquanto a IA ainda não estiver pronta,
+    o botão permanece visualmente desativado.
+*/
+.btn-recomendacoes:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
 
 /* --------------------------------------------------
    CABEÇALHO DO GRÁFICO
