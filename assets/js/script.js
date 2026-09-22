@@ -1186,19 +1186,90 @@ filmesPontuados.sort(
 
 
 /*
-    Finalmente escolhemos
-    os três melhores resultados.
+    Selecionamos primeiro os filmes
+    com melhor pontuação.
+
+    Usaremos no máximo os 8 melhores
+    como candidatos finais.
+*/
+const melhoresCandidatos =
+    filmesPontuados.slice(
+        0,
+        8
+    );
+
+
+/*
+    Criamos uma cópia do array.
+
+    Assim podemos embaralhar os candidatos
+    sem alterar a ordem original
+    de filmesPontuados.
+*/
+const candidatosEmbaralhados = [
+    ...melhoresCandidatos
+];
+
+
+/*
+    Embaralhamos os melhores candidatos.
+
+    Percorremos o array do fim
+    para o começo e trocamos
+    os elementos de posição.
+*/
+for (
+    let i =
+        candidatosEmbaralhados.length - 1;
+
+    i > 0;
+
+    i--
+) {
+
+    /*
+        Escolhe uma posição aleatória
+        entre 0 e i.
+    */
+    const indiceAleatorio =
+        Math.floor(
+            Math.random() *
+            (i + 1)
+        );
+
+
+    /*
+        Troca os dois elementos
+        de posição.
+    */
+    [
+        candidatosEmbaralhados[i],
+        candidatosEmbaralhados[
+            indiceAleatorio
+        ]
+    ] = [
+        candidatosEmbaralhados[
+            indiceAleatorio
+        ],
+        candidatosEmbaralhados[i]
+    ];
+}
+
+
+/*
+    Depois do embaralhamento,
+    pegamos somente três filmes.
 */
 const filmesRecomendados =
-    filmesPontuados.slice(
+    candidatosEmbaralhados.slice(
         0,
         3
     );
 
 
 /*
-    Console temporário para vermos
-    por que cada filme ficou bem colocado.
+    Mostra no Console
+    quais filmes foram escolhidos.
 */
 console.log(
     "Filmes recomendados:",
