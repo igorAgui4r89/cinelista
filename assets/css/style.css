@@ -1414,6 +1414,79 @@ body {
     font-size: 13px;
 }
 
+
+/* ==================================================
+   PÔSTER DAS RECOMENDAÇÕES
+================================================== */
+
+/*
+    Faz o pôster respeitar
+    a largura do card.
+*/
+.recomendacao-poster {
+    width: 100%;
+
+    /*
+        Mantém a proporção típica
+        de pôster de cinema.
+    */
+    aspect-ratio: 2 / 3;
+
+    /*
+        Preenche toda a área sem
+        deformar a imagem.
+    */
+    object-fit: cover;
+
+    border-radius: 8px;
+
+    margin-bottom: 12px;
+
+    display: block;
+}
+
+
+/*
+    Impede que o conteúdo interno
+    force o card a ficar mais largo
+    do que a coluna disponível.
+*/
+.recomendacao-item {
+    min-width: 0;
+    overflow: hidden;
+}
+
+
+/*
+    Espaço usado quando determinado
+    filme não possui pôster no TMDb.
+*/
+.recomendacao-sem-poster {
+    width: 100%;
+
+    aspect-ratio: 2 / 3;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 12px;
+
+    border-radius: 8px;
+
+    background:
+        rgba(255, 255, 255, 0.05);
+
+    color:
+        rgba(255, 255, 255, 0.55);
+
+    font-size: 13px;
+}
+
+
+
+
+
 /* --------------------------------------------------
    CABEÇALHO DO GRÁFICO
 -------------------------------------------------- */
