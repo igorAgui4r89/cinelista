@@ -1062,24 +1062,148 @@ const resposta =
             Depois escolhemos somente
             os três primeiros.
         */
-        const filmesRecomendados =
-            dados.filmes
-                .filter(
-                    function (filme) {
+        /*
+    Transforma a sequência recebida anteriormente:
 
-                        const tituloFilme =
-                            filme.titulo
-                                .trim()
-                                .toLowerCase();
+    "28|18|12"
+
+    em:
+
+    [28, 18, 12]
+
+    Assim podemos comparar os gêneros
+    preferidos do usuário com os gêneros
+    de cada filme retornado pelo TMDb.
+*/
+const idsGenerosPreferidos =
+    generosPreferidos
+        ? generosPreferidos
+            .split("|")
+            .map(Number)
+        : [];
 
 
-                        return !titulosCadastrados
+/*
+    Primeiro removemos filmes que
+    o usuário já possui na CineLista.
+*/
+const filmesCandidatos =
+    dados.filmes.filter(
+        function (filme) {
+
+            const tituloFilme =
+                filme.titulo
+                    .trim()
+                    .toLowerCase();
+
+
+            return !titulosCadastrados
+                .includes(
+                    tituloFilme
+                );
+        }
+    );
+
+
+/*
+    Agora damos uma pontuação
+    para cada filme candidato.
+*/
+const filmesPontuados =
+    filmesCandidatos.map(
+        function (filme) {
+
+            /*
+                Conta quantos dos gêneros
+                preferidos do usuário também
+                aparecem neste filme.
+            */
+            const quantidadeGenerosEmComum =
+                filme.generos.filter(
+                    function (idGenero) {
+
+                        return idsGenerosPreferidos
                             .includes(
-                                tituloFilme
+                                idGenero
                             );
                     }
-                )
-                .slice(0, 3);
+                ).length;
+
+
+            /*
+                Criamos uma pontuação simples.
+
+                Cada gênero em comum vale 10 pontos.
+
+                Depois somamos a nota do TMDb.
+
+                Exemplo:
+
+                2 gêneros em comum = 20 pontos
+                nota 7,8 = +7,8
+
+                total = 27,8
+            */
+            const pontuacao =
+                (
+                    quantidadeGenerosEmComum * 10
+                ) +
+                (
+                    Number(filme.nota) || 0
+                );
+
+
+            /*
+                Devolvemos o filme junto
+                com sua pontuação.
+            */
+            return {
+                ...filme,
+
+                pontuacao:
+                    pontuacao,
+
+                generosEmComum:
+                    quantidadeGenerosEmComum
+            };
+        }
+    );
+
+
+/*
+    Ordenamos do filme com maior
+    pontuação para o menor.
+*/
+filmesPontuados.sort(
+    function (a, b) {
+
+        return (
+            b.pontuacao -
+            a.pontuacao
+        );
+    }
+);
+
+
+/*
+    Finalmente escolhemos
+    os três melhores resultados.
+*/
+const filmesRecomendados =
+    filmesPontuados.slice(
+        0,
+        3
+    );
+
+
+/*
+    Console temporário para vermos
+    por que cada filme ficou bem colocado.
+*/
+console.log(
+    "Filmes recomendados:",
+    filmesRecomendados
+);
 
 
         /*
