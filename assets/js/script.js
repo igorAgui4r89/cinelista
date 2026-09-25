@@ -207,7 +207,15 @@ const modalRecomendacaoSinopse =
     document.getElementById(
         "modal-recomendacao-sinopse"
     );
-
+/*
+    Botão utilizado para levar
+    a recomendação para o formulário
+    de cadastro do CineLista.
+*/
+const modalRecomendacaoAdicionar =
+    document.getElementById(
+        "modal-recomendacao-adicionar"
+    );
 
 
 
@@ -354,7 +362,14 @@ let graficoGeneros = null;
 */
 let idsUltimasRecomendacoes = [];
 
+/*
+    Guarda o filme que está sendo
+    exibido atualmente no modal.
 
+    Assim o botão "Adicionar à minha CineLista"
+    saberá qual filme deve enviar ao formulário.
+*/
+let filmeSelecionadoRecomendacao = null;
 
 // -----------------------------------------------------
 // LISTA TEMPORÁRIA DE CONTEÚDOS
@@ -1633,6 +1648,127 @@ if (filme.poster) {
     }
 }
 
+
+
+
+
+
+
+
+// -----------------------------------------------------
+// CONVERTER GÊNEROS DO TMDB
+// -----------------------------------------------------
+
+/*
+    O TMDb envia os gêneros como números.
+
+    Exemplo:
+    28 = Ação
+    18 = Drama
+    12 = Aventura
+
+    Esta função transforma esses números
+    novamente em nomes para preencher
+    o formulário do CineLista.
+*/
+function converterGenerosTMDbParaTexto(
+    idsGeneros
+) {
+
+    const mapaGeneros = {
+
+        28: "Ação",
+
+        12: "Aventura",
+
+        16: "Animação",
+
+        35: "Comédia",
+
+        80: "Crime",
+
+        99: "Documentário",
+
+        18: "Drama",
+
+        10751: "Família",
+
+        14: "Fantasia",
+
+        36: "História",
+
+        27: "Terror",
+
+        10402: "Música",
+
+        9648: "Mistério",
+
+        10749: "Romance",
+
+        878: "Ficção científica",
+
+        53: "Thriller",
+
+        10752: "Guerra",
+
+        37: "Western"
+    };
+
+
+    /*
+        Se não recebemos nenhum gênero,
+        devolvemos texto vazio.
+    */
+    if (
+        !Array.isArray(idsGeneros)
+    ) {
+
+        return "";
+    }
+
+
+    /*
+        Converte cada ID para seu nome.
+
+        filter(Boolean) remove algum gênero
+        que eventualmente não exista
+        no nosso mapa.
+    */
+    return idsGeneros
+        .map(
+            function (idGenero) {
+
+                return mapaGeneros[
+                    idGenero
+                ];
+            }
+        )
+        .filter(Boolean)
+        .join(" / ");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // -----------------------------------------------------
 // ABRIR MODAL DE RECOMENDAÇÃO
 // -----------------------------------------------------
@@ -1642,6 +1778,15 @@ if (filme.poster) {
     o modal com suas informações.
 */
 function abrirModalRecomendacao(filme) {
+
+    /*
+    Guarda este filme para que
+    o botão "Adicionar à minha CineLista"
+    possa utilizá-lo depois.
+*/
+
+    filmeSelecionadoRecomendacao =
+        filme;
 
     /*
         Título.
@@ -1793,6 +1938,161 @@ document.addEventListener(
         }
     }
 );
+
+
+// -----------------------------------------------------
+// ADICIONAR RECOMENDAÇÃO À CINELISTA
+// -----------------------------------------------------
+
+modalRecomendacaoAdicionar.addEventListener(
+    "click",
+    function () {
+
+        /*
+            Segurança:
+            se nenhum filme estiver selecionado,
+            não fazemos nada.
+        */
+        if (
+            !filmeSelecionadoRecomendacao
+        ) {
+
+            return;
+        }
+
+
+        /*
+            Confere novamente se o filme
+            já está cadastrado.
+
+            Isso evita duplicidade caso
+            a lista tenha sido alterada depois
+            que as recomendações apareceram.
+        */
+        const filmeJaExiste =
+            listaConteudos.some(
+                function (conteudo) {
+
+                    return (
+                        conteudo.titulo
+                            .trim()
+                            .toLowerCase()
+                        ===
+                        filmeSelecionadoRecomendacao
+                            .titulo
+                            .trim()
+                            .toLowerCase()
+                    );
+                }
+            );
+
+
+        /*
+            Se já existir,
+            avisamos o usuário.
+        */
+        if (filmeJaExiste) {
+
+            alert(
+                "Este filme já está na sua CineLista."
+            );
+
+            fecharModalRecomendacao();
+
+            return;
+        }
+
+
+        /*
+            Garantimos que estamos criando
+            um conteúdo novo e não editando
+            algum cadastro anterior.
+        */
+        indiceEmEdicao =
+            null;
+
+        btnSalvar.textContent =
+            "Salvar";
+
+
+        /*
+            Limpa o formulário antes
+            de receber os novos dados.
+        */
+        formulario.reset();
+
+
+        /*
+            Como as recomendações atuais
+            são filmes, selecionamos
+            automaticamente o formulário
+            de Filmes.
+        */
+        mostrarCamposFilme();
+
+
+        /*
+            Preenche o título.
+        */
+        document.getElementById(
+            "titulo"
+        ).value =
+            filmeSelecionadoRecomendacao
+                .titulo;
+
+
+        /*
+            Converte os IDs de gênero do TMDb
+            para os nomes utilizados no CineLista.
+        */
+        document.getElementById(
+            "genero"
+        ).value =
+            converterGenerosTMDbParaTexto(
+                filmeSelecionadoRecomendacao
+                    .generos
+            );
+
+
+        /*
+            Preenche a data de lançamento.
+
+            O TMDb já envia no formato
+            YYYY-MM-DD, que é justamente
+            o formato esperado pelo input date.
+        */
+        document.getElementById(
+            "lancamento"
+        ).value =
+            filmeSelecionadoRecomendacao
+                .dataLancamento || "";
+
+
+        /*
+            Fecha o modal.
+        */
+        fecharModalRecomendacao();
+
+
+        /*
+            Leva o usuário até
+            o formulário de cadastro.
+        */
+        document
+            .getElementById(
+                "cadastro"
+            )
+            .scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+    }
+);
+
+
+
+
+
 
 
 
