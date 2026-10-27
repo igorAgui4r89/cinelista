@@ -3161,3 +3161,171 @@ body {
         align-self: stretch;
     }
 }
+
+/* ==================================================
+   BUSCA DE FILMES NO TMDB
+================================================== */
+
+.busca-tmdb {
+    margin-bottom: 24px;
+
+    padding: 18px;
+
+    border:
+        1px solid rgba(185, 92, 255, 0.35);
+
+    border-radius: 14px;
+
+    background:
+        rgba(185, 92, 255, 0.10);
+
+    backdrop-filter: blur(8px);
+}
+
+
+/*
+    Cabeçalho da área de busca.
+*/
+.busca-tmdb-cabecalho {
+    margin-bottom: 14px;
+}
+
+
+.busca-tmdb-cabecalho h2 {
+    margin-bottom: 6px;
+
+    font-size: 20px;
+    font-weight: 600;
+
+    color: white;
+}
+
+
+.busca-tmdb-cabecalho p {
+    margin: 0;
+
+    color:
+        rgba(255, 255, 255, 0.68);
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+/* ==================================================
+   CAMPO + BOTÃO
+================================================== */
+
+.busca-tmdb-formulario {
+    display: flex;
+    gap: 10px;
+}
+
+
+/*
+    Campo de pesquisa.
+*/
+#busca-tmdb-input {
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 11px 12px;
+
+    border:
+        1px solid rgba(185, 92, 255, 0.35);
+
+    border-radius: 9px;
+
+    background:
+        rgba(255, 255, 255, 0.92);
+
+    color: #24152f;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    outline: none;
+}
+
+
+#busca-tmdb-input::placeholder {
+    color:
+        rgba(36, 21, 47, 0.55);
+}
+
+
+#busca-tmdb-input:focus {
+    border-color: #b95cff;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(185, 92, 255, 0.12);
+}
+
+
+/*
+    Botão Buscar.
+*/
+.busca-tmdb-botao {
+    padding: 11px 18px;
+
+    border:
+        1px solid rgba(185, 92, 255, 0.55);
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #7a2cff,
+            #b344ff
+        );
+
+    color: white;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.busca-tmdb-botao:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 5px 15px
+        rgba(143, 44, 255, 0.20);
+}
+
+
+/* ==================================================
+   RESULTADOS DA BUSCA
+================================================== */
+
+.busca-tmdb-resultados {
+    margin-top: 14px;
+}
+
+
+/* ==================================================
+   MOBILE
+================================================== */
+
+@media (max-width: 600px) {
+
+    .busca-tmdb-formulario {
+        flex-direction: column;
+    }
+
+
+    .busca-tmdb-botao {
+        width: 100%;
+    }
+}

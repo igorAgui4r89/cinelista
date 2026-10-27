@@ -87,6 +87,69 @@
 
         <h1>Adicionar à CineLista</h1>
 
+<!-- ==================================================
+     BUSCA DE FILMES NO TMDB
+=================================================== -->
+
+<section class="busca-tmdb">
+
+    <div class="busca-tmdb-cabecalho">
+
+        <h2>
+            🔎 Buscar filme
+        </h2>
+
+        <p>
+            Pesquise um título no catálogo e preencha
+            os dados automaticamente.
+        </p>
+
+    </div>
+
+
+    <div class="busca-tmdb-formulario">
+
+        <input
+            type="text"
+            id="busca-tmdb-input"
+            placeholder="Ex.: Interestelar"
+            autocomplete="off"
+        >
+
+        <button
+            type="button"
+            id="busca-tmdb-botao"
+            class="busca-tmdb-botao"
+        >
+            Buscar
+        </button>
+
+    </div>
+
+
+    <!--
+        Os resultados encontrados no TMDb
+        serão inseridos aqui pelo JavaScript.
+    -->
+    <div
+        class="busca-tmdb-resultados"
+        id="busca-tmdb-resultados"
+    >
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
         <!-- Botões para escolher o tipo de conteúdo -->
          <div class="tipo-conteudo">
 
