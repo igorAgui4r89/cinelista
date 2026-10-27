@@ -409,108 +409,247 @@ dados.filmes.forEach(
 
 /*
     Ao clicar em "Selecionar",
-    enviamos os dados encontrados
-    para o formulário de cadastro.
+    buscamos também os detalhes
+    do filme escolhido.
+
+    Assim conseguimos preencher
+    duração e diretor automaticamente.
 */
 btnSelecionar.addEventListener(
     "click",
-    function () {
+    async function () {
 
         /*
-            Garante que estamos criando
-            um novo cadastro, e não editando
-            algum conteúdo existente.
+            Desativa temporariamente
+            o botão enquanto buscamos
+            os detalhes do filme.
         */
-        indiceEmEdicao =
-            null;
+        btnSelecionar.disabled = true;
+
+        btnSelecionar.textContent =
+            "Carregando...";
 
 
-        /*
-            O botão principal volta
-            ao estado normal de cadastro.
-        */
-        btnSalvar.textContent =
-            "Salvar";
+        try {
+
+            /*
+                Monta a URL da Netlify Function
+                utilizando o ID oficial do TMDb.
+            */
+            const urlDetalhes =
+                "/.netlify/functions/tmdb-detalhes" +
+                "?id=" +
+                encodeURIComponent(
+                    filme.id
+                );
 
 
-        /*
-            Limpa possíveis dados
-            que já estavam no formulário.
-        */
-        formulario.reset();
+            /*
+                Consulta os detalhes
+                do filme escolhido.
+            */
+            const resposta =
+                await fetch(
+                    urlDetalhes
+                );
 
 
-        /*
-            Como estamos buscando filmes,
-            selecionamos automaticamente
-            a aba Filmes.
-        */
-        mostrarCamposFilme();
+            /*
+                Se a função responder com erro,
+                interrompemos esta parte.
+            */
+            if (!resposta.ok) {
+
+                throw new Error(
+                    "Não foi possível buscar os detalhes do filme."
+                );
+            }
 
 
-        /*
-            Preenche o título encontrado
-            no TMDb.
-        */
-        document.getElementById(
-            "titulo"
-        ).value =
-            filme.titulo;
+            /*
+                Converte a resposta JSON
+                para JavaScript.
+            */
+            const detalhes =
+                await resposta.json();
 
 
-        /*
-            Converte os IDs de gênero
-            recebidos do TMDb para texto.
-
-            Exemplo:
-            28 vira "Ação".
-        */
-        document.getElementById(
-            "genero"
-        ).value =
-            converterGenerosTMDbParaTexto(
-                filme.generos
+            /*
+                Mostra no Console apenas
+                para facilitar nossos testes.
+            */
+            console.log(
+                "Detalhes do filme selecionado:",
+                detalhes
             );
 
 
-        /*
-            Preenche a data de lançamento.
+            /*
+                Garantimos que será criado
+                um novo conteúdo.
 
-            O TMDb já envia a data
-            no formato YYYY-MM-DD,
-            compatível com nosso input.
-        */
-        document.getElementById(
-            "lancamento"
-        ).value =
-            filme.dataLancamento || "";
+                Isso evita permanecer
+                no modo de edição.
+            */
+            indiceEmEdicao =
+                null;
 
 
-        /*
-            Leva o usuário suavemente
-            até o formulário.
-        */
-        document
-            .getElementById(
-                "cadastro"
-            )
-            .scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
+            /*
+                O botão principal do formulário
+                volta ao estado normal.
+            */
+            btnSalvar.textContent =
+                "Salvar";
 
 
-        /*
-            Coloca o cursor no campo
-            de duração, que será o próximo
-            dado que o usuário precisa completar.
-        */
-        document.getElementById(
-            "duracao"
-        ).focus();
+            /*
+                Limpamos possíveis valores
+                que estavam no formulário.
+            */
+            formulario.reset();
+
+
+            /*
+                Como o resultado pesquisado
+                é um filme, ativamos
+                automaticamente essa opção.
+            */
+            mostrarCamposFilme();
+
+
+            /*
+                TÍTULO
+
+                Utilizamos o título que já veio
+                da busca inicial.
+            */
+            document.getElementById(
+                "titulo"
+            ).value =
+                filme.titulo;
+
+
+            /*
+                GÊNERO
+
+                A função de detalhes já devolve
+                os nomes dos gêneros prontos.
+
+                Exemplo:
+
+                ["Aventura", "Drama"]
+
+                transforma-se em:
+
+                "Aventura / Drama"
+            */
+            document.getElementById(
+                "genero"
+            ).value =
+                detalhes.generos.join(
+                    " / "
+                );
+
+
+            /*
+                DURAÇÃO
+
+                O TMDb devolve a duração
+                em minutos.
+            */
+            document.getElementById(
+                "duracao"
+            ).value =
+                detalhes.duracao || "";
+
+
+            /*
+                DATA DE LANÇAMENTO
+
+                Mantemos a data recebida
+                na busca original.
+
+                Ela já está no formato
+                aceito pelo input date.
+            */
+            document.getElementById(
+                "lancamento"
+            ).value =
+                filme.dataLancamento || "";
+
+
+            /*
+                DIRETOR
+
+                A Netlify Function já encontrou
+                o diretor nos créditos do filme.
+            */
+            document.getElementById(
+                "diretor"
+            ).value =
+                detalhes.diretor || "";
+
+
+            /*
+                Leva o usuário suavemente
+                até o formulário.
+            */
+            document
+                .getElementById(
+                    "cadastro"
+                )
+                .scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+
+            /*
+                Como quase tudo já foi preenchido,
+                colocamos o foco diretamente
+                no campo Streaming.
+
+                Esse continuará sendo escolhido
+                pelo próprio usuário.
+            */
+            document.getElementById(
+                "streaming"
+            ).focus();
+
+
+        } catch (erro) {
+
+            /*
+                Caso alguma coisa dê errado
+                na consulta dos detalhes,
+                mostramos o erro no Console.
+            */
+            console.error(
+                "Erro ao selecionar filme:",
+                erro
+            );
+
+
+            alert(
+                "Não foi possível carregar os detalhes deste filme."
+            );
+
+
+        } finally {
+
+            /*
+                Independentemente do resultado,
+                devolvemos o botão
+                ao estado normal.
+            */
+            btnSelecionar.disabled = false;
+
+            btnSelecionar.textContent =
+                "Selecionar";
+        }
     }
 );
-
 
 
 
