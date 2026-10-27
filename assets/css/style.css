@@ -3484,7 +3484,7 @@ body {
     para não empurrar o formulário muito para baixo.
 */
 .busca-tmdb-resultados {
-    max-height: 390px;
+    max-height: 350px;
 
     overflow-y: auto;
 
