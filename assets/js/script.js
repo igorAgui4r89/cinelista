@@ -148,6 +148,186 @@ const listaRecomendacoes =
         "lista-recomendacoes"
     );
 
+
+
+
+
+
+
+
+/*
+    Campo utilizado para digitar
+    o título que será pesquisado no TMDb.
+*/
+const buscaTMDbInput =
+    document.getElementById(
+        "busca-tmdb-input"
+    );
+
+
+/*
+    Botão que inicia a pesquisa.
+*/
+const buscaTMDbBotao =
+    document.getElementById(
+        "busca-tmdb-botao"
+    );
+
+
+/*
+    Área onde os resultados
+    encontrados serão exibidos.
+*/
+const buscaTMDbResultados =
+    document.getElementById(
+        "busca-tmdb-resultados"
+    );
+
+
+
+
+
+// -----------------------------------------------------
+// BUSCA DE FILMES NO TMDB
+// -----------------------------------------------------
+
+async function buscarFilmesTMDb() {
+
+    /*
+        Recupera o texto digitado
+        pelo usuário.
+    */
+    const titulo =
+        buscaTMDbInput.value.trim();
+
+
+    /*
+        Evita fazer uma busca vazia.
+    */
+    if (!titulo) {
+
+        buscaTMDbResultados.textContent =
+            "Digite o nome de um filme.";
+
+        return;
+    }
+
+
+    /*
+        Enquanto a busca acontece,
+        alteramos temporariamente
+        o texto do botão.
+    */
+    buscaTMDbBotao.disabled = true;
+
+    buscaTMDbBotao.textContent =
+        "Buscando...";
+
+
+    try {
+
+        /*
+            Monta a URL da nossa
+            Netlify Function.
+        */
+        const urlBusca =
+            "/.netlify/functions/tmdb-busca" +
+            "?titulo=" +
+            encodeURIComponent(titulo);
+
+
+        /*
+            Faz a requisição.
+        */
+        const resposta =
+            await fetch(urlBusca);
+
+
+        /*
+            Se a função devolver erro,
+            interrompemos a execução.
+        */
+        if (!resposta.ok) {
+
+            throw new Error(
+                "Não foi possível realizar a busca."
+            );
+        }
+
+
+        /*
+            Converte a resposta JSON
+            para JavaScript.
+        */
+        const dados =
+            await resposta.json();
+
+
+        /*
+            Por enquanto apenas mostramos
+            os resultados no Console.
+
+            No próximo passo criaremos
+            os cards visuais.
+        */
+        console.log(
+            "Resultados da busca TMDb:",
+            dados.filmes
+        );
+
+
+        /*
+            Mensagem temporária apenas
+            para confirmar que funcionou.
+        */
+        buscaTMDbResultados.textContent =
+            `${dados.filmes.length} filme(s) encontrado(s).`;
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao buscar filme:",
+            erro
+        );
+
+
+        buscaTMDbResultados.textContent =
+            "Não foi possível buscar filmes.";
+
+    } finally {
+
+        /*
+            Volta o botão ao estado normal.
+        */
+        buscaTMDbBotao.disabled = false;
+
+        buscaTMDbBotao.textContent =
+            "Buscar";
+    }
+}
+
+/*
+    Executa a busca ao clicar
+    no botão Buscar.
+*/
+buscaTMDbBotao.addEventListener(
+    "click",
+    buscarFilmesTMDb
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
 // -----------------------------------------------------
 // MODAL DE DETALHES DA RECOMENDAÇÃO
 // -----------------------------------------------------
