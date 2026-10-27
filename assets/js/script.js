@@ -407,6 +407,116 @@ dados.filmes.forEach(
         );
 
 
+/*
+    Ao clicar em "Selecionar",
+    enviamos os dados encontrados
+    para o formulário de cadastro.
+*/
+btnSelecionar.addEventListener(
+    "click",
+    function () {
+
+        /*
+            Garante que estamos criando
+            um novo cadastro, e não editando
+            algum conteúdo existente.
+        */
+        indiceEmEdicao =
+            null;
+
+
+        /*
+            O botão principal volta
+            ao estado normal de cadastro.
+        */
+        btnSalvar.textContent =
+            "Salvar";
+
+
+        /*
+            Limpa possíveis dados
+            que já estavam no formulário.
+        */
+        formulario.reset();
+
+
+        /*
+            Como estamos buscando filmes,
+            selecionamos automaticamente
+            a aba Filmes.
+        */
+        mostrarCamposFilme();
+
+
+        /*
+            Preenche o título encontrado
+            no TMDb.
+        */
+        document.getElementById(
+            "titulo"
+        ).value =
+            filme.titulo;
+
+
+        /*
+            Converte os IDs de gênero
+            recebidos do TMDb para texto.
+
+            Exemplo:
+            28 vira "Ação".
+        */
+        document.getElementById(
+            "genero"
+        ).value =
+            converterGenerosTMDbParaTexto(
+                filme.generos
+            );
+
+
+        /*
+            Preenche a data de lançamento.
+
+            O TMDb já envia a data
+            no formato YYYY-MM-DD,
+            compatível com nosso input.
+        */
+        document.getElementById(
+            "lancamento"
+        ).value =
+            filme.dataLancamento || "";
+
+
+        /*
+            Leva o usuário suavemente
+            até o formulário.
+        */
+        document
+            .getElementById(
+                "cadastro"
+            )
+            .scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+
+        /*
+            Coloca o cursor no campo
+            de duração, que será o próximo
+            dado que o usuário precisa completar.
+        */
+        document.getElementById(
+            "duracao"
+        ).focus();
+    }
+);
+
+
+
+
+
+
+
         /*
             Monta as informações.
         */

@@ -3474,3 +3474,50 @@ body {
         font-size: 14px;
     }
 }
+
+/* ==================================================
+   ROLAGEM DOS RESULTADOS DA BUSCA
+================================================== */
+
+/*
+    Limita a altura da lista de resultados
+    para não empurrar o formulário muito para baixo.
+*/
+.busca-tmdb-resultados {
+    max-height: 560px;
+
+    overflow-y: auto;
+
+    padding-right: 6px;
+}
+
+
+/*
+    Personalização da barra de rolagem
+    para combinar com o CineLista.
+*/
+.busca-tmdb-resultados::-webkit-scrollbar {
+    width: 7px;
+}
+
+
+.busca-tmdb-resultados::-webkit-scrollbar-track {
+    background:
+        rgba(255, 255, 255, 0.04);
+
+    border-radius: 10px;
+}
+
+
+.busca-tmdb-resultados::-webkit-scrollbar-thumb {
+    background:
+        rgba(185, 92, 255, 0.55);
+
+    border-radius: 10px;
+}
+
+
+.busca-tmdb-resultados::-webkit-scrollbar-thumb:hover {
+    background:
+        rgba(185, 92, 255, 0.80);
+}
