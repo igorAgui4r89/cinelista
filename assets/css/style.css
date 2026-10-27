@@ -3484,11 +3484,23 @@ body {
     para não empurrar o formulário muito para baixo.
 */
 .busca-tmdb-resultados {
-    max-height: 560px;
+    max-height: 390px;
 
     overflow-y: auto;
 
     padding-right: 6px;
+}
+
+@media (max-width: 600px) {
+
+    /*
+        No celular mostramos apenas
+        cerca de dois resultados completos
+        antes de ativar a rolagem.
+    */
+    .busca-tmdb-resultados {
+        max-height: 365px;
+    }
 }
 
 
