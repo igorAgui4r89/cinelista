@@ -3329,3 +3329,148 @@ body {
         width: 100%;
     }
 }
+
+
+/* ==================================================
+   RESULTADOS DA BUSCA NO TMDB
+================================================== */
+
+/*
+    Cada filme encontrado aparece
+    como um pequeno card horizontal.
+*/
+.busca-tmdb-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    margin-top: 14px;
+    padding: 10px;
+
+    border:
+        1px solid rgba(185, 92, 255, 0.28);
+
+    border-radius: 12px;
+
+    background:
+        rgba(255, 255, 255, 0.05);
+}
+
+
+/*
+    Pôster do resultado.
+
+    Mantemos aproximadamente
+    o mesmo tamanho usado
+    nas recomendações.
+*/
+.busca-tmdb-poster {
+    width: 105px;
+
+    aspect-ratio: 2 / 3;
+
+    object-fit: cover;
+
+    flex-shrink: 0;
+
+    border-radius: 8px;
+}
+
+
+/*
+    Área com título,
+    ano e botão.
+*/
+.busca-tmdb-info {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: flex-start;
+}
+
+
+/*
+    Título do filme.
+*/
+.busca-tmdb-info h3 {
+    margin: 0 0 5px;
+
+    color: white;
+
+    font-size: 15px;
+    line-height: 1.3;
+}
+
+
+/*
+    Ano de lançamento.
+*/
+.busca-tmdb-info p {
+    margin: 0 0 12px;
+
+    color:
+        rgba(255, 255, 255, 0.65);
+
+    font-size: 13px;
+}
+
+
+/* ==================================================
+   BOTÃO SELECIONAR
+================================================== */
+
+.busca-tmdb-selecionar {
+    padding: 8px 13px;
+
+    border:
+        1px solid rgba(185, 92, 255, 0.55);
+
+    border-radius: 8px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #7a2cff,
+            #b344ff
+        );
+
+    color: white;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.busca-tmdb-selecionar:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 5px 14px
+        rgba(143, 44, 255, 0.22);
+}
+
+
+/* ==================================================
+   RESULTADOS - MOBILE
+================================================== */
+
+@media (max-width: 600px) {
+
+    .busca-tmdb-poster {
+        width: 90px;
+    }
+
+
+    .busca-tmdb-info h3 {
+        font-size: 14px;
+    }
+}
