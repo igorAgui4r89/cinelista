@@ -263,25 +263,185 @@ async function buscarFilmesTMDb() {
             await resposta.json();
 
 
-        /*
-            Por enquanto apenas mostramos
-            os resultados no Console.
+/*
+    Mostra no Console os filmes
+    encontrados pelo TMDb.
+*/
+console.log(
+    "Resultados da busca TMDb:",
+    dados.filmes
+);
 
-            No próximo passo criaremos
-            os cards visuais.
+
+/*
+    Remove resultados de uma
+    pesquisa anterior.
+*/
+buscaTMDbResultados.innerHTML = "";
+
+
+/*
+    Caso nenhum filme seja encontrado,
+    mostramos uma mensagem ao usuário.
+*/
+if (dados.filmes.length === 0) {
+
+    buscaTMDbResultados.textContent =
+        "Nenhum filme encontrado.";
+
+    return;
+}
+
+
+/*
+    Cria um pequeno card para
+    cada filme encontrado.
+*/
+dados.filmes.forEach(
+    function (filme) {
+
+        /*
+            Container do resultado.
         */
-        console.log(
-            "Resultados da busca TMDb:",
-            dados.filmes
+        const item =
+            document.createElement(
+                "div"
+            );
+
+        item.classList.add(
+            "busca-tmdb-item"
         );
 
 
         /*
-            Mensagem temporária apenas
-            para confirmar que funcionou.
+            Pôster do filme.
         */
-        buscaTMDbResultados.textContent =
-            `${dados.filmes.length} filme(s) encontrado(s).`;
+        if (filme.poster) {
+
+            const imagem =
+                document.createElement(
+                    "img"
+                );
+
+            imagem.src =
+                "https://image.tmdb.org/t/p/w185" +
+                filme.poster;
+
+            imagem.alt =
+                `Pôster de ${filme.titulo}`;
+
+            imagem.classList.add(
+                "busca-tmdb-poster"
+            );
+
+            item.appendChild(
+                imagem
+            );
+        }
+
+
+        /*
+            Área onde ficarão
+            título e ano.
+        */
+        const info =
+            document.createElement(
+                "div"
+            );
+
+        info.classList.add(
+            "busca-tmdb-info"
+        );
+
+
+        /*
+            Título.
+        */
+        const tituloFilme =
+            document.createElement(
+                "h3"
+            );
+
+        tituloFilme.textContent =
+            filme.titulo;
+
+
+        /*
+            Ano de lançamento.
+        */
+        const ano =
+            document.createElement(
+                "p"
+            );
+
+        if (filme.dataLancamento) {
+
+            ano.textContent =
+                filme.dataLancamento
+                    .slice(0, 4);
+
+        } else {
+
+            ano.textContent =
+                "Ano não informado";
+        }
+
+
+        /*
+            Botão que posteriormente
+            preencherá o formulário.
+        */
+        const btnSelecionar =
+            document.createElement(
+                "button"
+            );
+
+        btnSelecionar.type =
+            "button";
+
+        btnSelecionar.textContent =
+            "Selecionar";
+
+        btnSelecionar.classList.add(
+            "busca-tmdb-selecionar"
+        );
+
+
+        /*
+            Monta as informações.
+        */
+        info.appendChild(
+            tituloFilme
+        );
+
+        info.appendChild(
+            ano
+        );
+
+        info.appendChild(
+            btnSelecionar
+        );
+
+
+        /*
+            Coloca as informações
+            dentro do resultado.
+        */
+        item.appendChild(
+            info
+        );
+
+
+        /*
+            Finalmente adiciona
+            o resultado na tela.
+        */
+        buscaTMDbResultados
+            .appendChild(
+                item
+            );
+    }
+);
 
 
     } catch (erro) {
