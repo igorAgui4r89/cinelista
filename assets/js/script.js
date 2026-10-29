@@ -140,6 +140,26 @@ const btnRecomendacoes =
 
 
 /*
+    Botão utilizado para solicitar
+    recomendações de séries.
+*/
+const btnRecomendacoesSeries =
+    document.getElementById(
+        "btn-recomendacoes-series"
+    );
+
+
+/*
+    Área onde as séries recomendadas
+    serão exibidas.
+*/
+const listaRecomendacoesSeries =
+    document.getElementById(
+        "lista-recomendacoes-series"
+    );
+
+
+/*
     Área onde os filmes recomendados
     serão exibidos.
 */
@@ -2811,6 +2831,402 @@ modalRecomendacaoAdicionar.addEventListener(
         }
     }
 );
+
+
+// -----------------------------------------------------
+// RECOMENDAÇÕES DE SÉRIES
+// -----------------------------------------------------
+
+async function carregarRecomendacoesSeries() {
+
+    /*
+        Enquanto buscamos as séries,
+        desativamos temporariamente o botão.
+    */
+    btnRecomendacoesSeries.disabled =
+        true;
+
+    btnRecomendacoesSeries.textContent =
+        "Buscando...";
+
+
+    /*
+        Remove recomendações anteriores.
+    */
+    listaRecomendacoesSeries.innerHTML =
+        "";
+
+
+    try {
+
+        /*
+            Reaproveitamos os gêneros
+            predominantes já identificados
+            na CineLista.
+        */
+        const generosPreferidos =
+            obterGenerosPreferidosTMDb();
+
+
+        /*
+            URL da nossa Netlify Function
+            específica para séries.
+        */
+        let urlRecomendacoes =
+            "/.netlify/functions/tmdb-series";
+
+
+        /*
+            Se existem gêneros preferidos,
+            enviamos para a função.
+        */
+        if (generosPreferidos) {
+
+            urlRecomendacoes +=
+                "?generos=" +
+                encodeURIComponent(
+                    generosPreferidos
+                );
+        }
+
+
+        /*
+            Faz a consulta.
+        */
+        const resposta =
+            await fetch(
+                urlRecomendacoes
+            );
+
+
+        if (!resposta.ok) {
+
+            throw new Error(
+                "Não foi possível buscar séries."
+            );
+        }
+
+
+        const dados =
+            await resposta.json();
+
+
+        /*
+            Cria uma lista com os títulos
+            que o usuário já cadastrou.
+        */
+        const titulosCadastrados =
+            listaConteudos.map(
+                function (conteudo) {
+
+                    return conteudo.titulo
+                        .trim()
+                        .toLowerCase();
+                }
+            );
+
+
+        /*
+            Converte:
+
+            "18|80|9648"
+
+            em:
+
+            [18, 80, 9648]
+        */
+        const idsGenerosPreferidos =
+            generosPreferidos
+                ? generosPreferidos
+                    .split("|")
+                    .map(Number)
+                : [];
+
+
+        /*
+            Remove séries que já existem
+            na CineLista.
+        */
+        const seriesCandidatas =
+            dados.series.filter(
+                function (serie) {
+
+                    const tituloSerie =
+                        serie.titulo
+                            .trim()
+                            .toLowerCase();
+
+
+                    return !titulosCadastrados
+                        .includes(
+                            tituloSerie
+                        );
+                }
+            );
+
+
+        /*
+            Calcula a pontuação
+            de cada série.
+        */
+        const seriesPontuadas =
+            seriesCandidatas.map(
+                function (serie) {
+
+                    const generosEmComum =
+                        serie.generos.filter(
+                            function (idGenero) {
+
+                                return idsGenerosPreferidos
+                                    .includes(
+                                        idGenero
+                                    );
+                            }
+                        ).length;
+
+
+                    /*
+                        Mesma lógica usada
+                        nas recomendações de filmes:
+
+                        gênero em comum = 10 pontos
+                        nota TMDb = pontos adicionais
+                    */
+                    const pontuacao =
+                        (
+                            generosEmComum * 10
+                        ) +
+                        (
+                            Number(
+                                serie.nota
+                            ) || 0
+                        );
+
+
+                    return {
+                        ...serie,
+
+                        pontuacao:
+                            pontuacao
+                    };
+                }
+            );
+
+
+        /*
+            Ordena da maior pontuação
+            para a menor.
+        */
+        seriesPontuadas.sort(
+            function (a, b) {
+
+                return (
+                    b.pontuacao -
+                    a.pontuacao
+                );
+            }
+        );
+
+
+        /*
+            Mantemos os melhores candidatos.
+        */
+        const melhoresSeries =
+            seriesPontuadas.slice(
+                0,
+                8
+            );
+
+
+        /*
+            Embaralhamos para que
+            as recomendações não sejam
+            sempre exatamente iguais.
+        */
+        const seriesEmbaralhadas = [
+            ...melhoresSeries
+        ];
+
+
+        for (
+            let i =
+                seriesEmbaralhadas.length - 1;
+
+            i > 0;
+
+            i--
+        ) {
+
+            const indiceAleatorio =
+                Math.floor(
+                    Math.random() *
+                    (i + 1)
+                );
+
+
+            [
+                seriesEmbaralhadas[i],
+                seriesEmbaralhadas[
+                    indiceAleatorio
+                ]
+            ] = [
+                seriesEmbaralhadas[
+                    indiceAleatorio
+                ],
+                seriesEmbaralhadas[i]
+            ];
+        }
+
+
+        /*
+            Escolhemos três séries.
+        */
+        const seriesRecomendadas =
+            seriesEmbaralhadas.slice(
+                0,
+                3
+            );
+
+
+        /*
+            Monta os cards.
+        */
+        seriesRecomendadas.forEach(
+            function (serie) {
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                item.classList.add(
+                    "recomendacao-item"
+                );
+
+
+                /*
+                    Pôster.
+                */
+                if (serie.poster) {
+
+                    const imagem =
+                        document.createElement(
+                            "img"
+                        );
+
+
+                    imagem.src =
+                        "https://image.tmdb.org/t/p/w342" +
+                        serie.poster;
+
+
+                    imagem.alt =
+                        `Pôster de ${serie.titulo}`;
+
+
+                    imagem.classList.add(
+                        "recomendacao-poster"
+                    );
+
+
+                    item.appendChild(
+                        imagem
+                    );
+                }
+
+
+                /*
+                    Título.
+                */
+                const titulo =
+                    document.createElement(
+                        "h4"
+                    );
+
+
+                titulo.textContent =
+                    serie.titulo;
+
+
+                /*
+                    Ano.
+                */
+                const ano =
+                    document.createElement(
+                        "p"
+                    );
+
+
+                if (
+                    serie.dataLancamento
+                ) {
+
+                    ano.textContent =
+                        serie.dataLancamento
+                            .slice(
+                                0,
+                                4
+                            );
+
+                } else {
+
+                    ano.textContent =
+                        "Ano não informado";
+                }
+
+
+                item.appendChild(
+                    titulo
+                );
+
+                item.appendChild(
+                    ano
+                );
+
+
+                listaRecomendacoesSeries
+                    .appendChild(
+                        item
+                    );
+            }
+        );
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao buscar recomendações de séries:",
+            erro
+        );
+
+
+        listaRecomendacoesSeries.textContent =
+            "Não foi possível carregar as recomendações.";
+
+
+    } finally {
+
+        btnRecomendacoesSeries.disabled =
+            false;
+
+        btnRecomendacoesSeries.textContent =
+            "Gerar recomendações";
+    }
+}
+
+/*
+    Executa a busca de séries
+    quando o botão for clicado.
+*/
+btnRecomendacoesSeries.addEventListener(
+    "click",
+    carregarRecomendacoesSeries
+);
+
+
+
+
 
 
 
