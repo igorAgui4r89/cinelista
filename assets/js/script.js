@@ -183,7 +183,26 @@ const buscaTMDbResultados =
         "busca-tmdb-resultados"
     );
 
+/*
+    Título exibido na área de busca.
 
+    Ele muda conforme o usuário
+    escolhe Filmes ou Séries.
+*/
+const buscaTMDbTitulo =
+    document.getElementById(
+        "busca-tmdb-titulo"
+    );
+
+
+/*
+    Pequena descrição exibida
+    abaixo do título da busca.
+*/
+const buscaTMDbDescricao =
+    document.getElementById(
+        "busca-tmdb-descricao"
+    );
 
 
 
@@ -4361,6 +4380,33 @@ function mostrarCamposFilme() {
     // Remove o destaque do botão Séries.
     btnSeries.classList.remove("ativo");
 
+/*
+    Configura o buscador
+    para procurar filmes.
+*/
+buscaTMDbTitulo.textContent =
+    "🔎 Buscar filme";
+
+buscaTMDbDescricao.textContent =
+    "Pesquise um filme no catálogo e preencha os dados automaticamente.";
+
+buscaTMDbInput.placeholder =
+    "Ex.: Interestelar";
+
+
+/*
+    Ao trocar o tipo de conteúdo,
+    apagamos a pesquisa anterior.
+*/
+buscaTMDbInput.value = "";
+
+buscaTMDbResultados.innerHTML = "";
+
+
+
+
+
+
     // Insere o campo específico de duração do filme.
     camposDuracao.innerHTML = `
         <div class="campo">
@@ -4394,6 +4440,29 @@ function mostrarCamposSerie() {
 
     // Remove o destaque do botão Filmes.
     btnFilmes.classList.remove("ativo");
+
+    /*
+    Configura o buscador
+    para procurar séries.
+*/
+buscaTMDbTitulo.textContent =
+    "🔎 Buscar série";
+
+buscaTMDbDescricao.textContent =
+    "Pesquise uma série no catálogo e preencha os dados automaticamente.";
+
+buscaTMDbInput.placeholder =
+    "Ex.: Breaking Bad";
+
+
+/*
+    Ao trocar o tipo de conteúdo,
+    apagamos a pesquisa anterior.
+*/
+buscaTMDbInput.value = "";
+
+buscaTMDbResultados.innerHTML = "";
+
 
   // Exibe os campos específicos de séries.
 camposDuracao.innerHTML = `
