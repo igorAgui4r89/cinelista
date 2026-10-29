@@ -246,15 +246,19 @@ async function buscarFilmesTMDb() {
     try {
 
         /*
-            Monta a URL da nossa
-            Netlify Function.
-        */
-        const urlBusca =
-            "/.netlify/functions/tmdb-busca" +
-            "?titulo=" +
-            encodeURIComponent(titulo);
+    Enviamos o título pesquisado
+    e também o tipo atualmente selecionado:
 
-
+    filme
+    ou
+    serie
+*/
+const urlBusca =
+    "/.netlify/functions/tmdb-busca" +
+    "?titulo=" +
+    encodeURIComponent(titulo) +
+    "&tipo=" +
+    encodeURIComponent(tipoSelecionado);
         /*
             Faz a requisição.
         */
@@ -288,9 +292,8 @@ async function buscarFilmesTMDb() {
 */
 console.log(
     "Resultados da busca TMDb:",
-    dados.filmes
+    dados.resultados
 );
-
 
 /*
     Remove resultados de uma
@@ -303,7 +306,7 @@ buscaTMDbResultados.innerHTML = "";
     Caso nenhum filme seja encontrado,
     mostramos uma mensagem ao usuário.
 */
-if (dados.filmes.length === 0) {
+if (dados.resultados.length === 0) {
 
     buscaTMDbResultados.textContent =
         "Nenhum filme encontrado.";
@@ -316,7 +319,7 @@ if (dados.filmes.length === 0) {
     Cria um pequeno card para
     cada filme encontrado.
 */
-dados.filmes.forEach(
+dados.resultados.forEach(
     function (filme) {
 
         /*
