@@ -604,69 +604,140 @@
 </article>
 
 <!-- ==================================================
-     RECOMENDAÇÕES PERSONALIZADAS
+     QUADRANTE RESERVADO
+     Espaço mantido para uma futura funcionalidade.
 =================================================== -->
 
-<article class="grafico-card recomendacoes-card">
-
-    <!-- Cabeçalho do card -->
-    <div class="grafico-cabecalho">
-
-        <h3>
-            ✨ Recomendações para você
-        </h3>
-
-        <p>
-            Sugestões baseadas na sua CineLista
-        </p>
-
-    </div>
-
-
-    <!--
-        Conteúdo temporário.
-        Depois esta área receberá
-        as recomendações geradas pela IA.
-    -->
-    <div class="recomendacoes-conteudo">
-
-        <p class="recomendacoes-texto">
-             Descubra novos títulos para adicionar à sua CineLista.
-        </p>
-
-
-<!--
-    Área onde os filmes recomendados
-    serão exibidos.
--->
-<div
-    class="lista-recomendacoes"
-    id="lista-recomendacoes"
+<article
+    class="grafico-card dashboard-quadrante-vazio"
+    aria-hidden="true"
 >
-</div>
-
-
-        <!--
-    Botão que solicitará novas
-    recomendações de filmes.
--->
-<button
-    type="button"
-    class="btn-recomendacoes"
-    id="btn-recomendacoes"
->
-    Gerar recomendações
-</button>
-
-    </div>
-
 </article>
 
 
 
+</div>
+
+
+
+<!-- ==================================================
+     RECOMENDAÇÕES DO DASHBOARD
+=================================================== -->
+
+<div class="dashboard-recomendacoes">
+
+
+    <!-- ==================================================
+         RECOMENDAÇÕES DE FILMES
+    =================================================== -->
+
+    <article class="grafico-card recomendacoes-card">
+
+        <div class="grafico-cabecalho">
+
+            <h3>
+                🎬 Recomendações de filmes
+            </h3>
+
+            <p>
+                Sugestões baseadas na sua CineLista
+            </p>
+
+        </div>
+
+
+        <div class="recomendacoes-conteudo">
+
+            <p class="recomendacoes-texto">
+                Descubra novos filmes para adicionar à sua CineLista.
+            </p>
+
+
+            <!--
+                Mantemos exatamente os mesmos IDs
+                já utilizados pelo JavaScript atual.
+            -->
+            <div
+                class="lista-recomendacoes"
+                id="lista-recomendacoes"
+            >
+            </div>
+
+
+            <button
+                type="button"
+                class="btn-recomendacoes"
+                id="btn-recomendacoes"
+            >
+                Gerar recomendações
+            </button>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- ==================================================
+         RECOMENDAÇÕES DE SÉRIES
+    =================================================== -->
+
+    <article class="grafico-card recomendacoes-card">
+
+        <div class="grafico-cabecalho">
+
+            <h3>
+                📺 Recomendações de séries
+            </h3>
+
+            <p>
+                Sugestões baseadas na sua CineLista
+            </p>
+
+        </div>
+
+
+        <div class="recomendacoes-conteudo">
+
+            <p class="recomendacoes-texto">
+                Descubra novas séries para adicionar à sua CineLista.
+            </p>
+
+
+            <!--
+                Esta área será preenchida
+                quando implementarmos
+                o algoritmo de séries.
+            -->
+            <div
+                class="lista-recomendacoes"
+                id="lista-recomendacoes-series"
+            >
+            </div>
+
+
+            <button
+                type="button"
+                class="btn-recomendacoes"
+                id="btn-recomendacoes-series"
+            >
+                Gerar recomendações
+            </button>
+
+        </div>
+
+    </article>
 
 
 </div>
+
+
+
+
+
+
+
+
 
 
 
