@@ -2535,7 +2535,7 @@ document.addEventListener(
 
 modalRecomendacaoAdicionar.addEventListener(
     "click",
-    function () {
+    async function () {
 
         /*
             Segurança:
@@ -2551,12 +2551,8 @@ modalRecomendacaoAdicionar.addEventListener(
 
 
         /*
-            Confere novamente se o filme
-            já está cadastrado.
-
-            Isso evita duplicidade caso
-            a lista tenha sido alterada depois
-            que as recomendações apareceram.
+            Verifica se o filme já existe
+            na CineLista do usuário.
         */
         const filmeJaExiste =
             listaConteudos.some(
@@ -2577,8 +2573,8 @@ modalRecomendacaoAdicionar.addEventListener(
 
 
         /*
-            Se já existir,
-            avisamos o usuário.
+            Evita cadastrar novamente
+            um filme que já existe.
         */
         if (filmeJaExiste) {
 
@@ -2593,96 +2589,206 @@ modalRecomendacaoAdicionar.addEventListener(
 
 
         /*
-            Garantimos que estamos criando
-            um conteúdo novo e não editando
-            algum cadastro anterior.
+            Enquanto buscamos os detalhes,
+            desativamos temporariamente
+            o botão do modal.
         */
-        indiceEmEdicao =
-            null;
+        modalRecomendacaoAdicionar.disabled =
+            true;
 
-        btnSalvar.textContent =
-            "Salvar";
-
-
-        /*
-            Limpa o formulário antes
-            de receber os novos dados.
-        */
-        formulario.reset();
+        modalRecomendacaoAdicionar.textContent =
+            "Carregando...";
 
 
-        /*
-            Como as recomendações atuais
-            são filmes, selecionamos
-            automaticamente o formulário
-            de Filmes.
-        */
-        mostrarCamposFilme();
+        try {
+
+            /*
+                Utilizamos o ID do filme recomendado
+                para consultar nossa função
+                de detalhes do TMDb.
+            */
+            const urlDetalhes =
+                "/.netlify/functions/tmdb-detalhes" +
+                "?id=" +
+                encodeURIComponent(
+                    filmeSelecionadoRecomendacao.id
+                );
 
 
-        /*
-            Preenche o título.
-        */
-        document.getElementById(
-            "titulo"
-        ).value =
-            filmeSelecionadoRecomendacao
-                .titulo;
+            /*
+                Consulta duração, diretor,
+                gêneros e outros detalhes.
+            */
+            const resposta =
+                await fetch(
+                    urlDetalhes
+                );
 
 
-        /*
-            Converte os IDs de gênero do TMDb
-            para os nomes utilizados no CineLista.
-        */
-        document.getElementById(
-            "genero"
-        ).value =
-            converterGenerosTMDbParaTexto(
-                filmeSelecionadoRecomendacao
-                    .generos
+            /*
+                Se a função retornar erro,
+                interrompemos o processo.
+            */
+            if (!resposta.ok) {
+
+                throw new Error(
+                    "Não foi possível buscar os detalhes do filme."
+                );
+            }
+
+
+            /*
+                Transforma a resposta
+                em um objeto JavaScript.
+            */
+            const detalhes =
+                await resposta.json();
+
+
+            /*
+                Apenas para conferirmos
+                os dados durante os testes.
+            */
+            console.log(
+                "Detalhes da recomendação:",
+                detalhes
             );
 
 
-        /*
-            Preenche a data de lançamento.
+            /*
+                Garantimos que estamos fazendo
+                um novo cadastro.
+            */
+            indiceEmEdicao =
+                null;
 
-            O TMDb já envia no formato
-            YYYY-MM-DD, que é justamente
-            o formato esperado pelo input date.
-        */
-        document.getElementById(
-            "lancamento"
-        ).value =
-            filmeSelecionadoRecomendacao
-                .dataLancamento || "";
+            btnSalvar.textContent =
+                "Salvar";
 
 
-        /*
-            Fecha o modal.
-        */
-        fecharModalRecomendacao();
+            /*
+                Limpa qualquer informação
+                que estivesse no formulário.
+            */
+            formulario.reset();
 
 
-        /*
-            Leva o usuário até
-            o formulário de cadastro.
-        */
-        document
-            .getElementById(
-                "cadastro"
-            )
-            .scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
+            /*
+                Recomendações atuais são filmes.
+            */
+            mostrarCamposFilme();
+
+
+            /*
+                TÍTULO
+            */
+            document.getElementById(
+                "titulo"
+            ).value =
+                filmeSelecionadoRecomendacao
+                    .titulo;
+
+
+            /*
+                GÊNEROS
+
+                A função de detalhes já devolve
+                os nomes dos gêneros.
+            */
+            document.getElementById(
+                "genero"
+            ).value =
+                detalhes.generos.join(
+                    " / "
+                );
+
+
+            /*
+                DURAÇÃO
+            */
+            document.getElementById(
+                "duracao"
+            ).value =
+                detalhes.duracao || "";
+
+
+            /*
+                DATA DE LANÇAMENTO
+            */
+            document.getElementById(
+                "lancamento"
+            ).value =
+                detalhes.dataLancamento ||
+                filmeSelecionadoRecomendacao
+                    .dataLancamento ||
+                "";
+
+
+            /*
+                DIRETOR
+            */
+            document.getElementById(
+                "diretor"
+            ).value =
+                detalhes.diretor || "";
+
+
+            /*
+                Fecha o modal depois
+                que os dados já foram carregados.
+            */
+            fecharModalRecomendacao();
+
+
+            /*
+                Leva o usuário até
+                o formulário preenchido.
+            */
+            document
+                .getElementById(
+                    "cadastro"
+                )
+                .scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+
+            /*
+                O único campo que continua
+                dependendo do usuário
+                é o streaming.
+            */
+            document.getElementById(
+                "streaming"
+            ).focus();
+
+
+        } catch (erro) {
+
+            console.error(
+                "Erro ao adicionar recomendação:",
+                erro
+            );
+
+            alert(
+                "Não foi possível carregar os detalhes deste filme."
+            );
+
+
+        } finally {
+
+            /*
+                Restaura o botão do modal.
+            */
+            modalRecomendacaoAdicionar.disabled =
+                false;
+
+            modalRecomendacaoAdicionar.textContent =
+                "+ Adicionar à minha CineLista";
+        }
     }
 );
-
-
-
-
-
-
 
 
 
