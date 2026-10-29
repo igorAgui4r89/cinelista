@@ -1,32 +1,30 @@
 // =====================================================
-// BUSCA DE FILMES NO TMDB
+// BUSCA DE FILMES E SÉRIES NO TMDB
 // =====================================================
 
 /*
-    Esta Netlify Function recebe um título
-    enviado pelo CineLista e consulta
-    o catálogo do TMDb.
+    Esta função recebe:
 
-    Exemplo:
+    titulo = texto pesquisado
+    tipo   = filme ou serie
 
-    /.netlify/functions/tmdb-busca?titulo=Interestelar
+    Exemplos:
+
+    /.netlify/functions/tmdb-busca?titulo=Interestelar&tipo=filme
+
+    /.netlify/functions/tmdb-busca?titulo=Breaking%20Bad&tipo=serie
 */
 
 export default async function (request) {
 
     /*
-        Recupera o token do TMDb
-        armazenado com segurança
+        Recupera o token protegido
         nas variáveis de ambiente do Netlify.
     */
     const token =
         process.env.TMDB_READ_ACCESS_TOKEN;
 
 
-    /*
-        Se o token não estiver configurado,
-        interrompemos a execução.
-    */
     if (!token) {
 
         return Response.json(
@@ -42,20 +40,13 @@ export default async function (request) {
 
 
     /*
-        Converte a URL recebida
-        em um objeto que podemos consultar.
+        Recupera os parâmetros enviados
+        pela URL.
     */
     const urlRecebida =
         new URL(request.url);
 
 
-    /*
-        Recupera o parâmetro "titulo".
-
-        Exemplo:
-
-        ?titulo=Interestelar
-    */
     const titulo =
         urlRecebida.searchParams.get(
             "titulo"
@@ -63,7 +54,19 @@ export default async function (request) {
 
 
     /*
-        Não fazemos uma busca vazia.
+        O CineLista utiliza:
+
+        filme
+        serie
+    */
+    const tipo =
+        urlRecebida.searchParams.get(
+            "tipo"
+        ) || "filme";
+
+
+    /*
+        Não permitimos uma busca vazia.
     */
     if (
         !titulo ||
@@ -82,66 +85,68 @@ export default async function (request) {
     }
 
 
+    /*
+        Aceitamos somente os dois tipos
+        utilizados pelo CineLista.
+    */
+    if (
+        tipo !== "filme" &&
+        tipo !== "serie"
+    ) {
+
+        return Response.json(
+            {
+                erro:
+                    "Tipo de conteúdo inválido."
+            },
+            {
+                status: 400
+            }
+        );
+    }
+
+
     try {
 
         /*
-            Endpoint oficial do TMDb
-            utilizado para busca textual
-            de filmes.
+            Decide qual endpoint será utilizado.
+
+            Filme:
+            /search/movie
+
+            Série:
+            /search/tv
         */
+        const endpoint =
+            tipo === "serie"
+                ? "tv"
+                : "movie";
+
+
         const urlTMDb =
             new URL(
-                "https://api.themoviedb.org/3/search/movie"
+                `https://api.themoviedb.org/3/search/${endpoint}`
             );
 
 
-        /*
-            Texto digitado pelo usuário.
-        */
         urlTMDb.searchParams.set(
             "query",
             titulo.trim()
         );
 
 
-        /*
-            Solicitamos os dados traduzidos
-            para português do Brasil.
-        */
         urlTMDb.searchParams.set(
             "language",
             "pt-BR"
         );
 
 
-        /*
-            Informamos a região Brasil.
-
-            Isso ajuda o TMDb a utilizar
-            informações regionais quando disponíveis.
-        */
-        urlTMDb.searchParams.set(
-            "region",
-            "BR"
-        );
-
-
-        /*
-            Não queremos resultados adultos
-            nesta busca.
-        */
         urlTMDb.searchParams.set(
             "include_adult",
             "false"
         );
 
 
-        /*
-            Buscamos apenas a primeira página.
-
-            Para o CineLista isso já será suficiente
-            na primeira versão do buscador.
-        */
         urlTMDb.searchParams.set(
             "page",
             "1"
@@ -149,8 +154,7 @@ export default async function (request) {
 
 
         /*
-            Faz a requisição ao TMDb
-            utilizando o Bearer Token.
+            Consulta o TMDb.
         */
         const resposta =
             await fetch(
@@ -168,17 +172,10 @@ export default async function (request) {
             );
 
 
-        /*
-            Converte a resposta para JavaScript.
-        */
         const dados =
             await resposta.json();
 
 
-        /*
-            Se o TMDb devolver algum erro,
-            repassamos uma mensagem para o frontend.
-        */
         if (!resposta.ok) {
 
             return Response.json(
@@ -198,108 +195,115 @@ export default async function (request) {
 
 
         /*
-            Mantemos apenas os dados
-            que realmente serão úteis
-            para o CineLista.
+            Normalizamos filmes e séries
+            para o mesmo formato.
+
+            Isso é importante porque o TMDb
+            utiliza nomes de propriedades diferentes:
+
+            Filme:
+            title
+            release_date
+
+            Série:
+            name
+            first_air_date
         */
-        const filmes =
+        const resultados =
             dados.results.map(
-                function (filme) {
+                function (item) {
 
                     return {
 
-                        /*
-                            ID oficial do TMDb.
-
-                            Vamos precisar dele depois
-                            para consultar detalhes.
-                        */
                         id:
-                            filme.id,
+                            item.id,
 
 
                         /*
-                            Título em português,
-                            quando disponível.
+                            Filme usa title.
+                            Série usa name.
                         */
                         titulo:
-                            filme.title,
+                            tipo === "serie"
+                                ? item.name
+                                : item.title,
 
 
                         /*
-                            Título original.
+                            Título original também
+                            possui nomes diferentes.
                         */
                         tituloOriginal:
-                            filme.original_title,
+                            tipo === "serie"
+                                ? item.original_name
+                                : item.original_title,
 
 
                         /*
-                            Data de lançamento.
+                            Filme:
+                            release_date
+
+                            Série:
+                            first_air_date
                         */
                         dataLancamento:
-                            filme.release_date,
+                            tipo === "serie"
+                                ? item.first_air_date
+                                : item.release_date,
 
 
-                        /*
-                            IDs dos gêneros.
-
-                            Depois o CineLista converte
-                            esses números para nomes.
-                        */
                         generos:
-                            filme.genre_ids,
+                            item.genre_ids,
 
 
-                        /*
-                            Caminho do pôster.
-                        */
                         poster:
-                            filme.poster_path,
+                            item.poster_path,
 
 
-                        /*
-                            Resumo do filme.
-                        */
                         sinopse:
-                            filme.overview,
+                            item.overview,
+
+
+                        nota:
+                            item.vote_average,
 
 
                         /*
-                            Nota média no TMDb.
+                            Guardamos também o tipo.
+
+                            Isso será útil quando
+                            o usuário clicar em Selecionar.
                         */
-                        nota:
-                            filme.vote_average
+                        tipo:
+                            tipo
                     };
                 }
             );
 
 
         /*
-            Retornamos no máximo
-            os 8 primeiros resultados.
-
-            Isso evita encher a tela
-            com resultados demais.
+            Mantemos no máximo
+            oito resultados.
         */
         return Response.json({
+
             busca:
                 titulo.trim(),
 
-            filmes:
-                filmes.slice(
+            tipo:
+                tipo,
+
+            resultados:
+                resultados.slice(
                     0,
                     8
                 )
+
         });
 
 
     } catch (erro) {
 
-        /*
-            Este bloco trata erros
-            inesperados de conexão
-            ou execução.
-        */
         console.error(
             "Erro na busca TMDb:",
             erro
