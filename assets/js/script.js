@@ -2906,7 +2906,7 @@ modalRecomendacaoAdicionar.addEventListener(
 
         /*
             Segurança:
-            se nenhum filme estiver selecionado,
+            se nenhum conteúdo estiver selecionado,
             não fazemos nada.
         */
         if (
@@ -2918,10 +2918,23 @@ modalRecomendacaoAdicionar.addEventListener(
 
 
         /*
-            Verifica se o filme já existe
-            na CineLista do usuário.
+            Descobre se a recomendação aberta
+            no modal é uma série.
+
+            Os filmes atuais não possuem
+            tipo "serie", então continuam
+            seguindo normalmente pelo fluxo de filme.
         */
-        const filmeJaExiste =
+        const ehSerie =
+            filmeSelecionadoRecomendacao.tipo ===
+            "serie";
+
+
+        /*
+            Evita cadastrar novamente
+            um título que já está na CineLista.
+        */
+        const conteudoJaExiste =
             listaConteudos.some(
                 function (conteudo) {
 
@@ -2939,14 +2952,10 @@ modalRecomendacaoAdicionar.addEventListener(
             );
 
 
-        /*
-            Evita cadastrar novamente
-            um filme que já existe.
-        */
-        if (filmeJaExiste) {
+        if (conteudoJaExiste) {
 
             alert(
-                "Este filme já está na sua CineLista."
+                "Este título já está na sua CineLista."
             );
 
             fecharModalRecomendacao();
@@ -2957,8 +2966,7 @@ modalRecomendacaoAdicionar.addEventListener(
 
         /*
             Enquanto buscamos os detalhes,
-            desativamos temporariamente
-            o botão do modal.
+            desativamos o botão.
         */
         modalRecomendacaoAdicionar.disabled =
             true;
@@ -2970,12 +2978,27 @@ modalRecomendacaoAdicionar.addEventListener(
         try {
 
             /*
-                Utilizamos o ID do filme recomendado
-                para consultar nossa função
-                de detalhes do TMDb.
+                Escolhe automaticamente
+                a função correta do Netlify.
+
+                Filme:
+                tmdb-detalhes
+
+                Série:
+                tmdb-detalhes-series
+            */
+            const endpointDetalhes =
+                ehSerie
+                    ? "/.netlify/functions/tmdb-detalhes-series"
+                    : "/.netlify/functions/tmdb-detalhes";
+
+
+            /*
+                Monta a URL usando
+                o ID oficial do TMDb.
             */
             const urlDetalhes =
-                "/.netlify/functions/tmdb-detalhes" +
+                endpointDetalhes +
                 "?id=" +
                 encodeURIComponent(
                     filmeSelecionadoRecomendacao.id
@@ -2983,8 +3006,7 @@ modalRecomendacaoAdicionar.addEventListener(
 
 
             /*
-                Consulta duração, diretor,
-                gêneros e outros detalhes.
+                Consulta os detalhes.
             */
             const resposta =
                 await fetch(
@@ -2992,30 +3014,18 @@ modalRecomendacaoAdicionar.addEventListener(
                 );
 
 
-            /*
-                Se a função retornar erro,
-                interrompemos o processo.
-            */
             if (!resposta.ok) {
 
                 throw new Error(
-                    "Não foi possível buscar os detalhes do filme."
+                    "Não foi possível buscar os detalhes."
                 );
             }
 
 
-            /*
-                Transforma a resposta
-                em um objeto JavaScript.
-            */
             const detalhes =
                 await resposta.json();
 
 
-            /*
-                Apenas para conferirmos
-                os dados durante os testes.
-            */
             console.log(
                 "Detalhes da recomendação:",
                 detalhes
@@ -3023,8 +3033,8 @@ modalRecomendacaoAdicionar.addEventListener(
 
 
             /*
-                Garantimos que estamos fazendo
-                um novo cadastro.
+                Garantimos que estamos
+                fazendo um novo cadastro.
             */
             indiceEmEdicao =
                 null;
@@ -3034,82 +3044,174 @@ modalRecomendacaoAdicionar.addEventListener(
 
 
             /*
-                Limpa qualquer informação
-                que estivesse no formulário.
+                Limpa possíveis valores
+                antigos do formulário.
             */
             formulario.reset();
 
 
-            /*
-                Recomendações atuais são filmes.
-            */
-            mostrarCamposFilme();
+            // =================================================
+            // RECOMENDAÇÃO DE SÉRIE
+            // =================================================
+
+            if (ehSerie) {
+
+                /*
+                    Ativa o formulário
+                    específico de séries.
+                */
+                mostrarCamposSerie();
+
+
+                /*
+                    Título.
+                */
+                document.getElementById(
+                    "titulo"
+                ).value =
+                    detalhes.titulo ||
+                    filmeSelecionadoRecomendacao
+                        .titulo;
+
+
+                /*
+                    Gêneros.
+                */
+                document.getElementById(
+                    "genero"
+                ).value =
+                    detalhes.generos
+                        ?.join(" / ") || "";
+
+
+                /*
+                    Lançamento.
+                */
+                document.getElementById(
+                    "lancamento"
+                ).value =
+                    detalhes.dataLancamento ||
+                    filmeSelecionadoRecomendacao
+                        .dataLancamento ||
+                    "";
+
+
+                /*
+                    No formulário atual,
+                    utilizamos o campo Diretor
+                    também para armazenar
+                    os criadores da série.
+                */
+                document.getElementById(
+                    "diretor"
+                ).value =
+                    detalhes.criadores
+                        ?.join(" / ") || "";
+
+
+                /*
+                    Temporadas.
+                */
+                document.getElementById(
+                    "temporadas"
+                ).value =
+                    detalhes.temporadas || "";
+
+
+                /*
+                    Episódios.
+                */
+                document.getElementById(
+                    "episodios"
+                ).value =
+                    detalhes.episodios || "";
+
+
+                /*
+                    Status:
+                    Em andamento ou Encerrada.
+                */
+                document.getElementById(
+                    "status-serie"
+                ).value =
+                    detalhes.statusSerie || "";
+            }
+
+
+            // =================================================
+            // RECOMENDAÇÃO DE FILME
+            // =================================================
+
+            else {
+
+                /*
+                    Ativa o formulário
+                    específico de filmes.
+                */
+                mostrarCamposFilme();
+
+
+                /*
+                    Título.
+                */
+                document.getElementById(
+                    "titulo"
+                ).value =
+                    detalhes.titulo ||
+                    filmeSelecionadoRecomendacao
+                        .titulo;
+
+
+                /*
+                    Gêneros.
+                */
+                document.getElementById(
+                    "genero"
+                ).value =
+                    detalhes.generos
+                        ?.join(" / ") || "";
+
+
+                /*
+                    Duração.
+                */
+                document.getElementById(
+                    "duracao"
+                ).value =
+                    detalhes.duracao || "";
+
+
+                /*
+                    Lançamento.
+                */
+                document.getElementById(
+                    "lancamento"
+                ).value =
+                    detalhes.dataLancamento ||
+                    filmeSelecionadoRecomendacao
+                        .dataLancamento ||
+                    "";
+
+
+                /*
+                    Diretor.
+                */
+                document.getElementById(
+                    "diretor"
+                ).value =
+                    detalhes.diretor || "";
+            }
 
 
             /*
-                TÍTULO
-            */
-            document.getElementById(
-                "titulo"
-            ).value =
-                filmeSelecionadoRecomendacao
-                    .titulo;
-
-
-            /*
-                GÊNEROS
-
-                A função de detalhes já devolve
-                os nomes dos gêneros.
-            */
-            document.getElementById(
-                "genero"
-            ).value =
-                detalhes.generos.join(
-                    " / "
-                );
-
-
-            /*
-                DURAÇÃO
-            */
-            document.getElementById(
-                "duracao"
-            ).value =
-                detalhes.duracao || "";
-
-
-            /*
-                DATA DE LANÇAMENTO
-            */
-            document.getElementById(
-                "lancamento"
-            ).value =
-                detalhes.dataLancamento ||
-                filmeSelecionadoRecomendacao
-                    .dataLancamento ||
-                "";
-
-
-            /*
-                DIRETOR
-            */
-            document.getElementById(
-                "diretor"
-            ).value =
-                detalhes.diretor || "";
-
-
-            /*
-                Fecha o modal depois
-                que os dados já foram carregados.
+                Fecha o modal somente depois
+                que os dados foram carregados.
             */
             fecharModalRecomendacao();
 
 
             /*
-                Leva o usuário até
-                o formulário preenchido.
+                Leva o usuário ao formulário.
             */
             document
                 .getElementById(
@@ -3122,9 +3224,8 @@ modalRecomendacaoAdicionar.addEventListener(
 
 
             /*
-                O único campo que continua
-                dependendo do usuário
-                é o streaming.
+                Streaming continua sendo
+                escolhido pelo usuário.
             */
             document.getElementById(
                 "streaming"
@@ -3138,8 +3239,9 @@ modalRecomendacaoAdicionar.addEventListener(
                 erro
             );
 
+
             alert(
-                "Não foi possível carregar os detalhes deste filme."
+                "Não foi possível carregar os detalhes deste título."
             );
 
 
@@ -3156,7 +3258,6 @@ modalRecomendacaoAdicionar.addEventListener(
         }
     }
 );
-
 
 // -----------------------------------------------------
 // RECOMENDAÇÕES DE SÉRIES
@@ -3428,6 +3529,69 @@ const generosPreferidos =
                 item.classList.add(
                     "recomendacao-item"
                 );
+
+                /*
+    Faz o card da série funcionar
+    como área clicável.
+*/
+item.addEventListener(
+    "click",
+    function () {
+
+        /*
+            Identificamos que este conteúdo
+            veio das recomendações de séries.
+        */
+        serie.tipo =
+            "serie";
+
+
+        /*
+            Reaproveitamos o mesmo modal
+            já utilizado nas recomendações
+            de filmes.
+        */
+        abrirModalRecomendacao(
+            serie
+        );
+    }
+);
+
+
+/*
+    Permite abrir também
+    utilizando o teclado.
+*/
+item.tabIndex = 0;
+
+item.setAttribute(
+    "role",
+    "button"
+);
+
+item.setAttribute(
+    "aria-label",
+    `Ver detalhes de ${serie.titulo}`
+);
+
+
+item.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            serie.tipo =
+                "serie";
+
+            abrirModalRecomendacao(
+                serie
+            );
+        }
+    }
+);
 
 
                 /*
