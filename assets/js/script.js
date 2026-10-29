@@ -451,20 +451,27 @@ dados.resultados.forEach(
 
 /*
     Ao clicar em "Selecionar",
-    buscamos também os detalhes
-    do filme escolhido.
+    verificamos primeiro se o resultado
+    é um filme ou uma série.
 
-    Assim conseguimos preencher
-    duração e diretor automaticamente.
+    Depois consultamos a função de detalhes
+    correspondente e preenchemos o formulário correto.
 */
 btnSelecionar.addEventListener(
     "click",
     async function () {
 
         /*
-            Desativa temporariamente
-            o botão enquanto buscamos
-            os detalhes do filme.
+            Descobre se o resultado
+            selecionado é uma série.
+        */
+        const ehSerie =
+            filme.tipo === "serie";
+
+
+        /*
+            Enquanto buscamos os detalhes,
+            desativamos temporariamente o botão.
         */
         btnSelecionar.disabled = true;
 
@@ -475,11 +482,26 @@ btnSelecionar.addEventListener(
         try {
 
             /*
-                Monta a URL da Netlify Function
-                utilizando o ID oficial do TMDb.
+                Escolhe a função correta.
+
+                Filmes:
+                tmdb-detalhes
+
+                Séries:
+                tmdb-detalhes-series
+            */
+            const endpointDetalhes =
+                ehSerie
+                    ? "/.netlify/functions/tmdb-detalhes-series"
+                    : "/.netlify/functions/tmdb-detalhes";
+
+
+            /*
+                Monta a URL utilizando
+                o ID oficial do TMDb.
             */
             const urlDetalhes =
-                "/.netlify/functions/tmdb-detalhes" +
+                endpointDetalhes +
                 "?id=" +
                 encodeURIComponent(
                     filme.id
@@ -487,8 +509,7 @@ btnSelecionar.addEventListener(
 
 
             /*
-                Consulta os detalhes
-                do filme escolhido.
+                Busca os detalhes.
             */
             const resposta =
                 await fetch(
@@ -496,146 +517,203 @@ btnSelecionar.addEventListener(
                 );
 
 
-            /*
-                Se a função responder com erro,
-                interrompemos esta parte.
-            */
             if (!resposta.ok) {
 
                 throw new Error(
-                    "Não foi possível buscar os detalhes do filme."
+                    "Não foi possível buscar os detalhes."
                 );
             }
 
 
-            /*
-                Converte a resposta JSON
-                para JavaScript.
-            */
             const detalhes =
                 await resposta.json();
 
 
-            /*
-                Mostra no Console apenas
-                para facilitar nossos testes.
-            */
             console.log(
-                "Detalhes do filme selecionado:",
+                "Detalhes selecionados:",
                 detalhes
             );
 
 
             /*
-                Garantimos que será criado
-                um novo conteúdo.
-
-                Isso evita permanecer
-                no modo de edição.
+                Garantimos que estamos criando
+                um novo cadastro.
             */
             indiceEmEdicao =
                 null;
 
-
-            /*
-                O botão principal do formulário
-                volta ao estado normal.
-            */
             btnSalvar.textContent =
                 "Salvar";
 
 
             /*
-                Limpamos possíveis valores
-                que estavam no formulário.
+                Limpa dados anteriores
+                do formulário.
             */
             formulario.reset();
 
 
-            /*
-                Como o resultado pesquisado
-                é um filme, ativamos
-                automaticamente essa opção.
-            */
-            mostrarCamposFilme();
+            // =================================================
+            // SÉRIE
+            // =================================================
+
+            if (ehSerie) {
+
+                /*
+                    Ativa os campos específicos:
+
+                    temporadas
+                    episódios
+                    status
+                */
+                mostrarCamposSerie();
+
+
+                /*
+                    Título.
+                */
+                document.getElementById(
+                    "titulo"
+                ).value =
+                    detalhes.titulo ||
+                    filme.titulo;
+
+
+                /*
+                    Gêneros.
+                */
+                document.getElementById(
+                    "genero"
+                ).value =
+                    detalhes.generos.join(
+                        " / "
+                    );
+
+
+                /*
+                    Data de lançamento.
+                */
+                document.getElementById(
+                    "lancamento"
+                ).value =
+                    detalhes.dataLancamento ||
+                    filme.dataLancamento ||
+                    "";
+
+
+                /*
+                    Para séries, utilizamos
+                    os criadores retornados pelo TMDb
+                    no campo que atualmente chamamos
+                    de Diretor no CineLista.
+                */
+                document.getElementById(
+                    "diretor"
+                ).value =
+                    detalhes.criadores
+                        ?.join(" / ") || "";
+
+
+                /*
+                    Número de temporadas.
+                */
+                document.getElementById(
+                    "temporadas"
+                ).value =
+                    detalhes.temporadas || "";
+
+
+                /*
+                    Número total de episódios.
+                */
+                document.getElementById(
+                    "episodios"
+                ).value =
+                    detalhes.episodios || "";
+
+
+                /*
+                    Status já convertido pela
+                    nossa Netlify Function para:
+
+                    Em andamento
+                    ou
+                    Encerrada
+                */
+                document.getElementById(
+                    "status-serie"
+                ).value =
+                    detalhes.statusSerie || "";
+
+            }
+
+
+            // =================================================
+            // FILME
+            // =================================================
+
+            else {
+
+                /*
+                    Ativa o formulário de filmes.
+                */
+                mostrarCamposFilme();
+
+
+                /*
+                    Título.
+                */
+                document.getElementById(
+                    "titulo"
+                ).value =
+                    detalhes.titulo ||
+                    filme.titulo;
+
+
+                /*
+                    Gêneros.
+                */
+                document.getElementById(
+                    "genero"
+                ).value =
+                    detalhes.generos.join(
+                        " / "
+                    );
+
+
+                /*
+                    Duração.
+                */
+                document.getElementById(
+                    "duracao"
+                ).value =
+                    detalhes.duracao || "";
+
+
+                /*
+                    Data de lançamento.
+                */
+                document.getElementById(
+                    "lancamento"
+                ).value =
+                    detalhes.dataLancamento ||
+                    filme.dataLancamento ||
+                    "";
+
+
+                /*
+                    Diretor.
+                */
+                document.getElementById(
+                    "diretor"
+                ).value =
+                    detalhes.diretor || "";
+            }
 
 
             /*
-                TÍTULO
-
-                Utilizamos o título que já veio
-                da busca inicial.
-            */
-            document.getElementById(
-                "titulo"
-            ).value =
-                filme.titulo;
-
-
-            /*
-                GÊNERO
-
-                A função de detalhes já devolve
-                os nomes dos gêneros prontos.
-
-                Exemplo:
-
-                ["Aventura", "Drama"]
-
-                transforma-se em:
-
-                "Aventura / Drama"
-            */
-            document.getElementById(
-                "genero"
-            ).value =
-                detalhes.generos.join(
-                    " / "
-                );
-
-
-            /*
-                DURAÇÃO
-
-                O TMDb devolve a duração
-                em minutos.
-            */
-            document.getElementById(
-                "duracao"
-            ).value =
-                detalhes.duracao || "";
-
-
-            /*
-                DATA DE LANÇAMENTO
-
-                Mantemos a data recebida
-                na busca original.
-
-                Ela já está no formato
-                aceito pelo input date.
-            */
-            document.getElementById(
-                "lancamento"
-            ).value =
-                filme.dataLancamento || "";
-
-
-            /*
-                DIRETOR
-
-                A Netlify Function já encontrou
-                o diretor nos créditos do filme.
-            */
-            document.getElementById(
-                "diretor"
-            ).value =
-                detalhes.diretor || "";
-
-
-            /*
-                Leva o usuário suavemente
-                até o formulário.
+                Leva o usuário até
+                o formulário preenchido.
             */
             document
                 .getElementById(
@@ -648,12 +726,8 @@ btnSelecionar.addEventListener(
 
 
             /*
-                Como quase tudo já foi preenchido,
-                colocamos o foco diretamente
-                no campo Streaming.
-
-                Esse continuará sendo escolhido
-                pelo próprio usuário.
+                O streaming continua sendo
+                escolhido pelo usuário.
             */
             document.getElementById(
                 "streaming"
@@ -662,37 +736,30 @@ btnSelecionar.addEventListener(
 
         } catch (erro) {
 
-            /*
-                Caso alguma coisa dê errado
-                na consulta dos detalhes,
-                mostramos o erro no Console.
-            */
             console.error(
-                "Erro ao selecionar filme:",
+                "Erro ao selecionar conteúdo:",
                 erro
             );
 
 
             alert(
-                "Não foi possível carregar os detalhes deste filme."
+                "Não foi possível carregar os detalhes deste conteúdo."
             );
 
 
         } finally {
 
             /*
-                Independentemente do resultado,
-                devolvemos o botão
-                ao estado normal.
+                Restaura o botão.
             */
-            btnSelecionar.disabled = false;
+            btnSelecionar.disabled =
+                false;
 
             btnSelecionar.textContent =
                 "Selecionar";
         }
     }
 );
-
 
 
 
