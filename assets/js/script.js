@@ -1635,6 +1635,264 @@ function obterGenerosPreferidosTMDb() {
     );
 }
 
+// -----------------------------------------------------
+// GÊNEROS PREFERIDOS PARA RECOMENDAÇÃO DE SÉRIES
+// -----------------------------------------------------
+
+/*
+    O TMDb utiliza alguns IDs diferentes
+    para gêneros de filmes e de séries.
+
+    Por isso mantemos uma função específica
+    para as recomendações de séries.
+*/
+function obterGenerosPreferidosSeriesTMDb() {
+
+    /*
+        Relação entre os gêneros utilizados
+        no CineLista e os IDs de TV do TMDb.
+    */
+    const mapaGenerosSeries = {
+
+        "acao": 10759,
+
+        "aventura": 10759,
+
+        "animacao": 16,
+
+        "comedia": 35,
+
+        "crime": 80,
+
+        "documentario": 99,
+
+        "drama": 18,
+
+        "familia": 10751,
+
+        /*
+            No catálogo de TV do TMDb,
+            fantasia e ficção científica
+            ficam agrupadas.
+        */
+        "fantasia": 10765,
+
+        "ficcao cientifica": 10765,
+
+        "sci-fi": 10765,
+
+        "misterio": 9648,
+
+        /*
+            O catálogo de TV não possui
+            categorias separadas para
+            suspense e terror.
+
+            Para nossa recomendação,
+            aproximamos esses gêneros
+            de Mistério.
+        */
+        "suspense": 9648,
+
+        "thriller": 9648,
+
+        "terror": 9648,
+
+        "horror": 9648,
+
+        /*
+            Romance não possui categoria
+            própria em TV no TMDb.
+
+            Drama é a aproximação
+            mais adequada para nosso sistema.
+        */
+        "romance": 18,
+
+        "western": 37,
+
+        "guerra": 10768,
+
+        "politica": 10768,
+
+        /*
+            Categorias específicas
+            existentes no catálogo de TV.
+        */
+        "infantil": 10762,
+
+        "noticias": 10763,
+
+        "reality": 10764,
+
+        "novela": 10766,
+
+        "soap": 10766,
+
+        "talk show": 10767,
+
+        /*
+            Algumas categorias usadas
+            no CineLista são aproximadas
+            para Action & Adventure.
+        */
+        "super-herois": 10759,
+
+        "super herois": 10759,
+
+        "luta": 10759,
+
+        "artes marciais": 10759
+    };
+
+
+    const contagemGeneros = {};
+
+
+    /*
+        Para recomendar séries,
+        analisamos somente as séries
+        cadastradas pelo usuário.
+
+        Assim os filmes não interferem
+        no perfil de recomendação de TV.
+    */
+    const seriesCadastradas =
+        listaConteudos.filter(
+            function (conteudo) {
+
+                return (
+                    conteudo.tipo === "serie"
+                );
+            }
+        );
+
+
+    /*
+        Percorre as séries cadastradas.
+    */
+    seriesCadastradas.forEach(
+        function (conteudo) {
+
+            const generos =
+                conteudo.genero.split(
+                    /[\/,]/
+                );
+
+
+            /*
+                Evita contar o mesmo ID
+                duas vezes dentro
+                da mesma série.
+            */
+            const idsDoConteudo =
+                new Set();
+
+
+            generos.forEach(
+                function (genero) {
+
+                    /*
+                        Normaliza:
+
+                        "Ficção científica"
+
+                        para:
+
+                        "ficcao cientifica"
+                    */
+                    const generoNormalizado =
+                        genero
+                            .normalize("NFD")
+                            .replace(
+                                /[\u0300-\u036f]/g,
+                                ""
+                            )
+                            .trim()
+                            .toLowerCase();
+
+
+                    const idGenero =
+                        mapaGenerosSeries[
+                            generoNormalizado
+                        ];
+
+
+                    if (idGenero) {
+
+                        idsDoConteudo.add(
+                            idGenero
+                        );
+                    }
+                }
+            );
+
+
+            /*
+                Conta os gêneros encontrados.
+            */
+            idsDoConteudo.forEach(
+                function (idGenero) {
+
+                    if (
+                        contagemGeneros[
+                            idGenero
+                        ]
+                    ) {
+
+                        contagemGeneros[
+                            idGenero
+                        ]++;
+
+                    } else {
+
+                        contagemGeneros[
+                            idGenero
+                        ] = 1;
+                    }
+                }
+            );
+        }
+    );
+
+
+    /*
+        Ordena pelos gêneros
+        mais frequentes e mantém
+        somente os três primeiros.
+    */
+    const generosMaisFrequentes =
+        Object.entries(
+            contagemGeneros
+        )
+            .sort(
+                function (a, b) {
+
+                    return b[1] - a[1];
+                }
+            )
+            .slice(
+                0,
+                3
+            )
+            .map(
+                function (item) {
+
+                    return item[0];
+                }
+            );
+
+
+    /*
+        Exemplo final:
+
+        10759|18|10765
+    */
+    return generosMaisFrequentes.join(
+        "|"
+    );
+}
+
 
 // -----------------------------------------------------
 // RECOMENDAÇÕES - TESTE COM TMDB
@@ -2860,12 +3118,12 @@ async function carregarRecomendacoesSeries() {
     try {
 
         /*
-            Reaproveitamos os gêneros
-            predominantes já identificados
-            na CineLista.
-        */
-        const generosPreferidos =
-            obterGenerosPreferidosTMDb();
+    Para séries utilizamos
+    os IDs próprios do catálogo
+    de TV do TMDb.
+*/
+const generosPreferidos =
+    obterGenerosPreferidosSeriesTMDb();
 
 
         /*
