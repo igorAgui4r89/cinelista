@@ -2719,6 +2719,384 @@ function converterGenerosTMDbParaTexto(
 }
 
 
+// -----------------------------------------------------
+// FILME EM DESTAQUE
+// -----------------------------------------------------
+
+async function carregarFilmeDestaque() {
+
+    /*
+        Segurança:
+        só executamos se o quadrante
+        existir na página.
+    */
+    if (
+        !destaqueFilmeConteudo
+    ) {
+
+        return;
+    }
+
+
+    /*
+        Mensagem enquanto aguardamos
+        a resposta da Netlify Function.
+    */
+    destaqueFilmeConteudo.innerHTML =
+        `
+            <p class="destaque-filme-carregando">
+                Buscando destaque...
+            </p>
+        `;
+
+
+    try {
+
+        /*
+            Consulta nossa função responsável
+            por decidir entre:
+
+            - filme aleatório;
+            - filme de data especial.
+        */
+        const resposta =
+            await fetch(
+                "/.netlify/functions/tmdb-destaque"
+            );
+
+
+        if (!resposta.ok) {
+
+            throw new Error(
+                "Não foi possível carregar o destaque."
+            );
+        }
+
+
+        const dados =
+            await resposta.json();
+
+
+        const filme =
+            dados.filme;
+
+
+        /*
+            Segurança caso a resposta
+            não contenha um filme.
+        */
+        if (!filme) {
+
+            throw new Error(
+                "Nenhum filme foi retornado."
+            );
+        }
+
+
+        // =================================================
+        // CABEÇALHO DO QUADRANTE
+        // =================================================
+
+        /*
+            Se for uma data comemorativa,
+            mostramos o motivo enviado
+            pela Netlify Function.
+
+            Caso contrário, usamos
+            uma mensagem padrão.
+        */
+        if (
+            dados.tipoDestaque ===
+            "aniversario"
+        ) {
+
+            destaqueFilmeMotivo.textContent =
+                "🎉 " + dados.motivo;
+
+        } else {
+
+            destaqueFilmeMotivo.textContent =
+                "Uma descoberta aleatória do CineLista";
+        }
+
+
+        /*
+            Se for um filme especial,
+            adicionamos uma classe visual.
+        */
+        const cardDestaque =
+            destaqueFilmeConteudo
+                .closest(
+                    ".destaque-filme-card"
+                );
+
+
+        if (cardDestaque) {
+
+            cardDestaque.classList.toggle(
+                "destaque-filme-especial",
+
+                dados.tipoDestaque ===
+                    "aniversario"
+            );
+        }
+
+
+        // =================================================
+        // PÔSTER
+        // =================================================
+
+        const poster =
+            filme.poster
+                ? "https://image.tmdb.org/t/p/w342" +
+                    filme.poster
+                : "";
+
+
+        // =================================================
+        // DATA
+        // =================================================
+
+        let dataFormatada =
+            "Data não informada";
+
+
+        if (
+            filme.dataLancamento
+        ) {
+
+            /*
+                Exemplo:
+
+                1994-12-23
+
+                vira:
+
+                23/12/1994
+            */
+            const partesData =
+                filme.dataLancamento.split(
+                    "-"
+                );
+
+
+            if (
+                partesData.length === 3
+            ) {
+
+                dataFormatada =
+                    partesData[2] +
+                    "/" +
+                    partesData[1] +
+                    "/" +
+                    partesData[0];
+            }
+        }
+
+
+        // =================================================
+        // NOTA
+        // =================================================
+
+        const nota =
+            Number(
+                filme.nota
+            );
+
+
+        const notaFormatada =
+            Number.isFinite(
+                nota
+            )
+                ? nota.toFixed(1)
+                : "—";
+
+
+        // =================================================
+        // SINOPSE
+        // =================================================
+
+        const sinopse =
+            filme.sinopse
+                ? filme.sinopse
+                : "Sinopse não disponível.";
+
+
+        // =================================================
+        // MONTA O CARD
+        // =================================================
+
+        destaqueFilmeConteudo.innerHTML =
+            "";
+
+
+        /*
+            Pôster.
+        */
+        if (poster) {
+
+            const imagem =
+                document.createElement(
+                    "img"
+                );
+
+
+            imagem.src =
+                poster;
+
+
+            imagem.alt =
+                `Pôster de ${filme.titulo}`;
+
+
+            imagem.classList.add(
+                "destaque-filme-poster"
+            );
+
+
+            destaqueFilmeConteudo
+                .appendChild(
+                    imagem
+                );
+        }
+
+
+        /*
+            Área das informações.
+        */
+        const info =
+            document.createElement(
+                "div"
+            );
+
+
+        info.classList.add(
+            "destaque-filme-info"
+        );
+
+
+        /*
+            Título.
+        */
+        const titulo =
+            document.createElement(
+                "h4"
+            );
+
+
+        titulo.textContent =
+            filme.titulo;
+
+
+        /*
+            Data + nota.
+        */
+        const meta =
+            document.createElement(
+                "div"
+            );
+
+
+        meta.classList.add(
+            "destaque-filme-meta"
+        );
+
+
+        const data =
+            document.createElement(
+                "span"
+            );
+
+
+        data.textContent =
+            "📅 " +
+            dataFormatada;
+
+
+        const notaElemento =
+            document.createElement(
+                "span"
+            );
+
+
+        notaElemento.textContent =
+            "⭐ " +
+            notaFormatada;
+
+
+        meta.appendChild(
+            data
+        );
+
+
+        meta.appendChild(
+            notaElemento
+        );
+
+
+        /*
+            Sinopse.
+        */
+        const sinopseElemento =
+            document.createElement(
+                "p"
+            );
+
+
+        sinopseElemento.classList.add(
+            "destaque-filme-sinopse"
+        );
+
+
+        sinopseElemento.textContent =
+            sinopse;
+
+
+        /*
+            Junta tudo.
+        */
+        info.appendChild(
+            titulo
+        );
+
+
+        info.appendChild(
+            meta
+        );
+
+
+        info.appendChild(
+            sinopseElemento
+        );
+
+
+        destaqueFilmeConteudo
+            .appendChild(
+                info
+            );
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao carregar filme em destaque:",
+            erro
+        );
+
+
+        destaqueFilmeConteudo.innerHTML =
+            `
+                <p class="destaque-filme-carregando">
+                    Não foi possível carregar o destaque.
+                </p>
+            `;
+
+
+        destaqueFilmeMotivo.textContent =
+            "Tente novamente mais tarde";
+    }
+}
+
 
 
 
@@ -4131,6 +4509,9 @@ if (graficoFilmesSeries !== null) {
     );
 }
  
+
+
+
 
 
 
@@ -5599,6 +5980,12 @@ function renderizarLista() {
     atualizarDashboard();
 
     /*
+    Carrega o filme do quarto quadrante
+    sempre que o CineLista é iniciado.
+    */
+    carregarFilmeDestaque();
+
+    /*
     Atualiza também o gráfico
     Filmes x Séries.
     */
@@ -6401,3 +6788,289 @@ function formatarData(data) {
     */
     return `${dia}/${mes}/${ano}`;
 }
+
+// -----------------------------------------------------
+// FILME EM DESTAQUE
+// -----------------------------------------------------
+
+async function carregarFilmeDestaque() {
+
+    /*
+        Se o quadrante não existir,
+        não executamos a função.
+    */
+    if (!destaqueFilmeConteudo) {
+        return;
+    }
+
+
+    try {
+
+        /*
+            Consulta a Netlify Function
+            responsável pelo sorteio.
+        */
+        const resposta =
+            await fetch(
+                "/.netlify/functions/tmdb-destaque"
+            );
+
+
+        if (!resposta.ok) {
+
+            throw new Error(
+                "Não foi possível carregar o destaque."
+            );
+        }
+
+
+        const dados =
+            await resposta.json();
+
+
+        const filme =
+            dados.filme;
+
+
+        if (!filme) {
+
+            throw new Error(
+                "Nenhum filme foi retornado."
+            );
+        }
+
+
+        /*
+            Texto abaixo do título
+            "Filme em destaque".
+        */
+        if (
+            dados.tipoDestaque ===
+            "aniversario"
+        ) {
+
+            destaqueFilmeMotivo.textContent =
+                "🎉 " + dados.motivo;
+
+        } else {
+
+            destaqueFilmeMotivo.textContent =
+                "Uma descoberta aleatória do CineLista";
+        }
+
+
+        /*
+            Monta a URL do pôster.
+        */
+        const poster =
+            filme.poster
+                ? "https://image.tmdb.org/t/p/w342" +
+                    filme.poster
+                : "";
+
+
+        /*
+            Formata a data.
+        */
+        let dataFormatada =
+            "Data não informada";
+
+
+        if (filme.dataLancamento) {
+
+            const partesData =
+                filme.dataLancamento.split("-");
+
+
+            if (partesData.length === 3) {
+
+                dataFormatada =
+                    partesData[2] +
+                    "/" +
+                    partesData[1] +
+                    "/" +
+                    partesData[0];
+            }
+        }
+
+
+        /*
+            Formata a nota.
+        */
+        const nota =
+            Number(filme.nota);
+
+
+        const notaFormatada =
+            Number.isFinite(nota)
+                ? nota.toFixed(1)
+                : "—";
+
+
+        /*
+            Limpa o texto
+            "Buscando destaque...".
+        */
+        destaqueFilmeConteudo.innerHTML =
+            "";
+
+
+        /*
+            Pôster.
+        */
+        if (poster) {
+
+            const imagem =
+                document.createElement(
+                    "img"
+                );
+
+
+            imagem.src =
+                poster;
+
+
+            imagem.alt =
+                `Pôster de ${filme.titulo}`;
+
+
+            imagem.classList.add(
+                "destaque-filme-poster"
+            );
+
+
+            destaqueFilmeConteudo
+                .appendChild(imagem);
+        }
+
+
+        /*
+            Área das informações.
+        */
+        const info =
+            document.createElement(
+                "div"
+            );
+
+
+        info.classList.add(
+            "destaque-filme-info"
+        );
+
+
+        /*
+            Título.
+        */
+        const titulo =
+            document.createElement(
+                "h4"
+            );
+
+
+        titulo.textContent =
+            filme.titulo;
+
+
+        /*
+            Data + nota.
+        */
+        const meta =
+            document.createElement(
+                "div"
+            );
+
+
+        meta.classList.add(
+            "destaque-filme-meta"
+        );
+
+
+        const data =
+            document.createElement(
+                "span"
+            );
+
+
+        data.textContent =
+            "📅 " + dataFormatada;
+
+
+        const notaElemento =
+            document.createElement(
+                "span"
+            );
+
+
+        notaElemento.textContent =
+            "⭐ " + notaFormatada;
+
+
+        meta.appendChild(data);
+
+        meta.appendChild(
+            notaElemento
+        );
+
+
+        /*
+            Sinopse.
+        */
+        const sinopse =
+            document.createElement(
+                "p"
+            );
+
+
+        sinopse.classList.add(
+            "destaque-filme-sinopse"
+        );
+
+
+        sinopse.textContent =
+            filme.sinopse ||
+            "Sinopse não disponível.";
+
+
+        /*
+            Junta as informações.
+        */
+        info.appendChild(
+            titulo
+        );
+
+        info.appendChild(
+            meta
+        );
+
+        info.appendChild(
+            sinopse
+        );
+
+
+        destaqueFilmeConteudo
+            .appendChild(info);
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao carregar filme em destaque:",
+            erro
+        );
+
+
+        destaqueFilmeConteudo.innerHTML =
+            `
+                <p class="destaque-filme-carregando">
+                    Não foi possível carregar o destaque.
+                </p>
+            `;
+    }
+}
+
+
+/*
+    Carrega automaticamente
+    o filme quando a página é aberta.
+*/
+carregarFilmeDestaque();
