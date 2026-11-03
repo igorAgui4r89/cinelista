@@ -3591,3 +3591,140 @@ body {
         min-height: 250px;
     }
 }
+
+/* ==================================================
+   FILME EM DESTAQUE
+================================================== */
+
+.destaque-filme-card {
+    min-height: 360px;
+}
+
+
+/*
+    Área principal do filme.
+*/
+.destaque-filme-conteudo {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    margin-top: 14px;
+}
+
+
+/*
+    Pôster do filme.
+*/
+.destaque-filme-poster {
+    width: 125px;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    flex-shrink: 0;
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 6px 18px
+        rgba(0, 0, 0, 0.30);
+}
+
+
+/*
+    Informações ao lado do pôster.
+*/
+.destaque-filme-info {
+    flex: 1;
+    min-width: 0;
+}
+
+
+/*
+    Título.
+*/
+.destaque-filme-info h4 {
+    margin: 0 0 7px;
+
+    font-size: 1.05rem;
+    line-height: 1.25;
+}
+
+
+/*
+    Data e nota.
+*/
+.destaque-filme-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    margin-bottom: 10px;
+
+    font-size: 0.88rem;
+
+    opacity: 0.85;
+}
+
+
+/*
+    Sinopse.
+*/
+.destaque-filme-sinopse {
+    margin: 0;
+
+    font-size: 0.9rem;
+    line-height: 1.45;
+
+    opacity: 0.9;
+
+    /*
+        Evita que sinopses enormes
+        estourem o quadrante.
+    */
+    display: -webkit-box;
+    -webkit-line-clamp: 7;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+
+/*
+    Mensagem exibida enquanto
+    o filme está sendo buscado.
+*/
+.destaque-filme-carregando {
+    opacity: 0.75;
+}
+
+
+/*
+    Destaque visual quando o filme
+    pertence a uma data especial.
+*/
+.destaque-filme-especial {
+    border:
+        1px solid
+        rgba(179, 68, 255, 0.55);
+}
+
+
+/* ==================================================
+   MOBILE
+================================================== */
+
+@media (max-width: 600px) {
+
+    .destaque-filme-conteudo {
+        align-items: flex-start;
+        gap: 13px;
+    }
+
+
+    .destaque-filme-poster {
+        width: 100px;
+    }
+
+
+    .destaque-filme-sinopse {
+        -webkit-line-clamp: 6;
+    }
+}

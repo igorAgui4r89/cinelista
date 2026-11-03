@@ -224,6 +224,21 @@ const buscaTMDbDescricao =
         "busca-tmdb-descricao"
     );
 
+/*
+    Elementos do quarto quadrante
+    "Filme em destaque".
+*/
+const destaqueFilmeConteudo =
+    document.getElementById(
+        "destaque-filme-conteudo"
+    );
+
+
+const destaqueFilmeMotivo =
+    document.getElementById(
+        "destaque-filme-motivo"
+    );   
+
 
 
 // -----------------------------------------------------
